@@ -3,6 +3,23 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --boa-black: #050505;
+  --boa-white: #f8f8f8;
+  --boa-red: #dc2626;
+  --boa-red-dark: #991b1b;
+  --boa-gray: #171717;
+}
+
+@theme {
+  --font-rush-zone: "Rush Zone", cursive;
+}
+
+@font-face {
+  font-family: "Rush Zone";
+  src: url("/fonts/RushZone.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @theme inline {
@@ -23,4 +40,55 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.adv-calendar .rdp {
+  --rdp-accent-color: #dc2626;
+  --rdp-day-height: 30px;
+  --rdp-day-width: 30px;
+  --rdp-day_button-height: 28px;
+  --rdp-day_button-width: 28px;
+  margin: 0;
+  width: 100%;
+  color: white;
+}
+
+.adv-calendar .rdp-months,
+.adv-calendar .rdp-month,
+.adv-calendar .rdp-month_grid {
+  width: 100%;
+}
+
+.adv-calendar .rdp-month_caption {
+  justify-content: center;
+  margin-bottom: 12px;
+  font-size: 1.25rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.adv-calendar .rdp-weekday {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #a1a1aa;
+}
+
+.adv-calendar .rdp-day_button {
+  border-radius: 9999px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.adv-calendar .rdp-selected .rdp-day_button {
+  background: #dc2626;
+  color: white;
+}
+
+.adv-calendar .rdp-outside {
+  color: #52525b;
+}
+
+.adv-calendar .rdp-chevron {
+  fill: #dc2626;
 }
