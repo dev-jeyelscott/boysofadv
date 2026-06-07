@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: boysofadv-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: boysofadv
+      POSTGRES_PASSWORD: boysofadv_password
+      POSTGRES_DB: boysofadv_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - boysofadv_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  boysofadv_postgres_data:

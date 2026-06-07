@@ -92,3 +92,9 @@ body {
 .adv-calendar .rdp-chevron {
   fill: #dc2626;
 }
+
+@layer clerk {
+  .cl-formFieldInput::placeholder {
+    color: rgba(255, 255, 255, 0.45) !important;
+  }
+}

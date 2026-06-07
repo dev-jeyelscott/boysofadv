@@ -66,12 +66,12 @@ export function AboutMissionVisionSection() {
                   and brotherhood.
                 </p>
 
-                <p className="font-bold uppercase text-red-500">
-                  Fearless, not reck
+                <p className="font-bold uppercase text-white">
+                  We are <span className="text-red-600">Fearless</span>, not <span className="text-red-600">reckless</span>.
                 </p>
               </div>
 
-              <button className="mt-6 inline-flex w-fit skew-x-[-12deg] items-center gap-3 bg-red-700 px-7 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-red-600">
+              <button className="mt-6 inline-flex w-fit -skew-x-12 items-center gap-3 bg-red-700 px-7 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-red-600">
                 More About Us
               </button>
             </div>

@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const ctas = [
   {
@@ -8,6 +9,7 @@ const ctas = [
     description: "Be part of the brotherhood. Join Boys of ADV today!",
     button: "Join us now",
     image: "/images/cta-riders.jpg",
+    url: "/sign-up"
   },
   {
     eyebrow: "Grow with",
@@ -15,6 +17,7 @@ const ctas = [
     description: "Partner with Boys of ADV and let's go further together.",
     button: "Be a partner",
     image: "/images/cta-partner.jpg",
+    url: "/be-a-partner"
   },
 ];
 
@@ -48,10 +51,10 @@ export function CtaSection() {
                 {cta.description}
               </p>
 
-              <button className="mt-6 inline-flex w-fit -skew-x-12 items-center gap-3 bg-red-700 px-7 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-red-600">
-                <span className="skew-x-[12deg]">{cta.button}</span>
-                <ChevronRight className="h-5 w-5 skew-x-[12deg]" />
-              </button>
+              <Link href={cta.url} className="mt-6 inline-flex w-fit -skew-x-12 items-center gap-3 bg-red-700 px-7 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-red-600">
+                <span className="skew-x-12">{cta.button}</span>
+                <ChevronRight className="h-5 w-5 skew-x-12" />
+              </Link>
             </div>
           </div>
         ))}
