@@ -39,6 +39,7 @@ export const builds = pgTable("builds", {
   accessories: text("accessories"),
 
   coverImageUrl: text("cover_image_url"),
+  coverImageKey: text("cover_image_key"),
 
   status: buildStatusEnum("status").notNull().default("draft"),
   isFeatured: boolean("is_featured").notNull().default(false),

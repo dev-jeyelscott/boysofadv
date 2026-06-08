@@ -2,12 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
+import { UTApi } from "uploadthing/server";
 
 import { db } from "@/db/db";
-import { users } from "@/db/schema";
-import { builds } from "@/db/schema";
-import { nanoid } from "nanoid";
+import { builds, users } from "@/db/schema";
 import { getCurrentUser } from "@/lib/get-current-user";
+
+const utapi = new UTApi();
 
 export async function updateProfile(formData: FormData) {
   const user = await getCurrentUser();
@@ -40,14 +42,17 @@ function createSlug(value: string) {
 export async function updateMyBuild(formData: FormData) {
   const user = await getCurrentUser();
 
-  const title = String(formData.get("title") || "").trim();
-
   const existingBuild = await db.query.builds.findFirst({
     where: eq(builds.userId, user.id),
   });
 
+  const title = String(formData.get("title") || "").trim();
+
+  const coverImageUrl = String(formData.get("coverImageUrl") || "");
+  const coverImageKey = String(formData.get("coverImageKey") || "");
+
   const payload = {
-    title: String(formData.get("title") || ""),
+    title,
     slug: createSlug(title || `${user.nickname || user.firstName || "member"}-build`),
     motorcycleModel: String(formData.get("motorcycleModel") || ""),
     yearModel: String(formData.get("yearModel") || ""),
@@ -59,9 +64,18 @@ export async function updateMyBuild(formData: FormData) {
     brakingSetup: String(formData.get("brakingSetup") || ""),
     wheelSetup: String(formData.get("wheelSetup") || ""),
     accessories: String(formData.get("accessories") || ""),
-    coverImageUrl: String(formData.get("coverImageUrl") || ""),
+    coverImageUrl,
+    coverImageKey,
     updatedAt: new Date(),
   };
+
+  if (
+    existingBuild?.coverImageKey &&
+    coverImageKey &&
+    existingBuild.coverImageKey !== coverImageKey
+  ) {
+    await utapi.deleteFiles(existingBuild.coverImageKey);
+  }
 
   if (existingBuild) {
     await db
@@ -74,10 +88,11 @@ export async function updateMyBuild(formData: FormData) {
       userId: user.id,
       ...payload,
     });
+  }
 
     revalidatePath("/member/my-build");
-  }
 }
+
 
 // export async function updateAccountSettings(formData: FormData) {
 //   const user = await getCurrentMember();

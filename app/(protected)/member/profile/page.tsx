@@ -49,6 +49,12 @@ export default async function ProfilePage() {
           defaultValue={user.instagramUrl ?? ""}
         />
 
+        <Field
+          name="youtubeUrl"
+          label="Youtube URL"
+          defaultValue={user.youtubeUrl ?? ""}
+        />
+
         <div>
           <label className="text-xs font-black uppercase tracking-widest text-white/50">
             Bio
@@ -62,7 +68,7 @@ export default async function ProfilePage() {
           />
         </div>
 
-        <button className="w-fit rounded-full bg-red-600 px-6 py-3 text-sm font-black uppercase text-white hover:bg-red-500">
+        <button className="w-fit -skew-x-12 bg-red-600 px-6 py-3 text-sm font-black uppercase text-white hover:bg-red-500">
           Save Profile
         </button>
       </form>

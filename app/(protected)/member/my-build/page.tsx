@@ -4,7 +4,9 @@ import { MemberShell } from "@/components/member/member-shell";
 import { db } from "@/db/db";
 import { builds } from "@/db/schema";
 import { updateMyBuild } from "../actions";
+import { BuildCoverUploader } from "@/components/member/build-cover-uploader";
 import { getCurrentUser } from "@/lib/get-current-user";
+import { AutoResizeTextarea } from "@/components/member/auto-resize-textarea";
 
 export default async function MyBuildPage() {
   const user = await getCurrentUser();
@@ -54,77 +56,57 @@ export default async function MyBuildPage() {
           />
         </div>
 
-        <TextArea
-          name="description"
+        <AutoResizeTextarea
+          name={"description"}
           label="Build Description"
-          placeholder="Short summary of your setup..."
-          rows={4}
           defaultValue={build?.description ?? ""}
+          placeholder={"Short summary of your setup..."}
         />
 
-        <TextArea
-          name="engineSetup"
+        <AutoResizeTextarea
+          name={"engineSetup"}
           label="Engine Setup"
-          placeholder="Example: MTRT 63mm block, cams, throttle body, injector..."
-          rows={5}
           defaultValue={build?.engineSetup ?? ""}
+          placeholder={"Example: MTRT 63mm block, cams, throttle body, injector..."}
         />
 
-        <TextArea
-          name="cvtSetup"
+        <AutoResizeTextarea
+          name={"cvtSetup"}
           label="CVT Setup"
-          placeholder="Example: pulley, flyball grams, center spring, clutch spring..."
-          rows={5}
           defaultValue={build?.cvtSetup ?? ""}
+          placeholder={"Example: pulley, flyball grams, center spring, clutch spring..."}
         />
 
-        <TextArea
-          name="suspensionSetup"
+        <AutoResizeTextarea
+          name={"suspensionSetup"}
           label="Suspension Setup"
-          placeholder="Example: RCB rear shock, front fork tuning..."
-          rows={4}
           defaultValue={build?.suspensionSetup ?? ""}
+          placeholder={"Example: RCB rear shock, front fork tuning..."}
         />
 
-        <TextArea
-          name="brakingSetup"
+        <AutoResizeTextarea
+          name={"brakingSetup"}
           label="Braking Setup"
-          placeholder="Example: caliper, disc, brake hose, pads..."
-          rows={4}
           defaultValue={build?.brakingSetup ?? ""}
+          placeholder={"Example: caliper, disc, brake hose, pads..."}
         />
 
-        <TextArea
-          name="wheelSetup"
+        <AutoResizeTextarea
+          name={"wheelSetup"}
           label="Wheel / Tire Setup"
-          placeholder="Example: RCB mags, tire sizes, tire brand..."
-          rows={4}
           defaultValue={build?.wheelSetup ?? ""}
+          placeholder={"Example: RCB mags, tire sizes, tire brand..."}
         />
 
-        <TextArea
-          name="accessories"
+        <AutoResizeTextarea
+          name={"accessories"}
           label="Accessories"
-          placeholder="Example: box, lights, windshield, crash guard, phone mount..."
-          rows={4}
           defaultValue={build?.accessories ?? ""}
+          placeholder={"Example: box, lights, windshield, crash guard, phone mount..."}
         />
 
         <div>
-          <label className="text-xs font-black uppercase tracking-widest text-white/50">
-            Cover Image URL
-          </label>
-
-          <input
-            name="coverImageUrl"
-            defaultValue={build?.coverImageUrl ?? ""}
-            placeholder="https://..."
-            className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-red-600"
-          />
-
-          <p className="mt-2 text-xs text-white/40">
-            Temporary URL field. Later, replace this with UploadThing.
-          </p>
+          <BuildCoverUploader defaultValue={build?.coverImageUrl ?? ""} />
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black p-5">
@@ -143,7 +125,7 @@ export default async function MyBuildPage() {
           </div>
         </div>
 
-        <button className="w-fit rounded-full bg-red-600 px-6 py-3 text-sm font-black uppercase text-white hover:bg-red-500">
+        <button className="w-fit -skew-x-12 bg-red-600 px-6 py-3 text-sm font-black uppercase text-white hover:bg-red-500">
           Save Build
         </button>
       </form>
