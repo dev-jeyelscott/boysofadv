@@ -8,6 +8,7 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
+import { CustomUserButton } from "../auth/custom-user-button";
 
 export function SiteHeader() {
   return (
@@ -56,14 +57,7 @@ export function SiteHeader() {
               </SignUpButton>
             </Show>
             <Show when="signed-in">
-              <UserButton
-                appearance={{
-                  elements: {
-                    avatarBox:
-                      "h-10 w-10 rounded-full border-2 border-red-600 shadow-[0_0_15px_rgba(220,38,38,.5)]"
-                  },
-                }}
-              />
+              <CustomUserButton />
             </Show>
           </div>
         </div>
