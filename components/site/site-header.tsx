@@ -2,11 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   Show,
-  SignedIn,
-  SignedOut,
   SignInButton,
   SignUpButton,
-  UserButton,
 } from "@clerk/nextjs";
 import { CustomUserButton } from "../auth/custom-user-button";
 
