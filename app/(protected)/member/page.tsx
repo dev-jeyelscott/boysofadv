@@ -11,19 +11,14 @@ const cards = [
     title: "Setup My Build",
     description: "Add your ADV setup, modifications, photos, and build story.",
     href: "/member/my-build",
-  },
-  {
-    title: "Account Settings",
-    description: "Manage basic account preferences and security details.",
-    href: "/member/account-settings",
-  },
+  }
 ];
 
 export default function MemberDashboardPage() {
   return (
     <MemberShell
       title="Dashboard"
-      description="Manage your Boys of ADV member profile, motorcycle build, and account settings."
+      description="Manage your Boys of ADV member profile and motorcycle build."
     >
       <div className="grid gap-4 md:grid-cols-3">
         {cards.map((card) => (

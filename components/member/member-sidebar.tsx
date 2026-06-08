@@ -28,11 +28,6 @@ const navItems = [
     href: "/member/my-build",
     icon: Bike,
   },
-  {
-    label: "Account Settings",
-    href: "/member/account-settings",
-    icon: Settings,
-  },
 ];
 
 export function MemberSidebar() {
