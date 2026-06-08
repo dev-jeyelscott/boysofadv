@@ -1,6 +1,7 @@
 import { db } from "@/db/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
 
 async function seedSuperAdmin() {
   const clerkUserId = "user_3EogImecKpWji1WgblRI8Qe4twj";
@@ -15,21 +16,20 @@ async function seedSuperAdmin() {
   }
 
   await db.insert(users).values({
-    id: clerkUserId,
+  id: nanoid(),
 
-    email: "jleward.escote17@gmail.com",
+  clerkUserId: clerkUserId,
 
-    firstName: "Super",
-    lastName: "Admin",
+  email: "jleward.escote17@gmail.com",
+  firstName: "Leward",
+  lastName: "Escote",
+  nickname: "Leward",
+  codename: "Super Admin",
 
-    nickname: "Papichulo",
-    codename: "Super Admin",
-
-    role: "admin",
-    status: "approved",
-
-    isFeatured: false,
-  });
+  role: "super_admin",
+  status: "approved",
+  isFeatured: false,
+});
 
   console.log("Super Admin created");
 }

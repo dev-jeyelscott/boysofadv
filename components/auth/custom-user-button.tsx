@@ -99,7 +99,7 @@ export function CustomUserButton() {
           </div>
 
           <div className="p-2">
-            <MenuLink href="/profile" icon={<User className="h-4 w-4" />}>
+            <MenuLink href="/member/profile" icon={<User className="h-4 w-4" />}>
               My Profile
             </MenuLink>
 
