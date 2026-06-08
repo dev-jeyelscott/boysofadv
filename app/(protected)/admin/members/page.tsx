@@ -25,13 +25,14 @@ export default async function MembersPage({ searchParams }: MembersPageProps) {
   ]);
 
   return (
-    <div className="grid gap-5">
+    <div className="space-y-6">
       <MembersFilters
         chapters={filterOptions.chapters}
         units={filterOptions.units}
       />
-
-      <MembersTable members={members} />
+      <div className="p-4">
+        <MembersTable members={members} />
+      </div>
     </div>
   );
 }

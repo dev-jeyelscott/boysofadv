@@ -1,6 +1,7 @@
 "use client";
 
 import { toggleMemberStatus } from "@/app/(protected)/admin/members/actions";
+import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
 
 type MemberStatusActionProps = {
@@ -17,8 +18,7 @@ export function MemberStatusAction({
   const isApproved = status === "approved";
 
   return (
-    <button
-      type="button"
+    <Button
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {
@@ -27,11 +27,11 @@ export function MemberStatusAction({
       }}
       className={
         isApproved
-          ? "rounded-lg bg-red-600 px-3 py-2 text-xs font-black uppercase text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
-          : "rounded-lg bg-green-600 px-3 py-2 text-xs font-black uppercase text-white transition hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-50"
+          ? "inline-flex items-center gap-2 rounded-lg bg-red-600 text-xs font-black uppercase text-white hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+          : "inline-flex items-center gap-2 rounded-lg bg-green-600 text-xs font-black uppercase text-white hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-50"
       }
     >
       {isPending ? "Updating..." : isApproved ? "Suspend" : "Mark as Active"}
-    </button>
+    </Button>
   );
 }

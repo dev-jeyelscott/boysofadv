@@ -52,8 +52,8 @@ export function MembersFilters({ chapters, units }: MembersFiltersProps) {
   const unit = searchParams.get("unit") ?? "all";
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-      <div className="flex flex-col gap-4 lg:flex-row">
+    <div className="p-4">
+      <div className="flex items-center gap-4">
         {/* Search */}
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />

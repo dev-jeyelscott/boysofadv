@@ -3,6 +3,16 @@
 import { Eye } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
 import { MemberDetailsDialog } from "./member-details-dialog";
 import { MemberStatusAction } from "./member-status-action";
 
@@ -27,56 +37,92 @@ export function MembersTable({ members }: MembersTableProps) {
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1000px] text-left">
-          <thead className="border-b border-white/10 bg-white/[0.03]">
-            <tr>
-              <Th>Name</Th>
-              <Th>Email</Th>
-              <Th>Nickname</Th>
-              <Th>Codename</Th>
-              <Th>MC Unit</Th>
-              <Th>Chapter</Th>
-              <Th>Status</Th>
-              <Th>Joined</Th>
-              <Th className="text-right">Actions</Th>
-            </tr>
-          </thead>
+        <Table className="min-w-[1100px]">
+          <TableHeader>
+            <TableRow className="border-white/10 bg-white/[0.03] hover:bg-white/[0.03]">
+              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
+                Name
+              </TableHead>
+              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
+                Email
+              </TableHead>
+              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
+                Nickname
+              </TableHead>
+              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
+                Codename
+              </TableHead>
+              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
+                MC Unit
+              </TableHead>
+              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
+                Chapter
+              </TableHead>
+              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
+                Status
+              </TableHead>
+              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
+                Joined
+              </TableHead>
+              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
+                Actions
+              </TableHead>
+            </TableRow>
+          </TableHeader>
 
-          <tbody>
+          <TableBody>
             {members.length > 0 ? (
               members.map((member) => (
-                <tr
+                <TableRow
                   key={member.id}
-                  className="border-b border-white/10 transition hover:bg-white/[0.03]"
+                  className="border-white/10 transition hover:bg-white/[0.03]"
                 >
-                  <Td>
+                  <TableCell className="p-4 text-center">
                     <div className="font-bold text-white">
                       {getFullName(member)}
                     </div>
-                  </Td>
+                  </TableCell>
 
-                  <Td>{member.email}</Td>
-                  <Td>{member.nickname || "—"}</Td>
-                  <Td>{member.codename || "—"}</Td>
-                  <Td>{member.unit || "—"}</Td>
-                  <Td>{member.chapter || "—"}</Td>
+                  <TableCell className="p-4 text-center text-sm text-white/70">
+                    {member.email}
+                  </TableCell>
 
-                  <Td>
+                  <TableCell className="p-4 text-center text-sm text-white/70">
+                    {member.nickname || "—"}
+                  </TableCell>
+
+                  <TableCell className="p-4 text-center text-sm text-white/70">
+                    {member.codename || "—"}
+                  </TableCell>
+
+                  <TableCell className="p-4 text-center text-sm text-white/70">
+                    {member.unit || "—"}
+                  </TableCell>
+
+                  <TableCell className="p-4 text-center text-sm text-white/70">
+                    {member.chapter || "—"}
+                  </TableCell>
+
+                  <TableCell className="px-4 py-4">
                     <StatusBadge status={member.status} />
-                  </Td>
+                  </TableCell>
 
-                  <Td>{formatDate(member.createdAt)}</Td>
+                  <TableCell className="p-4 text-center text-sm text-white/70">
+                    {formatDate(member.createdAt)}
+                  </TableCell>
 
-                  <Td>
+                  <TableCell className="px-4 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <MemberDetailsDialog member={member}>
-                        <button
+                        <Button
                           type="button"
-                          className="inline-flex size-9 items-center justify-center rounded-lg border border-white/10 text-white/70 transition hover:bg-white/10 hover:text-white"
+                          size="icon"
+                          variant="outline"
+                          className=" border-white/10 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white"
                           aria-label="View member details"
                         >
-                          <Eye className="size-4" />
-                        </button>
+                          <Eye />
+                        </Button>
                       </MemberDetailsDialog>
 
                       <MemberStatusAction
@@ -84,44 +130,24 @@ export function MembersTable({ members }: MembersTableProps) {
                         status={member.status}
                       />
                     </div>
-                  </Td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td
+              <TableRow className="border-white/10 hover:bg-transparent">
+                <TableCell
                   colSpan={9}
                   className="px-4 py-12 text-center text-sm text-white/50"
                 >
                   No members found.
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
-}
-
-function Th({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <th
-      className={`px-4 py-4 text-xs font-black uppercase tracking-widest text-white/50 ${className}`}
-    >
-      {children}
-    </th>
-  );
-}
-
-function Td({ children }: { children: React.ReactNode }) {
-  return <td className="px-4 py-4 text-sm text-white/70">{children}</td>;
 }
 
 function StatusBadge({ status }: { status: MemberRow["status"] }) {
