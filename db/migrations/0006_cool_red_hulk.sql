@@ -1,0 +1,1 @@
+ALTER TYPE "public"."build_status" ADD VALUE 'unpublished' BEFORE 'rejected';

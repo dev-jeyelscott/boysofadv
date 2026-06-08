@@ -129,7 +129,7 @@ export function MyBuildForm({ build }: MyBuildFormProps) {
       />
 
       <div>
-        <BuildCoverUploader defaultValue={build?.coverImageUrl ?? ""} />
+        <BuildCoverUploader defaultImageUrl={build?.coverImageUrl ?? ""} />
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-black p-5">
@@ -149,13 +149,7 @@ export function MyBuildForm({ build }: MyBuildFormProps) {
               className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm font-bold uppercase text-white outline-none focus:border-red-600"
             >
               <option value="draft">Draft</option>
-
-              {build?.status === "draft" ||
-              build?.status === "rejected" ||
-              build?.status === "for_review" ||
-              build?.status === "archived" ? (
-                <option value="for_review">For Review</option>
-              ) : null}
+              <option value="for_review">For Review</option>
             </select>
           </div>
 

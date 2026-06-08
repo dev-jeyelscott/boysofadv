@@ -3,6 +3,7 @@
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 type CarouselBuild = {
@@ -17,7 +18,9 @@ type FeaturedBuildsCarouselProps = {
   builds: CarouselBuild[];
 };
 
-export function FeaturedBuildsCarousel({ builds }: FeaturedBuildsCarouselProps) {
+export function FeaturedBuildsCarousel({
+  builds,
+}: FeaturedBuildsCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: builds.length > 1,
     align: "start",
@@ -94,38 +97,40 @@ export function FeaturedBuildsCarousel({ builds }: FeaturedBuildsCarouselProps) 
             <div className="flex gap-4">
               {builds.map((build) => (
                 <div key={build.id} className="flex-[0_0_280px] px-1 py-3">
-                  <div className="group overflow-hidden border border-white/10 bg-zinc-950 transition-all duration-300 ease-out hover:-translate-y-3 hover:scale-[1.02] hover:border-red-600/70 hover:bg-zinc-900 hover:shadow-[0_0_30px_rgba(220,38,38,0.25)]">
-                    <div className="relative h-56 overflow-hidden">
-                      <Image
-                        src={build.image}
-                        alt={build.title}
-                        fill
-                        sizes="280px"
-                        className="object-cover"
-                      />
+                  <Link href={`/builds/${build.id}`} className="cursor-pointer">
+                    <div className="group overflow-hidden border border-white/10 bg-zinc-950 transition-all duration-300 ease-out hover:-translate-y-3 hover:scale-[1.02] hover:border-red-600/70 hover:bg-zinc-900 hover:shadow-[0_0_30px_rgba(220,38,38,0.25)]">
+                      <div className="relative h-56 overflow-hidden">
+                        <Image
+                          src={build.image}
+                          alt={build.title}
+                          fill
+                          sizes="280px"
+                          className="object-cover"
+                        />
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                      </div>
+
+                      <div className="border-t border-red-600/30 p-4">
+                        <h3 className="mb-2 text-sm font-black uppercase text-white">
+                          {build.title}
+                        </h3>
+
+                        <p className="mb-3 text-xs text-zinc-400">
+                          Owner: {build.owner}
+                        </p>
+
+                        <ul className="space-y-1 text-xs text-zinc-300">
+                          {build.mods.slice(0, 4).map((mod) => (
+                            <li key={mod} className="flex gap-2">
+                              <span className="text-red-500">•</span>
+                              {mod}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-
-                    <div className="border-t border-red-600/30 p-4">
-                      <h3 className="mb-2 text-sm font-black uppercase text-white">
-                        {build.title}
-                      </h3>
-
-                      <p className="mb-3 text-xs text-zinc-400">
-                        Owner: {build.owner}
-                      </p>
-
-                      <ul className="space-y-1 text-xs text-zinc-300">
-                        {build.mods.slice(0, 4).map((mod) => (
-                          <li key={mod} className="flex gap-2">
-                            <span className="text-red-500">•</span>
-                            {mod}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
+                  </Link>
                 </div>
               ))}
             </div>

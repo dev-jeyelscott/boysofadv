@@ -1,10 +1,4 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-  pgEnum,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 
 import { users } from "./users";
 
@@ -12,6 +6,7 @@ export const buildStatusEnum = pgEnum("build_status", [
   "draft",
   "for_review",
   "published",
+  "unpublished",
   "rejected",
   "archived",
 ]);

@@ -64,6 +64,7 @@ function parseBuildStatus(value: FormDataEntryValue | null): BuildStatus {
     status === BUILD_STATUSES.DRAFT ||
     status === BUILD_STATUSES.FOR_REVIEW ||
     status === BUILD_STATUSES.PUBLISHED ||
+    status === BUILD_STATUSES.UNPUBLISHED ||
     status === BUILD_STATUSES.ARCHIVED ||
     status === BUILD_STATUSES.REJECTED
   ) {
@@ -83,12 +84,22 @@ export async function updateMyBuild(formData: FormData) {
 
     const title = String(formData.get("title") || "").trim();
 
-    const coverImageUrl = String(formData.get("coverImageUrl") || "");
-    const coverImageKey = String(formData.get("coverImageKey") || "");
+    const incomingCoverImageUrl = String(formData.get("coverImageUrl") || "");
+    const incomingCoverImageKey = String(formData.get("coverImageKey") || "");
+
+    const hasNewImage =
+      incomingCoverImageUrl.length > 0 && incomingCoverImageKey.length > 0;
+
+    const coverImageUrl = hasNewImage
+      ? incomingCoverImageUrl
+      : existingBuild?.coverImageUrl || "";
+
+    const coverImageKey = hasNewImage
+      ? incomingCoverImageKey
+      : existingBuild?.coverImageKey || "";
 
     const isFeatured = formData.get("isFeatured") === "true";
-
-    const status = parseBuildStatus(String(formData.get("status") ?? "draft"));
+    const status = parseBuildStatus(formData.get("status"));
 
     const payload = {
       title,
@@ -113,9 +124,9 @@ export async function updateMyBuild(formData: FormData) {
     };
 
     if (
+      hasNewImage &&
       existingBuild?.coverImageKey &&
-      coverImageKey &&
-      existingBuild.coverImageKey !== coverImageKey
+      existingBuild.coverImageKey !== incomingCoverImageKey
     ) {
       await utapi.deleteFiles(existingBuild.coverImageKey);
     }

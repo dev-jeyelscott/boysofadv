@@ -6,12 +6,16 @@ import { useState } from "react";
 import { UploadDropzone } from "@/lib/uploadthing";
 
 type BuildCoverUploaderProps = {
-  defaultValue?: string;
+  defaultImageUrl?: string | null;
+  defaultImageKey?: string | null;
 };
 
-export function BuildCoverUploader({ defaultValue = "" }: BuildCoverUploaderProps) {
-  const [coverImageUrl, setCoverImageUrl] = useState(defaultValue);
-  const [coverImageKey, setCoverImageKey] = useState(defaultValue);
+export function BuildCoverUploader({
+  defaultImageUrl,
+  defaultImageKey,
+}: BuildCoverUploaderProps) {
+  const [coverImageUrl, setCoverImageUrl] = useState(defaultImageUrl ?? "");
+  const [coverImageKey, setCoverImageKey] = useState(defaultImageKey ?? "");
 
   return (
     <div>
@@ -32,7 +36,6 @@ export function BuildCoverUploader({ defaultValue = "" }: BuildCoverUploaderProp
 
               setCoverImageUrl(file.ufsUrl);
               setCoverImageKey(file.key);
-
             }}
             onUploadError={(error) => {
               console.error(error);
@@ -75,7 +78,6 @@ export function BuildCoverUploader({ defaultValue = "" }: BuildCoverUploaderProp
           </div>
         ) : null}
       </div>
-      
 
       <p className="mt-2 text-xs text-white/40">
         Upload one cover image. Recommended ratio: 16:9.

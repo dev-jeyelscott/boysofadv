@@ -18,7 +18,13 @@ export const ADMIN_REVIEWABLE_BUILD_STATUSES = [
 export type AdminBuildRow = {
   id: string;
   title: string;
-  status: "rejected" | "draft" | "for_review" | "published" | "archived";
+  status:
+    | "rejected"
+    | "draft"
+    | "for_review"
+    | "published"
+    | "unpublished"
+    | "archived";
   isFeatured: boolean;
   coverImageUrl: string | null;
 
