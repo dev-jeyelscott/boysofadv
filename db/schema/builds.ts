@@ -30,6 +30,7 @@ export const builds = pgTable("builds", {
   yearModel: text("year_model"),
 
   description: text("description"),
+  concept: text("concept"),
   engineSetup: text("engine_setup"),
   cvtSetup: text("cvt_setup"),
   suspensionSetup: text("suspension_setup"),

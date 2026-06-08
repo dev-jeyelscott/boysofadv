@@ -109,7 +109,7 @@ export function CustomUserButton() {
               </MenuLink>
             )}
 
-            <MenuLink href="/member/build" icon={<ShieldCheck className="h-4 w-4" />}>
+            <MenuLink href="/member/my-build" icon={<ShieldCheck className="h-4 w-4" />}>
               My ADV Build
             </MenuLink>
 

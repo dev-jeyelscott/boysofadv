@@ -1,12 +1,12 @@
+import { getCurrentUser } from "@/lib/get-current-user";
 import { redirect } from "next/navigation";
-import { getCurrentDbUser } from "@/lib/current-user";
 
 export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const dbUser = await getCurrentDbUser();
+  const dbUser = await getCurrentUser();
 
   if (dbUser && dbUser.status !== "approved") {
     redirect("/pending-approval");

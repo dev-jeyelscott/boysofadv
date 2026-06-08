@@ -1,8 +1,8 @@
+import { getCurrentUser } from "@/lib/get-current-user";
 import { NextResponse } from "next/server";
-import { getCurrentDbUser } from "@/lib/current-user";
 
 export async function GET() {
-  const user = await getCurrentDbUser();
+  const user = await getCurrentUser();
 
   return NextResponse.json({
     user,

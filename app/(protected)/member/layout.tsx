@@ -1,10 +1,13 @@
 import { MemberSidebar } from "@/components/member/member-sidebar";
+import { getCurrentUser } from "@/lib/get-current-user";
 
-export default function MemberLayout({
+export default async function MemberLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await getCurrentUser();
+
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="flex flex-col md:flex-row">
