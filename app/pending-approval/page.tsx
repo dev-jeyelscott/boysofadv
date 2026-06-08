@@ -19,7 +19,7 @@ const user = await getCurrentDbUser();
   
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 text-white">
-      <div className="max-w-xl rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center shadow-2xl shadow-red-950/30">
+      <div className="max-w-xl rounded-3xl border border-white/10 bg-white/4 p-8 text-center shadow-2xl shadow-red-950/30">
         <p className="text-sm font-black uppercase tracking-[0.35em] text-red-500">
           Account Pending
         </p>

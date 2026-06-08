@@ -30,7 +30,7 @@ export default async function AdminMembersPage() {
 
         <div className="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-white/10 bg-white/[0.04] text-white/60">
+            <thead className="border-b border-white/10 bg-white/4 text-white/60">
               <tr>
                 <th className="px-5 py-4">Name</th>
                 <th className="px-5 py-4">Email</th>

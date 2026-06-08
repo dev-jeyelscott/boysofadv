@@ -133,42 +133,42 @@ export function FeaturedBuildsSection() {
           </button>
 
           {/* Carousel */}
-          <div className="overflow-hidden px-12" ref={emblaRef}>
+          <div className="overflow-hidden px-12 py-5" ref={emblaRef}>
             <div className="flex gap-4">
               {builds.map((build) => (
                 <div
                   key={build.title}
-                  className="min-w-[280px] flex-[0_0_280px] overflow-hidden border border-white/10 bg-zinc-950"
+                  className="min-w-70 flex-[0_0_280px] px-1 py-3"
                 >
-                  {/* Image */}
-                  <div className="relative h-56 overflow-hidden">
-                    <img
-                      src={build.image}
-                      alt={build.title}
-                      className="h-full w-full object-cover transition duration-500 hover:scale-110"
-                    />
+                  <div className="group overflow-hidden border border-white/10 bg-zinc-950 transition-all duration-300 ease-out hover:-translate-y-3 hover:scale-[1.02] hover:border-red-600/70 hover:bg-zinc-900 hover:shadow-[0_0_30px_rgba(220,38,38,0.25)]">
+                    <div className="relative h-56 overflow-hidden">
+                      <img
+                        src={build.image}
+                        alt={build.title}
+                        className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                  </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                    </div>
 
-                  {/* Content */}
-                  <div className="border-t border-red-600/30 p-4">
-                    <h3 className="mb-2 text-sm font-black uppercase text-white">
-                      {build.title}
-                    </h3>
+                    <div className="border-t border-red-600/30 p-4">
+                      <h3 className="mb-2 text-sm font-black uppercase text-white">
+                        {build.title}
+                      </h3>
 
-                    <p className="mb-3 text-xs text-zinc-400">
-                      Owner: {build.owner}
-                    </p>
+                      <p className="mb-3 text-xs text-zinc-400">
+                        Owner: {build.owner}
+                      </p>
 
-                    <ul className="space-y-1 text-xs text-zinc-300">
-                      {build.mods.map((mod) => (
-                        <li key={mod} className="flex gap-2">
-                          <span className="text-red-500">•</span>
-                          {mod}
-                        </li>
-                      ))}
-                    </ul>
+                      <ul className="space-y-1 text-xs text-zinc-300">
+                        {build.mods.map((mod) => (
+                          <li key={mod} className="flex gap-2">
+                            <span className="text-red-500">•</span>
+                            {mod}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
               ))}

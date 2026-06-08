@@ -26,16 +26,16 @@ export function SiteHeader() {
         {/* Navigation + Auth */}
         <div className="hidden items-center gap-8 md:flex">
           <nav className="flex items-center gap-6 text-sm font-black uppercase tracking-wide text-white/70">
-            <Link href="/about" className="transition hover:text-white">
+            <Link href="#about" className="transition hover:text-white">
               About
             </Link>
             <Link href="/builds" className="transition hover:text-white">
               Builds
             </Link>
-            <Link href="/partners" className="transition hover:text-white">
+            <Link href="#partners" className="transition hover:text-white">
               Partners
             </Link>
-            <Link href="/events" className="transition hover:text-white">
+            <Link href="#events" className="transition hover:text-white">
               Events
             </Link>
           </nav>

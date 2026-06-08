@@ -16,7 +16,7 @@ export function HeroSection() {
       </div>
 
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/30" />
+      <div className="absolute inset-0 bg-linear-to-r from-black via-black/80 to-black/30" />
 
       {/* Content */}
       <div className="relative mx-auto flex min-h-[750px] max-w-7xl items-center px-6 py-10">

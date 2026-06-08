@@ -35,7 +35,7 @@ export function CtaSection() {
               style={{ backgroundImage: `url(${cta.image})` }}
             />
 
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/20" />
+            <div className="absolute inset-0 bg-linear-to-r from-black via-black/80 to-black/20" />
             <div className="absolute inset-0 border border-red-950/60" />
 
             <div className="relative z-10 flex h-full flex-col justify-center px-8 py-8 sm:px-10">

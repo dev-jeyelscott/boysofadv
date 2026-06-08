@@ -18,17 +18,17 @@ export function EventsSection() {
           </p>
 
           <div className="mt-8 grid gap-4 text-sm text-white/70 md:grid-cols-3">
-            <div className="rounded-2xl bg-white/[0.04] border border-red-500 p-5">
+            <div className="rounded-2xl bg-white/4 border border-red-500 p-5">
               <span className="block font-bold text-white">Date</span>
               To be announced
             </div>
 
-            <div className="rounded-2xl bg-white/[0.04] border border-red-500 p-5">
+            <div className="rounded-2xl bg-white/4 border border-red-500 p-5">
               <span className="block font-bold text-white">Location</span>
               To be announced
             </div>
 
-            <div className="rounded-2xl bg-white/[0.04] border border-red-500 p-5">
+            <div className="rounded-2xl bg-white/4 border border-red-500 p-5">
               <span className="block font-bold text-white">Riders</span>
               Honda ADV 150 / 160
             </div>

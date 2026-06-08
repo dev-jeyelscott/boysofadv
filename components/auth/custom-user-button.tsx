@@ -53,7 +53,7 @@ export function CustomUserButton() {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-2 py-2 text-left text-white transition hover:border-red-500/50 hover:bg-red-600/10"
+        className="flex items-center gap-3 rounded-full border border-white/10 bg-white/4 px-2 py-2 text-left text-white transition hover:border-red-500/50 hover:bg-red-600/10"
       >
         <img
           src={imageUrl}
@@ -79,7 +79,7 @@ export function CustomUserButton() {
 
       {open && (
         <div className="absolute right-0 mt-3 w-72 overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-2xl shadow-red-950/30">
-          <div className="border-b border-white/10 bg-gradient-to-r from-red-950/60 to-black p-4">
+          <div className="border-b border-white/10 bg-linear-to-r from-red-950/60 to-black p-4">
             <div className="flex items-center gap-3">
               <img
                 src={imageUrl}
@@ -140,7 +140,7 @@ function MenuLink({
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold uppercase text-white/75 transition hover:bg-white/[0.06] hover:text-white"
+      className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold uppercase text-white/75 transition hover:bg-white/6 hover:text-white"
     >
       <span className="text-red-500">{icon}</span>
       {children}
