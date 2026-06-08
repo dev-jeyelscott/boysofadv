@@ -35,7 +35,7 @@ export async function FeaturedBuildsSection() {
     mods: [
       build.motorcycleModel,
       build.concept,
-      build.description,
+      build.description?.slice(0, 400) + "... See more",
     ].filter((mod): mod is string => Boolean(mod)),
   }));
 
