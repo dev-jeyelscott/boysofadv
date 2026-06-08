@@ -12,6 +12,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
+import Image from "next/image";
 
 const navItems = [
   {
@@ -56,26 +57,19 @@ export function AdminSidebar() {
   const { signOut } = useClerk();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-72 border-r border-white/10 bg-black p-4 text-white lg:flex lg:flex-col">
-      <Link
-        href="/admin/dashboard"
-        className="flex items-center gap-3 px-3 py-4"
-      >
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-600 font-black">
-          ADV
-        </div>
+    <aside className="md:sticky md:top-0 md:h-screen flex w-full flex-col border-b border-white/10 bg-black/80 p-4 md:min-h-screen md:w-72 md:border-b-0 md:border-r">
+      <div className="mb-8 flex justify-center">
+        <Link href={"/"}>
+          <Image
+            src="/images/boysofadv.png"
+            alt="Boys of ADV"
+            width={200}
+            height={100}
+          />
+        </Link>
+      </div>
 
-        <div>
-          <p className="text-sm font-black uppercase leading-none">
-            Boys of ADV
-          </p>
-          <p className="mt-1 text-xs uppercase tracking-widest text-white/40">
-            Admin Panel
-          </p>
-        </div>
-      </Link>
-
-      <nav className="mt-6 grid gap-2">
+      <nav className="flex flex-col gap-2">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =

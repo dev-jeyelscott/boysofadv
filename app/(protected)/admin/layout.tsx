@@ -6,10 +6,14 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-black text-white">
-      <AdminSidebar />
+    <main className="min-h-screen bg-black text-white">
+      <div className="flex flex-col md:flex-row">
+        <AdminSidebar />
 
-      <div className="lg:pl-72">{children}</div>
-    </div>
+        <section className="min-h-screen flex-1 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.18),transparent_30%),linear-gradient(to_bottom,#050505,#000)] p-4 md:p-8">
+          {children}
+        </section>
+      </div>
+    </main>
   );
 }
