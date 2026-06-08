@@ -14,11 +14,6 @@ import { useClerk } from "@clerk/nextjs";
 
 const navItems = [
   {
-    label: "Overview",
-    href: "/member",
-    icon: LayoutDashboard,
-  },
-  {
     label: "Profile",
     href: "/member/profile",
     icon: UserRound,
@@ -37,12 +32,14 @@ export function MemberSidebar() {
   return (
     <aside className="md:sticky md:top-0 md:h-screen flex w-full flex-col border-b border-white/10 bg-black/80 p-4 md:min-h-screen md:w-72 md:border-b-0 md:border-r">
       <div className="mb-8 flex justify-center">
-        <Image
-          src="/images/boysofadv.png"
-          alt="Boys of ADV"
-          width={200}
-          height={100}
-        />
+        <Link href={"/"}>
+          <Image
+            src="/images/boysofadv.png"
+            alt="Boys of ADV"
+            width={200}
+            height={100}
+          />
+        </Link>
       </div>
 
       <nav className="flex flex-col gap-2">

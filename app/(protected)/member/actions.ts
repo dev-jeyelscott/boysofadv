@@ -8,27 +8,41 @@ import { UTApi } from "uploadthing/server";
 import { db } from "@/db/db";
 import { builds, users } from "@/db/schema";
 import { getCurrentUser } from "@/lib/get-current-user";
+import { BUILD_STATUSES } from "@/lib/constants/build";
 
 const utapi = new UTApi();
 
 export async function updateProfile(formData: FormData) {
-  const user = await getCurrentUser();
+  try {
+    const user = await getCurrentUser();
 
-  await db
-    .update(users)
-    .set({
-      firstName: String(formData.get("firstName") || ""),
-      lastName: String(formData.get("lastName") || ""),
-      nickname: String(formData.get("nickname") || ""),
-      codename: String(formData.get("codename") || ""),
-      facebookUrl: String(formData.get("facebookUrl") || ""),
-      instagramUrl: String(formData.get("instagramUrl") || ""),
-      bio: String(formData.get("bio") || ""),
-      updatedAt: new Date(),
-    })
-    .where(eq(users.id, user.id));
+    await db
+      .update(users)
+      .set({
+        firstName: String(formData.get("firstName") || ""),
+        lastName: String(formData.get("lastName") || ""),
+        nickname: String(formData.get("nickname") || ""),
+        codename: String(formData.get("codename") || ""),
+        facebookUrl: String(formData.get("facebookUrl") || ""),
+        instagramUrl: String(formData.get("instagramUrl") || ""),
+        youtubeUrl: String(formData.get("youtubeUrl") || ""),
+        bio: String(formData.get("bio") || ""),
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, user.id));
 
-  revalidatePath("/member/profile");
+    revalidatePath("/member/profile");
+
+    return {
+      success: true,
+      message: "Profile updated successfully.",
+    };
+  } catch {
+    return {
+      success: false,
+      message: "Failed to update profile.",
+    };
+  }
 }
 
 function createSlug(value: string) {
@@ -39,60 +53,97 @@ function createSlug(value: string) {
     .replace(/(^-|-$)+/g, "");
 }
 
-export async function updateMyBuild(formData: FormData) {
-  const user = await getCurrentUser();
+type BuildStatus = (typeof BUILD_STATUSES)[keyof typeof BUILD_STATUSES];
 
-  const existingBuild = await db.query.builds.findFirst({
-    where: eq(builds.userId, user.id),
-  });
-
-  const title = String(formData.get("title") || "").trim();
-
-  const coverImageUrl = String(formData.get("coverImageUrl") || "");
-  const coverImageKey = String(formData.get("coverImageKey") || "");
-
-  const payload = {
-    title,
-    slug: createSlug(title || `${user.nickname || user.firstName || "member"}-build`),
-    motorcycleModel: String(formData.get("motorcycleModel") || ""),
-    yearModel: String(formData.get("yearModel") || ""),
-    concept: String(formData.get("concept") || ""),
-    description: String(formData.get("description") || ""),
-    engineSetup: String(formData.get("engineSetup") || ""),
-    cvtSetup: String(formData.get("cvtSetup") || ""),
-    suspensionSetup: String(formData.get("suspensionSetup") || ""),
-    brakingSetup: String(formData.get("brakingSetup") || ""),
-    wheelSetup: String(formData.get("wheelSetup") || ""),
-    accessories: String(formData.get("accessories") || ""),
-    coverImageUrl,
-    coverImageKey,
-    updatedAt: new Date(),
-  };
+function parseBuildStatus(value: FormDataEntryValue | null): BuildStatus {
+  const status = String(value || BUILD_STATUSES.DRAFT);
 
   if (
-    existingBuild?.coverImageKey &&
-    coverImageKey &&
-    existingBuild.coverImageKey !== coverImageKey
+    status === BUILD_STATUSES.DRAFT ||
+    status === BUILD_STATUSES.FOR_REVIEW ||
+    status === BUILD_STATUSES.PUBLISHED ||
+    status === BUILD_STATUSES.ARCHIVED ||
+    status === BUILD_STATUSES.REJECTED
   ) {
-    await utapi.deleteFiles(existingBuild.coverImageKey);
+    return status;
   }
 
-  if (existingBuild) {
-    await db
-      .update(builds)
-      .set(payload)
-      .where(eq(builds.id, existingBuild.id));
-  } else {
-    await db.insert(builds).values({
-      id: nanoid(),
-      userId: user.id,
-      ...payload,
-    });
-  }
-
-    revalidatePath("/member/my-build");
+  return BUILD_STATUSES.DRAFT;
 }
 
+export async function updateMyBuild(formData: FormData) {
+  try {
+    const user = await getCurrentUser();
+
+    const existingBuild = await db.query.builds.findFirst({
+      where: eq(builds.userId, user.id),
+    });
+
+    const title = String(formData.get("title") || "").trim();
+
+    const coverImageUrl = String(formData.get("coverImageUrl") || "");
+    const coverImageKey = String(formData.get("coverImageKey") || "");
+
+    const isFeatured = formData.get("isFeatured") === "true";
+
+    const status = parseBuildStatus(String(formData.get("status") ?? "draft"));
+
+    const payload = {
+      title,
+      slug: createSlug(
+        title || `${user.nickname || user.firstName || "member"}-build`,
+      ),
+      motorcycleModel: String(formData.get("motorcycleModel") || ""),
+      yearModel: String(formData.get("yearModel") || ""),
+      concept: String(formData.get("concept") || ""),
+      description: String(formData.get("description") || ""),
+      engineSetup: String(formData.get("engineSetup") || ""),
+      cvtSetup: String(formData.get("cvtSetup") || ""),
+      suspensionSetup: String(formData.get("suspensionSetup") || ""),
+      brakingSetup: String(formData.get("brakingSetup") || ""),
+      wheelSetup: String(formData.get("wheelSetup") || ""),
+      accessories: String(formData.get("accessories") || ""),
+      coverImageUrl,
+      coverImageKey,
+      status,
+      isFeatured,
+      updatedAt: new Date(),
+    };
+
+    if (
+      existingBuild?.coverImageKey &&
+      coverImageKey &&
+      existingBuild.coverImageKey !== coverImageKey
+    ) {
+      await utapi.deleteFiles(existingBuild.coverImageKey);
+    }
+
+    if (existingBuild) {
+      await db
+        .update(builds)
+        .set(payload)
+        .where(eq(builds.id, existingBuild.id));
+    } else {
+      await db.insert(builds).values({
+        id: nanoid(),
+        userId: user.id,
+        ...payload,
+      });
+    }
+
+    revalidatePath("/member/my-build");
+
+    return {
+      success: true,
+      message: "Build updated successfully.",
+    };
+  } catch {
+    return {
+      success: false,
+      message: "Failed to update build details.",
+    };
+  }
+}
 
 // export async function updateAccountSettings(formData: FormData) {
 //   const user = await getCurrentMember();

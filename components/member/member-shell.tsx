@@ -15,7 +15,7 @@ export function MemberShell({
     <div className="w-full">
       <div className="mb-8 border-b border-white/10 pb-6">
         <p className="text-xs font-black uppercase tracking-[0.3em] text-red-500">
-          Member Area
+          Member Portal
         </p>
         <h1 className="mt-3 text-3xl font-black uppercase text-white md:text-5xl">
           {title}
