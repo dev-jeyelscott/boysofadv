@@ -10,6 +10,8 @@ type ProfileFormProps = {
     lastName: string | null;
     nickname: string | null;
     codename: string | null;
+    unit: string | null;
+    chapter: string | null;
     facebookUrl: string | null;
     instagramUrl: string | null;
     youtubeUrl: string | null;
@@ -57,6 +59,16 @@ export function ProfileForm({ user }: ProfileFormProps) {
           name="codename"
           label="Codename"
           defaultValue={user.codename ?? ""}
+        />
+        <Field
+          name="unit"
+          label="Motorcycle Unit"
+          defaultValue={user.unit ?? ""}
+        />
+        <Field
+          name="chapter"
+          label="Chapter"
+          defaultValue={user.chapter ?? ""}
         />
       </div>
 

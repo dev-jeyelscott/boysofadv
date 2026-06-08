@@ -23,6 +23,8 @@ export async function updateProfile(formData: FormData) {
         lastName: String(formData.get("lastName") || ""),
         nickname: String(formData.get("nickname") || ""),
         codename: String(formData.get("codename") || ""),
+        unit: String(formData.get("unit") || ""),
+        chapter: String(formData.get("chapter") || ""),
         facebookUrl: String(formData.get("facebookUrl") || ""),
         instagramUrl: String(formData.get("instagramUrl") || ""),
         youtubeUrl: String(formData.get("youtubeUrl") || ""),

@@ -1,12 +1,10 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-  pgEnum,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 
-export const userRoleEnum = pgEnum("user_role", ["super_admin", "member", "admin"]);
+export const userRoleEnum = pgEnum("user_role", [
+  "super_admin",
+  "member",
+  "admin",
+]);
 export const userStatusEnum = pgEnum("user_status", [
   "for_approval",
   "approved",
@@ -25,6 +23,9 @@ export const users = pgTable("users", {
 
   nickname: text("nickname"),
   codename: text("codename"),
+
+  chapter: text("chapter"),
+  unit: text("unit"),
 
   role: userRoleEnum("role").notNull().default("member"),
   status: userStatusEnum("status").notNull().default("for_approval"),
