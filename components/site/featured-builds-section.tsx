@@ -1,4 +1,3 @@
-// components/featured-builds-section.tsx
 import { desc, eq } from "drizzle-orm";
 
 import { db } from "@/db/db";

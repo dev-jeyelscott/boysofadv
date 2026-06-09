@@ -1,4 +1,3 @@
-// app/pending-approval/page.tsx
 import { USER_STATUSES } from "@/lib/constants/user";
 import { getCurrentDbUser } from "@/lib/current-user";
 import { SignOutButton } from "@clerk/nextjs";

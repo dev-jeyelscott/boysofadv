@@ -1,5 +1,3 @@
-// app/admin/builds/build-details-dialog.tsx
-
 "use client";
 
 import Image from "next/image";

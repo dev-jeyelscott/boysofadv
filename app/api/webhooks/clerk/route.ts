@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
       status = "approved";
     }
 
-    // Later, replace this console.log with Drizzle insert:
     await db.insert(users).values({
       id: nanoid(),
       clerkUserId: user.id,

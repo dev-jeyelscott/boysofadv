@@ -1,5 +1,3 @@
-// app/events/page.tsx
-
 import { CalendarDays, MapPin } from "lucide-react";
 import { desc } from "drizzle-orm";
 
