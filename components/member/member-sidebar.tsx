@@ -2,13 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Bike,
-  Settings,
-  UserRound,
-  LayoutDashboard,
-  LogOut,
-} from "lucide-react";
+import { Bike, UserRound, LogOut } from "lucide-react";
 import Image from "next/image";
 import { useClerk } from "@clerk/nextjs";
 

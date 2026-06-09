@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db/db";
 import { partners } from "@/db/schema";
 import Link from "next/link";
+import Image from "next/image";
 
 export async function PartnersSection() {
   const activePartners = await db.query.partners.findMany({
@@ -35,7 +36,7 @@ export async function PartnersSection() {
             >
               <Link href={partner.websiteUrl ?? partner.facebookUrl ?? "#"}>
                 {partner.logoUrl ? (
-                  <img
+                  <Image
                     src={partner.logoUrl}
                     alt={partner.name}
                     className="max-h-30 max-w-full object-contain transition-all duration-300 ease-out group-hover:scale-110"

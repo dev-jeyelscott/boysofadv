@@ -93,8 +93,7 @@ export default function SignUpPage() {
                   otpCodeFieldInput:
                     "!border-white/10 !bg-neutral-900 !text-white",
 
-                  formResendCodeLink:
-                    "!text-red-500 hover:!text-red-400",
+                  formResendCodeLink: "!text-red-500 hover:!text-red-400",
 
                   alertText: "!text-white",
 

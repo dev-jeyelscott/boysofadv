@@ -143,16 +143,12 @@
         "users_clerk_user_id_unique": {
           "name": "users_clerk_user_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "clerk_user_id"
-          ]
+          "columns": ["clerk_user_id"]
         },
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -248,9 +244,7 @@
         "partners_slug_unique": {
           "name": "partners_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -387,12 +381,8 @@
           "name": "builds_user_id_users_id_fk",
           "tableFrom": "builds",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -402,9 +392,7 @@
         "builds_slug_unique": {
           "name": "builds_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -480,12 +468,8 @@
           "name": "gallery_images_user_id_users_id_fk",
           "tableFrom": "gallery_images",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -493,12 +477,8 @@
           "name": "gallery_images_build_id_builds_id_fk",
           "tableFrom": "gallery_images",
           "tableTo": "builds",
-          "columnsFrom": [
-            "build_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["build_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -598,9 +578,7 @@
         "events_slug_unique": {
           "name": "events_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -843,88 +821,47 @@
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": [
-        "member",
-        "admin"
-      ]
+      "values": ["member", "admin"]
     },
     "public.user_status": {
       "name": "user_status",
       "schema": "public",
-      "values": [
-        "for_approval",
-        "approved",
-        "rejected",
-        "suspended"
-      ]
+      "values": ["for_approval", "approved", "rejected", "suspended"]
     },
     "public.partner_status": {
       "name": "partner_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "active",
-        "inactive"
-      ]
+      "values": ["draft", "active", "inactive"]
     },
     "public.build_status": {
       "name": "build_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "for_review",
-        "published",
-        "rejected",
-        "archived"
-      ]
+      "values": ["draft", "for_review", "published", "rejected", "archived"]
     },
     "public.gallery_image_type": {
       "name": "gallery_image_type",
       "schema": "public",
-      "values": [
-        "build",
-        "event",
-        "general"
-      ]
+      "values": ["build", "event", "general"]
     },
     "public.event_status": {
       "name": "event_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "published",
-        "cancelled",
-        "completed"
-      ]
+      "values": ["draft", "published", "cancelled", "completed"]
     },
     "public.join_request_status": {
       "name": "join_request_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "approved",
-        "rejected"
-      ]
+      "values": ["pending", "approved", "rejected"]
     },
     "public.partner_inquiry_status": {
       "name": "partner_inquiry_status",
       "schema": "public",
-      "values": [
-        "new",
-        "contacted",
-        "approved",
-        "rejected"
-      ]
+      "values": ["new", "contacted", "approved", "rejected"]
     },
     "public.contact_message_status": {
       "name": "contact_message_status",
       "schema": "public",
-      "values": [
-        "new",
-        "read",
-        "replied",
-        "archived"
-      ]
+      "values": ["new", "read", "replied", "archived"]
     }
   },
   "schemas": {},

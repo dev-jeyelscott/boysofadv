@@ -18,12 +18,13 @@ export async function POST(req: NextRequest) {
     let status: "for_approval" | "approved" | "rejected" | "suspended" =
       "for_approval";
 
-    if (user.email_addresses?.[0]?.email_address === process.env.SUPER_ADMIN_EMAIL) {
+    if (
+      user.email_addresses?.[0]?.email_address === process.env.SUPER_ADMIN_EMAIL
+    ) {
       role = "super_admin";
       status = "approved";
     }
 
-    
     // Later, replace this console.log with Drizzle insert:
     await db.insert(users).values({
       id: nanoid(),

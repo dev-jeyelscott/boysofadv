@@ -17,7 +17,7 @@ export default async function BuildsPage() {
           <div className="mb-10 flex items-center justify-center gap-4">
             <div className="h-px flex-1 bg-red-600/40" />
             <h1 className="text-center text-3xl font-black uppercase tracking-tight text-white md:text-5xl">
-              Member's Builds
+              Member&apos;s Builds
             </h1>
             <div className="h-px flex-1 bg-red-600/40" />
           </div>

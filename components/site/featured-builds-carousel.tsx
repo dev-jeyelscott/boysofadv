@@ -29,33 +29,47 @@ export function FeaturedBuildsCarousel({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
-  const scrollPrev = () => emblaApi?.scrollPrev();
-  const scrollNext = () => emblaApi?.scrollNext();
+  const scrollPrev = useCallback(() => {
+    emblaApi?.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    emblaApi?.scrollNext();
+  }, [emblaApi]);
 
   const scrollTo = useCallback(
     (index: number) => emblaApi?.scrollTo(index),
     [emblaApi],
   );
 
+  const onInit = useCallback(() => {
+    if (!emblaApi) return;
+
+    setScrollSnaps(emblaApi.scrollSnapList());
+  }, [emblaApi]);
+
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
+
     setSelectedIndex(emblaApi.selectedScrollSnap());
   }, [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
 
-    setScrollSnaps(emblaApi.scrollSnapList());
+    onInit();
     onSelect();
 
-    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onInit);
     emblaApi.on("reInit", onSelect);
+    emblaApi.on("select", onSelect);
 
     return () => {
-      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onInit);
       emblaApi.off("reInit", onSelect);
+      emblaApi.off("select", onSelect);
     };
-  }, [emblaApi, onSelect]);
+  }, [emblaApi, onInit, onSelect]);
 
   if (builds.length === 0) {
     return null;

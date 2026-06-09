@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:super-admin": "tsx db/seed/super-admin.ts"
+    "seed:super-admin": "tsx db/seed/super-admin.ts",
+    "format": "pnpm exec prettier . --write"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.4.3",
@@ -42,6 +43,7 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.7",
+    "prettier": "3.8.3",
     "tailwindcss": "^4",
     "tsx": "^4.22.4",
     "typescript": "^5"

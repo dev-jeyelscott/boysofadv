@@ -11,8 +11,7 @@ export async function requireAdmin() {
   }
 
   const isAdmin =
-    user.role === USER_ROLES.ADMIN ||
-    user.role === USER_ROLES.SUPER_ADMIN;
+    user.role === USER_ROLES.ADMIN || user.role === USER_ROLES.SUPER_ADMIN;
 
   if (!isAdmin || user.status !== USER_STATUSES.APPROVED) {
     redirect("/");

@@ -1,14 +1,16 @@
-import { and, asc, desc, eq, ilike, or, lt } from "drizzle-orm";
-
+import { and, desc, eq, ilike, or, lt } from "drizzle-orm";
+import { BUILD_STATUSES } from "@/lib/constants/build";
 import { db } from "@/db/db";
 import { builds, users } from "@/db/schema";
+
+type BuildStatus = (typeof BUILD_STATUSES)[keyof typeof BUILD_STATUSES];
 
 type GetAdminBuildsInput = {
   cursor?: string;
   search?: string;
   model?: string;
   concept?: string;
-  status?: string;
+  status?: BuildStatus;
   isFeatured?: string;
   limit?: number;
 };
@@ -49,8 +51,8 @@ export async function getAdminBuilds({
     conditions.push(eq(builds.concept, concept));
   }
 
-  if (status) {
-    conditions.push(eq(builds.status, status as any));
+  if (status && Object.values(BUILD_STATUSES).includes(status as BuildStatus)) {
+    conditions.push(eq(builds.status, status as BuildStatus));
   }
 
   if (isFeatured === "true") {

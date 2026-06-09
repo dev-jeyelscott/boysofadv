@@ -1,10 +1,4 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-  pgEnum,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 
 export const eventStatusEnum = pgEnum("event_status", [
   "draft",

@@ -16,6 +16,13 @@ export async function updateProfile(formData: FormData) {
   try {
     const user = await getCurrentUser();
 
+    if (!user) {
+      return {
+        success: false,
+        message: "Unauthorized.",
+      };
+    }
+
     await db
       .update(users)
       .set({
@@ -77,6 +84,13 @@ function parseBuildStatus(value: FormDataEntryValue | null): BuildStatus {
 export async function updateMyBuild(formData: FormData) {
   try {
     const user = await getCurrentUser();
+
+    if (!user) {
+      return {
+        success: false,
+        message: "Unauthorized.",
+      };
+    }
 
     const existingBuild = await db.query.builds.findFirst({
       where: eq(builds.userId, user.id),

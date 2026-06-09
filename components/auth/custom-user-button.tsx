@@ -3,19 +3,13 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
-import {
-  ChevronDown,
-  Gauge,
-  LogOut,
-  ShieldCheck,
-  User,
-} from "lucide-react";
+import { ChevronDown, Gauge, LogOut, ShieldCheck, User } from "lucide-react";
+import Image from "next/image";
 
 type DbUser = {
   role: "super_admin" | "admin" | "member";
   status: "approved" | "for_approval" | "rejected";
 };
-
 
 export function CustomUserButton() {
   const { user, isLoaded } = useUser();
@@ -23,7 +17,6 @@ export function CustomUserButton() {
   const [open, setOpen] = useState(false);
   const [dbUser, setDbUser] = useState<DbUser | null>(null);
 
-  
   useEffect(() => {
     async function fetchDbUser() {
       const res = await fetch("/api/me");
@@ -42,9 +35,8 @@ export function CustomUserButton() {
     user.primaryEmailAddress?.emailAddress ||
     "Member";
 
-    const canAccessAdmin =
+  const canAccessAdmin =
     dbUser?.role === "super_admin" || dbUser?.role === "admin";
-
 
   const imageUrl = user.imageUrl;
 
@@ -55,7 +47,7 @@ export function CustomUserButton() {
         onClick={() => setOpen((value) => !value)}
         className="flex items-center gap-3 rounded-full border border-white/10 bg-white/4 px-2 py-2 text-left text-white transition hover:border-red-500/50 hover:bg-red-600/10"
       >
-        <img
+        <Image
           src={imageUrl}
           alt={displayName}
           className="h-9 w-9 rounded-full border border-red-600/40 object-cover"
@@ -81,7 +73,7 @@ export function CustomUserButton() {
         <div className="absolute right-0 mt-3 w-72 overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-2xl shadow-red-950/30">
           <div className="border-b border-white/10 bg-linear-to-r from-red-950/60 to-black p-4">
             <div className="flex items-center gap-3">
-              <img
+              <Image
                 src={imageUrl}
                 alt={displayName}
                 className="h-12 w-12 rounded-full border border-red-500/50 object-cover"
@@ -99,17 +91,26 @@ export function CustomUserButton() {
           </div>
 
           <div className="p-2">
-            <MenuLink href="/member/profile" icon={<User className="h-4 w-4" />}>
+            <MenuLink
+              href="/member/profile"
+              icon={<User className="h-4 w-4" />}
+            >
               My Profile
             </MenuLink>
 
             {canAccessAdmin && (
-              <MenuLink href="/admin/dashboard" icon={<Gauge className="h-4 w-4" />}>
+              <MenuLink
+                href="/admin/dashboard"
+                icon={<Gauge className="h-4 w-4" />}
+              >
                 Admin Dashboard
               </MenuLink>
             )}
 
-            <MenuLink href="/member/my-build" icon={<ShieldCheck className="h-4 w-4" />}>
+            <MenuLink
+              href="/member/my-build"
+              icon={<ShieldCheck className="h-4 w-4" />}
+            >
               My ADV Build
             </MenuLink>
 

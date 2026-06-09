@@ -1,10 +1,4 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  integer,
-  pgEnum,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, integer, pgEnum } from "drizzle-orm/pg-core";
 
 import { builds } from "./builds";
 import { users } from "./users";

@@ -1,9 +1,4 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  pgEnum,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, pgEnum } from "drizzle-orm/pg-core";
 
 export const partnerInquiryStatusEnum = pgEnum("partner_inquiry_status", [
   "new",

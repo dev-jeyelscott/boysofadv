@@ -23,7 +23,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { UploadButton } from "@/lib/uploadthing";
 import { createPartner } from "@/app/(protected)/admin/partners/actions";
 import { PartnerLogoUploader } from "./partner-logo-uploader";
 
@@ -136,6 +135,8 @@ export function AddPartnerDialog() {
                   </Button>
                 </div>
               ) : null}
+
+              <input type="hidden" value={logoKey} />
 
               <div className="md:col-span-2">
                 <PartnerLogoUploader
