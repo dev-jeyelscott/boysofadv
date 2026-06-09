@@ -1,6 +1,7 @@
 import { USER_STATUSES } from "@/lib/constants/user";
 import { getCurrentDbUser } from "@/lib/current-user";
 import { SignOutButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function PendingApprovalPage() {
@@ -30,7 +31,13 @@ export default async function PendingApprovalPage() {
           approval before you can access member features.
         </p>
 
-        <div className="mt-8">
+        <div className="mt-8 flex justify-between gap-4">
+          <Link
+            href={"/"}
+            className="-skew-x-12 bg-red-600 px-5 py-2 border-none text-sm font-black uppercase text-white transition tracking-wide hover:bg-red-700"
+          >
+            Return to Home
+          </Link>
           <SignOutButton>
             <button className="-skew-x-12 bg-red-600 px-5 py-2 text-sm font-black uppercase text-white transition tracking-wide hover:bg-red-700">
               Sign Out

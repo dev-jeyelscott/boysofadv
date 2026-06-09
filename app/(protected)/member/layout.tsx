@@ -1,13 +1,22 @@
 import { MemberSidebar } from "@/components/member/member-sidebar";
-import { getCurrentUser } from "@/lib/get-current-user";
+import { USER_STATUSES } from "@/lib/constants/user";
+import { getCurrentDbUser } from "@/lib/current-user";
+import { redirect } from "next/navigation";
 
 export default async function MemberLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await getCurrentUser();
+  const user = await getCurrentDbUser();
+  console.log(user);
+  if (!user) {
+    redirect("/sign-in");
+  }
 
+  if (user.status === USER_STATUSES.FOR_APPROVAL) {
+    redirect("/pending-approval");
+  }
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="flex flex-col md:flex-row">

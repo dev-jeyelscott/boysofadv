@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "boysofadv.vercel.app",
+      },
+      {
+        protocol: "https",
         hostname: "img.clerk.com",
       },
     ],
