@@ -19,7 +19,7 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-linear-to-r from-black via-black/80 to-black/30" />
 
       {/* Content */}
-      <div className="relative mx-auto flex min-h-[750px] max-w-7xl items-center px-6 py-10">
+      <div className="relative mx-auto flex min-h-[750px] max-w-7xl items-center px-6 py-6">
         <div className="grid w-full items-center gap-16 lg:grid-cols-2">
           {/* Left */}
           <div>

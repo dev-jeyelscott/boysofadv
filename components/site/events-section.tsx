@@ -1,7 +1,7 @@
 export function EventsSection() {
   return (
     <section id="events" className="relative overflow-hidden bg-black py-6">
-      <div className="mx-auto max-w-7xl px-4 my-20">
+      <div className="mx-auto max-w-7xl px-4">
         <div className="border border-white/10 bg-neutral-950/80 p-8 md:p-12">
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-red-500">
             Upcoming Meet & Greet

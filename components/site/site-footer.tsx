@@ -2,7 +2,7 @@ import { Copyright } from "lucide-react";
 
 export function SiteFooter() {
   return (
-    <footer id="contact" className="border-t border-white/10 bg-black py-10">
+    <footer id="contact" className="border-t border-white/10 bg-black py-6">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-2">
           <p className="mt-2 text-sm font-black text-white/50">

@@ -61,7 +61,7 @@ export function FeaturedBuildsCarousel({
   }, [emblaApi, onSelect]);
 
   return (
-    <section id="builds" className="relative overflow-hidden bg-black py-10">
+    <section id="builds" className="relative overflow-hidden bg-black py-6">
       <div className="mx-auto my-10 max-w-7xl px-4">
         <div className="mb-8 flex items-center justify-center gap-4">
           <div className="h-px flex-1 bg-red-600/40" />

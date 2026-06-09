@@ -2,7 +2,7 @@ import { Users, Flag, Handshake, Route, Target, Eye } from "lucide-react";
 
 export function AboutMissionVisionSection() {
   return (
-    <section id="about" className="bg-black py-10">
+    <section id="about" className="bg-black py-6">
       <div className="container mx-auto px-4 my-10">
         <div className="overflow-hidden rounded-3xl border border-red-500/20 bg-gradient-to-b from-neutral-950 to-black">
           {/* Stats */}
