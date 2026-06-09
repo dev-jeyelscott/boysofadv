@@ -21,36 +21,48 @@ export function SiteHeader() {
 
         {/* Navigation + Auth */}
         <div className="hidden items-center gap-8 md:flex">
-          <nav className="flex items-center gap-6 text-sm font-black uppercase tracking-wide text-white/70">
-            <Link href="#about" className="transition hover:text-white">
+          <nav className="flex items-center gap-8 text-sm font-black uppercase tracking-wide text-white/70">
+            <Link
+              href="/about"
+              className="transition hover:scale-105 ease-out duration-300 hover:text-white"
+            >
               About
             </Link>
-            <Link href="/#builds" className="transition hover:text-white">
+            <Link
+              href="/builds"
+              className="transition hover:scale-105 ease-out duration-300 hover:text-white"
+            >
               Builds
             </Link>
-            <Link href="#partners" className="transition hover:text-white">
+            <Link
+              href="/partners"
+              className="transition hover:scale-105 ease-out duration-300 hover:text-white"
+            >
               Partners
             </Link>
-            <Link href="#events" className="transition hover:text-white">
+            <Link
+              href="/events"
+              className="transition hover:scale-105 ease-out duration-300 hover:text-white"
+            >
               Events
             </Link>
-            <Link href="#join" className="transition hover:text-white">
-              Membership
-            </Link>
-            <Link href="#join" className="transition hover:text-white">
-              Partnership
+            <Link
+              href="/be-a-partner"
+              className="transition hover:scale-105 ease-out duration-300 hover:text-white"
+            >
+              Be a Partner
             </Link>
           </nav>
 
           <div className="flex items-center gap-3">
             <Show when="signed-out">
               <SignInButton>
-                <button className="-skew-x-12 bg-red-600 px-5 py-2 text-sm font-black uppercase text-white transition tracking-wide hover:bg-red-700">
+                <button className="-skew-x-12 bg-red-600 px-5 py-2 text-sm font-black uppercase text-white transition tracking-wide hover:bg-red-700 hover:scale-105 ease-out duration-300">
                   Sign In
                 </button>
               </SignInButton>
               <SignUpButton>
-                <button className="-skew-x-12 border border-red-600 px-5 py-2 text-sm font-black uppercase text-white transition tracking-wide hover:bg-white/20">
+                <button className="-skew-x-12 border border-red-600 px-5 py-2 text-sm font-black uppercase text-white transition tracking-wide hover:bg-white/20 hover:scale-105 ease-out duration-300">
                   Sign Up
                 </button>
               </SignUpButton>
