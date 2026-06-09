@@ -26,7 +26,7 @@ export function HeroSection() {
             <div className="mb-6 flex items-center gap-4">
               <div className="h-[4px] w-16 bg-red-600" />
               <span className="text-sm font-bold uppercase tracking-[0.35em] text-white">
-                Boys of {" "}<span className="text-red-600">ADV</span>
+                Boys of <span className="text-red-600">ADV</span>
               </span>
             </div>
 
@@ -48,16 +48,16 @@ export function HeroSection() {
               One Brotherhood. One Passion. Endless Roads.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 flex md:justify-start justify-center flex-wrap gap-4">
               <Link
-                href="/join"
+                href="#join"
                 className="mt-6 inline-flex w-fit -skew-x-12 items-center gap-3 bg-red-700 px-7 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-red-600"
               >
                 Join the Brotherhood
               </Link>
 
               <Link
-                href="/events"
+                href="#events"
                 className="mt-6 inline-flex w-fit -skew-x-12 items-center gap-3 bg-none hover:border-red-500 border border-white px-7 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-white/20"
               >
                 Upcoming Meet & Greet

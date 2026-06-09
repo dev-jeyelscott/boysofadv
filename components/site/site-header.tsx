@@ -1,10 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Show,
-  SignInButton,
-  SignUpButton,
-} from "@clerk/nextjs";
+import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { CustomUserButton } from "../auth/custom-user-button";
 
 export function SiteHeader() {
@@ -29,7 +25,7 @@ export function SiteHeader() {
             <Link href="#about" className="transition hover:text-white">
               About
             </Link>
-            <Link href="/builds" className="transition hover:text-white">
+            <Link href="/#builds" className="transition hover:text-white">
               Builds
             </Link>
             <Link href="#partners" className="transition hover:text-white">
@@ -37,6 +33,12 @@ export function SiteHeader() {
             </Link>
             <Link href="#events" className="transition hover:text-white">
               Events
+            </Link>
+            <Link href="#join" className="transition hover:text-white">
+              Membership
+            </Link>
+            <Link href="#join" className="transition hover:text-white">
+              Partnership
             </Link>
           </nav>
 
@@ -46,7 +48,7 @@ export function SiteHeader() {
                 <button className="-skew-x-12 bg-red-600 px-5 py-2 text-sm font-black uppercase text-white transition tracking-wide hover:bg-red-700">
                   Sign In
                 </button>
-                </SignInButton>
+              </SignInButton>
               <SignUpButton>
                 <button className="-skew-x-12 border border-red-600 px-5 py-2 text-sm font-black uppercase text-white transition tracking-wide hover:bg-white/20">
                   Sign Up

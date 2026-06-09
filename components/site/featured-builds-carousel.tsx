@@ -154,6 +154,22 @@ export function FeaturedBuildsCarousel({
             </div>
           )}
         </div>
+        {builds.length > 5 ? (
+          <>
+            <div className="mt-5 flex justify-center">
+              <button className="hidden items-center -skew-x-12 gap-2 rounded-sm border border-red-700/70 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-red-700 sm:flex">
+                View All Builds
+                <span className="text-red-500">›</span>
+              </button>
+            </div>
+
+            <div className="mt-5 flex justify-center sm:hidden">
+              <button className="rounded-sm border  -skew-x-12 border-red-700/70 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-red-700">
+                View All Builds <span className="text-red-500">›</span>
+              </button>
+            </div>
+          </>
+        ) : null}
       </div>
     </section>
   );

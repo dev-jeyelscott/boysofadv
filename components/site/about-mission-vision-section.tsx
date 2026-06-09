@@ -1,43 +1,19 @@
-import {
-  Users,
-  Flag,
-  Handshake,
-  Route,
-  Target,
-  Eye,
-} from "lucide-react";
+import { Users, Flag, Handshake, Route, Target, Eye } from "lucide-react";
 
 export function AboutMissionVisionSection() {
   return (
     <section id="about" className="bg-black py-10">
       <div className="container mx-auto px-4 my-10">
         <div className="overflow-hidden rounded-3xl border border-red-500/20 bg-gradient-to-b from-neutral-950 to-black">
-
           {/* Stats */}
           <div className="grid grid-cols-2 border-b border-red-500/20 md:grid-cols-4">
-            <StatItem
-              icon={<Users />}
-              value="150+"
-              label="Official Members"
-            />
+            <StatItem icon={<Users />} value="150+" label="Official Members" />
 
-            <StatItem
-              icon={<Flag />}
-              value="30+"
-              label="Official Events"
-            />
+            <StatItem icon={<Flag />} value="30+" label="Official Events" />
 
-            <StatItem
-              icon={<Handshake />}
-              value="15+"
-              label="Partner Shops"
-            />
+            <StatItem icon={<Handshake />} value="15+" label="Partner Shops" />
 
-            <StatItem
-              icon={<Route />}
-              value="500+"
-              label="Community Rides"
-            />
+            <StatItem icon={<Route />} value="500+" label="Community Rides" />
           </div>
 
           {/* Content */}
@@ -45,35 +21,33 @@ export function AboutMissionVisionSection() {
             {/* About */}
             <div>
               <h2 className="mb-6 text-3xl font-black uppercase">
-                About{" "}
-                <span className="text-red-500">
-                  Boys of ADV
-                </span>
+                About <span className="text-red-500">Boys of ADV</span>
               </h2>
 
               <div className="space-y-4 text-white/70">
                 <p>
-                  Boys of ADV is a community of Honda ADV
-                  riders united by passion, camaraderie,
-                  and the pursuit of building motorcycles
+                  Boys of ADV is a community of Honda ADV riders united by
+                  passion, camaraderie, and the pursuit of building motorcycles
                   that stand out.
                 </p>
 
                 <p>
-                  We share knowledge, support fellow
-                  members, organize rides, and represent
-                  the culture of performance, aesthetics,
-                  and brotherhood.
+                  We share knowledge, support fellow members, organize rides,
+                  and represent the culture of performance, aesthetics, and
+                  brotherhood.
                 </p>
 
                 <p className="font-bold uppercase text-white">
-                  We are <span className="text-red-600">Fearless</span>, not <span className="text-red-600">reckless</span>.
+                  We are <span className="text-red-600">Fearless</span>, not{" "}
+                  <span className="text-red-600">reckless</span>.
                 </p>
               </div>
 
-              <button className="mt-6 inline-flex w-fit -skew-x-12 items-center gap-3 bg-red-700 px-7 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-red-600">
-                More About Us
-              </button>
+              <div className="flex md:justify-start justify-center">
+                <button className="mt-6 inline-flex w-fit -skew-x-12 items-center gap-3 bg-red-700 px-7 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-red-600">
+                  More About Us
+                </button>
+              </div>
             </div>
 
             {/* Mission */}
@@ -87,10 +61,9 @@ export function AboutMissionVisionSection() {
               </div>
 
               <p className="leading-relaxed text-white/70">
-                To unite Honda ADV riders through
-                camaraderie, organized events, meaningful
-                rides, and the promotion of safety,
-                respect, loyalty, and brotherhood.
+                To unite Honda ADV riders through camaraderie, organized events,
+                meaningful rides, and the promotion of safety, respect, loyalty,
+                and brotherhood.
               </p>
             </div>
 
@@ -105,10 +78,8 @@ export function AboutMissionVisionSection() {
               </div>
 
               <p className="leading-relaxed text-white/70">
-                To become the leading Honda ADV
-                community recognized for unity,
-                integrity, passion, and excellence in
-                motorcycle culture.
+                To become the leading Honda ADV community recognized for unity,
+                integrity, passion, and excellence in motorcycle culture.
               </p>
             </div>
           </div>
@@ -129,14 +100,10 @@ function StatItem({
 }) {
   return (
     <div className="flex items-center justify-center gap-4 border-r border-red-500/20 p-6 last:border-r-0">
-      <div className="text-red-500">
-        {icon}
-      </div>
+      <div className="text-red-500">{icon}</div>
 
       <div>
-        <div className="text-4xl font-black text-white">
-          {value}
-        </div>
+        <div className="text-4xl font-black text-white">{value}</div>
 
         <div className="text-xs uppercase tracking-widest text-white/50">
           {label}
