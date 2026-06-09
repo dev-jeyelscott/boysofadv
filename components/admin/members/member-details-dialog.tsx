@@ -58,7 +58,7 @@ function Detail({
   value: string | null | undefined;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+    <div className="rounded-xl border border-white/10 bg-white/3 p-4">
       <p className="text-xs font-black uppercase tracking-widest text-white/40">
         {label}
       </p>

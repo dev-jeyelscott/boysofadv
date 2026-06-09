@@ -75,7 +75,7 @@ export function MembersFilters({ chapters, units }: MembersFiltersProps) {
           value={status}
           onValueChange={(value) => updateFilter("status", value)}
         >
-          <SelectTrigger className="w-full lg:w-[180px]">
+          <SelectTrigger className="w-full lg:w-45">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
 

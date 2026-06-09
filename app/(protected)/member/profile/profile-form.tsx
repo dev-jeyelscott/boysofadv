@@ -36,7 +36,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
   return (
     <form
-      className="grid gap-5 rounded-2xl border border-white/10 bg-white/[0.04] p-6"
+      className="grid gap-5 rounded-2xl border border-white/10 bg-white/4 p-6"
       action={handleSubmit}
     >
       <div className="grid gap-5 md:grid-cols-2">

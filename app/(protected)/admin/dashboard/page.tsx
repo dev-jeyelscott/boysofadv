@@ -32,7 +32,7 @@ export default function DashboardPage() {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+    <div className="rounded-2xl border border-white/10 bg-white/4 p-5">
       <p className="text-xs font-black uppercase tracking-widest text-white/50">
         {label}
       </p>
@@ -49,7 +49,7 @@ function AdminPanel({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+    <section className="rounded-2xl border border-white/10 bg-white/4 p-6">
       <h2 className="text-xl font-black uppercase text-white">{title}</h2>
       <div className="mt-5 grid gap-3">{children}</div>
     </section>

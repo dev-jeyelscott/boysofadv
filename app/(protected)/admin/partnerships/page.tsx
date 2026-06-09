@@ -6,7 +6,7 @@ export default function PartnershipPage() {
       title="Partnership"
       description="Manage partnership applications and business collaborations."
     >
-      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+      <section className="rounded-2xl border border-white/10 bg-white/4 p-6">
         <h2 className="text-xl font-black uppercase text-white">
           Partnership Form
         </h2>

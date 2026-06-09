@@ -45,7 +45,7 @@ export function MyBuildForm({ build }: MyBuildFormProps) {
   return (
     <form
       action={handleSubmit}
-      className="grid gap-5 rounded-2xl border border-white/10 bg-white/[0.04] p-6"
+      className="grid gap-5 rounded-2xl border border-white/10 bg-white/4 p-6"
     >
       <div className="grid gap-5 md:grid-cols-2">
         <Field
@@ -138,7 +138,7 @@ export function MyBuildForm({ build }: MyBuildFormProps) {
         </p>
 
         <div className="mt-4 grid gap-5 md:grid-cols-2">
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/3 px-4 py-3">
             <label className="text-xs font-black uppercase tracking-widest text-white/50">
               Status
             </label>
@@ -153,7 +153,7 @@ export function MyBuildForm({ build }: MyBuildFormProps) {
             </select>
           </div>
 
-          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/3 px-4 py-3">
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-white/50">
                 Featured

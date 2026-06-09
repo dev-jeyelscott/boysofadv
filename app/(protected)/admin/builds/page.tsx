@@ -38,7 +38,6 @@ export default async function AdminBuildsPage({ searchParams }: Props) {
         status={params.status || ""}
         isFeatured={params.isFeatured || ""}
       />
-
       <div className="p-4">
         <AdminBuildsClient builds={data.items} />
       </div>

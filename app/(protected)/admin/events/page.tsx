@@ -21,7 +21,7 @@ export default function EventsPage() {
       title="Events"
       description="Manage rides, meetups, and community gatherings."
     >
-      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+      <section className="rounded-2xl border border-white/10 bg-white/4 p-6">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-xl font-black uppercase text-white">
             Event Calendar

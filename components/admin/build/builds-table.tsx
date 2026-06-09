@@ -25,11 +25,11 @@ type Props = {
 
 export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/4">
       <div className="overflow-x-auto">
-        <Table className="min-w-[1100px]">
+        <Table className="min-w-275">
           <TableHeader>
-            <TableRow className="border-white/10 bg-white/[0.03] hover:bg-white/[0.03]">
+            <TableRow className="border-white/10 bg-white/3 hover:bg-white/3">
               <TableHead className="p-4 text-xs font-black uppercase text-center tracking-widest text-white/50">
                 Build
               </TableHead>
@@ -61,7 +61,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
             {builds.map((build) => (
               <TableRow
                 key={build.id}
-                className="border-white/10 text-sm text-white/80 hover:bg-white/[0.03]"
+                className="border-white/10 text-sm text-white/80 hover:bg-white/3"
               >
                 <TableCell className="p-4 text-center">
                   <div className="flex items-center gap-3">
@@ -115,14 +115,14 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
                 </TableCell>
 
                 <TableCell className="p-4 text-center">
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-center gap-2">
                     <Button
                       type="button"
                       size="icon"
                       variant="outline"
                       onClick={() => onView(build)}
                       aria-label="View member details"
-                      className=" border-white/10 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white"
+                      className=" border-white/10 bg-white/3 text-white hover:bg-white/10 hover:text-white"
                     >
                       <Eye />
                     </Button>
@@ -177,7 +177,7 @@ function BuildStatusBadge({ status }: { status: AdminBuildRow["status"] }) {
   }
 
   return (
-    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-bold capitalize text-white/60">
+    <span className="rounded-full border border-white/10 bg-white/4 px-3 py-1 text-xs font-bold capitalize text-white/60">
       {label}
     </span>
   );

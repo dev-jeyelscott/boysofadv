@@ -31,6 +31,31 @@ export const uploadRouter = {
         name: file.name,
       };
     }),
+  partnerLogo: f({
+    image: {
+      maxFileSize: "2MB",
+      maxFileCount: 1,
+    },
+  })
+    .middleware(async () => {
+      const user = await getCurrentUser();
+
+      if (!user?.id) {
+        throw new UploadThingError("Unauthorized");
+      }
+
+      return {
+        userId: user.id,
+      };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      return {
+        userId: metadata.userId,
+        url: file.ufsUrl,
+        key: file.key,
+        name: file.name,
+      };
+    }),
 } satisfies FileRouter;
 
 export type UploadRouter = typeof uploadRouter;

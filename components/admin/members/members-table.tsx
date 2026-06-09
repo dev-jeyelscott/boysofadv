@@ -35,11 +35,11 @@ type MembersTableProps = {
 
 export function MembersTable({ members }: MembersTableProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/4">
       <div className="overflow-x-auto">
-        <Table className="min-w-[1100px]">
+        <Table className="min-w-275">
           <TableHeader>
-            <TableRow className="border-white/10 bg-white/[0.03] hover:bg-white/[0.03]">
+            <TableRow className="border-white/10 bg-white/3 hover:bg-white/3">
               <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
                 Name
               </TableHead>
@@ -75,7 +75,7 @@ export function MembersTable({ members }: MembersTableProps) {
               members.map((member) => (
                 <TableRow
                   key={member.id}
-                  className="border-white/10 transition hover:bg-white/[0.03]"
+                  className="border-white/10 transition hover:bg-white/3"
                 >
                   <TableCell className="p-4 text-center">
                     <div className="font-bold text-white">
@@ -112,13 +112,13 @@ export function MembersTable({ members }: MembersTableProps) {
                   </TableCell>
 
                   <TableCell className="px-4 py-4">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-center gap-2">
                       <MemberDetailsDialog member={member}>
                         <Button
                           type="button"
                           size="icon"
                           variant="outline"
-                          className=" border-white/10 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white"
+                          className=" border-white/10 bg-white/3 text-white hover:bg-white/10 hover:text-white"
                           aria-label="View member details"
                         >
                           <Eye />
