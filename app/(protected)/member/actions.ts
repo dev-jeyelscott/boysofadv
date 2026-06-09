@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 import { UTApi } from "uploadthing/server";
 
 import { db } from "@/db/db";
-import { builds, users } from "@/db/schema";
+import { builds, users, galleryImages } from "@/db/schema";
 import { getCurrentUser } from "@/lib/get-current-user";
 import { BUILD_STATUSES } from "@/lib/constants/build";
 
@@ -145,26 +145,66 @@ export async function updateMyBuild(formData: FormData) {
       await utapi.deleteFiles(existingBuild.coverImageKey);
     }
 
+    let buildId = existingBuild?.id;
+
     if (existingBuild) {
       await db
         .update(builds)
         .set(payload)
         .where(eq(builds.id, existingBuild.id));
     } else {
+      buildId = nanoid();
+
       await db.insert(builds).values({
-        id: nanoid(),
+        id: buildId,
         userId: user.id,
         ...payload,
       });
     }
 
+    if (!buildId) {
+      return {
+        success: false,
+        message: "Failed to update build gallery.",
+      };
+    }
+
+    const galleryImagesRaw = String(formData.get("galleryImages") || "[]");
+
+    const buildImages = JSON.parse(galleryImagesRaw) as {
+      id?: string;
+      imageUrl: string;
+      altText?: string | null;
+      caption?: string | null;
+    }[];
+
+    await db.delete(galleryImages).where(eq(galleryImages.buildId, buildId));
+
+    if (buildImages.length > 0) {
+      await db.insert(galleryImages).values(
+        buildImages.map((image, index) => ({
+          id: image.id || nanoid(),
+          buildId,
+          userId: user.id,
+          type: "build" as const,
+          imageUrl: image.imageUrl,
+          altText: image.altText || null,
+          caption: image.caption || null,
+          displayOrder: index,
+        })),
+      );
+    }
+
     revalidatePath("/member/my-build");
+    revalidatePath("/builds");
 
     return {
       success: true,
       message: "Build updated successfully.",
     };
-  } catch {
+  } catch (error) {
+    console.error(error);
+
     return {
       success: false,
       message: "Failed to update build details.",

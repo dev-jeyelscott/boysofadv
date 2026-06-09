@@ -1,11 +1,12 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 
 import { SiteHeader } from "@/components/site/site-header";
 import { db } from "@/db/db";
-import { builds, users } from "@/db/schema";
+import { builds, galleryImages, users } from "@/db/schema";
 import { Badge } from "@/components/ui/badge";
+import { BuildGallery } from "../build-gallery";
 
 type Props = {
   params: Promise<{
@@ -69,6 +70,16 @@ export default async function BuildDetailsPage({ params }: Props) {
   }
 
   const ownerName = getOwnerName(build);
+
+  const buildImages = await db
+    .select({
+      id: galleryImages.id,
+      imageUrl: galleryImages.imageUrl,
+      caption: galleryImages.caption,
+    })
+    .from(galleryImages)
+    .where(eq(galleryImages.buildId, buildId))
+    .orderBy(asc(galleryImages.createdAt));
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -202,6 +213,9 @@ export default async function BuildDetailsPage({ params }: Props) {
               </div>
             ) : null}
           </div>
+          {buildImages.length > 0 ? (
+            <BuildGallery images={buildImages} buildTitle={build.title} />
+          ) : null}
         </div>
       </section>
     </main>

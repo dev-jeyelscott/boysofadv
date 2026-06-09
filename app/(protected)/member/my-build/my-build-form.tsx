@@ -7,6 +7,7 @@ import { updateMyBuild } from "../actions";
 import { AutoResizeTextarea } from "@/components/member/auto-resize-textarea";
 import { BuildCoverUploader } from "@/components/member/build-cover-uploader";
 import { BuildFeaturedSwitch } from "@/components/member/build-featured-switch";
+import { BuildGalleryUploader } from "@/components/member/build-gallery-uploader";
 
 type MyBuildFormProps = {
   build: {
@@ -24,6 +25,12 @@ type MyBuildFormProps = {
     coverImageUrl: string | null;
     status: string | null;
     isFeatured: boolean | null;
+    galleryImages?: {
+      id?: string;
+      imageUrl: string;
+      imageKey?: string | null;
+      caption?: string | null;
+    }[];
   } | null;
 };
 
@@ -130,6 +137,10 @@ export function MyBuildForm({ build }: MyBuildFormProps) {
 
       <div>
         <BuildCoverUploader defaultImageUrl={build?.coverImageUrl ?? ""} />
+      </div>
+
+      <div>
+        <BuildGalleryUploader defaultImages={build?.galleryImages ?? []} />
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-black p-5">
