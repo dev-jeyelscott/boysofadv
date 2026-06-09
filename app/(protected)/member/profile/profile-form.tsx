@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { updateProfile } from "../actions";
+import { AutoResizeTextarea } from "@/components/member/auto-resize-textarea";
 
 type ProfileFormProps = {
   user: {
@@ -89,15 +90,10 @@ export function ProfileForm({ user }: ProfileFormProps) {
       />
 
       <div>
-        <label className="text-xs font-black uppercase tracking-widest text-white/50">
-          Bio
-        </label>
-
-        <textarea
+        <AutoResizeTextarea
+          label="Bio"
           name="bio"
-          rows={5}
           defaultValue={user.bio ?? ""}
-          className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-red-600"
         />
       </div>
 
