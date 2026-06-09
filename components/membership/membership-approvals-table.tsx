@@ -44,22 +44,22 @@ export function MembershipApprovalsTable({
         <Table className="min-w-[1100px]">
           <TableHeader>
             <TableRow className="border-white/10 hover:bg-transparent">
-              <TableHead className="px-5 py-4 text-xs font-black uppercase tracking-widest text-white/50">
+              <TableHead className="px-5 py-4 text-xs text-center font-black uppercase tracking-widest text-white/50">
                 Member
               </TableHead>
-              <TableHead className="px-5 py-4 text-xs font-black uppercase tracking-widest text-white/50">
+              <TableHead className="px-5 py-4 text-xs text-center font-black uppercase tracking-widest text-white/50">
                 Email
               </TableHead>
-              <TableHead className="px-5 py-4 text-xs font-black uppercase tracking-widest text-white/50">
+              <TableHead className="px-5 py-4 text-xs text-center font-black uppercase tracking-widest text-white/50">
                 Unit
               </TableHead>
-              <TableHead className="px-5 py-4 text-xs font-black uppercase tracking-widest text-white/50">
+              <TableHead className="px-5 py-4 text-xs text-center font-black uppercase tracking-widest text-white/50">
                 Chapter
               </TableHead>
-              <TableHead className="px-5 py-4 text-xs font-black uppercase tracking-widest text-white/50">
+              <TableHead className="px-5 py-4 text-xs text-center font-black uppercase tracking-widest text-white/50">
                 Status
               </TableHead>
-              <TableHead className="px-5 py-4 text-right text-xs font-black uppercase tracking-widest text-white/50">
+              <TableHead className="px-5 py-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
                 Actions
               </TableHead>
             </TableRow>
@@ -76,7 +76,7 @@ export function MembershipApprovalsTable({
                   key={member.id}
                   className="border-white/10 hover:bg-white/[0.03]"
                 >
-                  <TableCell className="px-5 py-4">
+                  <TableCell className="px-5 py-4 text-center">
                     <div>
                       <p className="font-bold text-white">{fullName}</p>
                       <p className="text-xs uppercase tracking-widest text-white/40">
@@ -85,31 +85,31 @@ export function MembershipApprovalsTable({
                     </div>
                   </TableCell>
 
-                  <TableCell className="px-5 py-4 text-white/60">
+                  <TableCell className="px-5 py-4 text-center text-white/60">
                     {member.email}
                   </TableCell>
 
-                  <TableCell className="px-5 py-4 text-white/60">
+                  <TableCell className="px-5 py-4 text-center text-white/60">
                     {member.unit || "—"}
                   </TableCell>
 
-                  <TableCell className="px-5 py-4 text-white/60">
+                  <TableCell className="px-5 py-4 text-center text-white/60">
                     {member.chapter || "—"}
                   </TableCell>
 
-                  <TableCell className="px-5 py-4">
-                    <Badge className="border border-red-500/30 bg-red-500/10 text-xs font-black uppercase tracking-widest text-red-300 hover:bg-red-500/10">
+                  <TableCell className="px-5 py-4 text-center">
+                    <Badge className="border-yellow-500/20 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/10">
                       For Approval
                     </Badge>
                   </TableCell>
 
-                  <TableCell className="px-5 py-4">
-                    <div className="flex justify-end gap-2">
+                  <TableCell className="px-5 py-4 text-center">
+                    <div className="flex justify-center gap-2">
                       <form action={approveMember.bind(null, member.id)}>
                         <Button
                           type="submit"
                           size="sm"
-                          className="rounded-xl bg-red-600 text-xs font-black uppercase tracking-widest text-white hover:bg-red-700"
+                          className="rounded bg-red-600 text-xs  uppercase tracking-widest text-white hover:bg-red-700"
                         >
                           <Check className="mr-2 size-4" />
                           Approve
@@ -121,7 +121,7 @@ export function MembershipApprovalsTable({
                           type="submit"
                           size="sm"
                           variant="outline"
-                          className="rounded-xl border-white/10 bg-transparent text-xs font-black uppercase tracking-widest text-white hover:border-red-500/50 hover:bg-white/10 hover:text-white"
+                          className="rounded border-white/10 bg-transparent text-xs  uppercase tracking-widest text-white hover:border-red-500/50 hover:bg-white/10 hover:text-white"
                         >
                           <X className="mr-2 size-4" />
                           Reject

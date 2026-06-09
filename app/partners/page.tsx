@@ -40,7 +40,7 @@ export default async function PartnersPage() {
               </p>
             </div>
           ) : (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
               {partnerRows.map((partner) => (
                 <article
                   key={partner.id}
@@ -52,8 +52,8 @@ export default async function PartnersPage() {
                         <Image
                           src={partner.logoUrl}
                           alt={`${partner.name} logo`}
-                          width={220}
-                          height={220}
+                          width={400}
+                          height={400}
                           className="max-h-full max-w-full object-contain transition duration-300 group-hover:scale-105"
                         />
                       ) : (
