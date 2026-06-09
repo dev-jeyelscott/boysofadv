@@ -4,32 +4,32 @@ import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 async function seedSuperAdmin() {
-  const clerkUserId = "user_3EogImecKpWji1WgblRI8Qe4twj";
+  const clerkUserId = "user_3EoiPW6rIXnyyoDi2J30dZhF2J1";
 
-  const existing = await db.query.users.findFirst({
-    where: eq(users.id, clerkUserId),
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.clerkUserId, clerkUserId),
   });
 
-  if (existing) {
+  if (existingUser) {
     console.log("Super Admin already exists");
     process.exit(0);
   }
 
   await db.insert(users).values({
-  id: nanoid(),
+    id: nanoid(),
 
-  clerkUserId: clerkUserId,
+    clerkUserId: clerkUserId,
 
-  email: "jleward.escote17@gmail.com",
-  firstName: "Leward",
-  lastName: "Escote",
-  nickname: "Leward",
-  codename: "Super Admin",
+    email: "jleward.escote17@gmail.com",
+    firstName: "Leward",
+    lastName: "Escote",
+    nickname: "Leward",
+    codename: "Super Admin",
 
-  role: "super_admin",
-  status: "approved",
-  isFeatured: false,
-});
+    role: "super_admin",
+    status: "approved",
+    isFeatured: false,
+  });
 
   console.log("Super Admin created");
 }
