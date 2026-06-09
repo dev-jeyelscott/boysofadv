@@ -40,14 +40,14 @@ export default async function PartnersPage() {
               </p>
             </div>
           ) : (
-            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+            <div className="grid gap-5 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               {partnerRows.map((partner) => (
                 <article
                   key={partner.id}
                   className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:border-red-600/50 hover:bg-white/[0.07]"
                 >
                   <Link href={partner.websiteUrl ?? partner.facebookUrl ?? ""}>
-                    <div className="flex aspect-square items-center justify-center rounded-2xl border border-white/10 bg-black p-6">
+                    <div className="flex aspect-video items-center justify-center rounded-2xl border border-white/10 bg-black p-6">
                       {partner.logoUrl ? (
                         <Image
                           src={partner.logoUrl}
@@ -65,8 +65,8 @@ export default async function PartnersPage() {
                       )}
                     </div>
 
-                    <div className="mt-5">
-                      <h2 className="text-lg font-black uppercase text-white">
+                    <div className="mt-5 flex justify-center">
+                      <h2 className="font-black uppercase text-white">
                         {partner.name}
                       </h2>
 
