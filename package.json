@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed:super-admin": "tsx db/seed/super-admin.ts",
-    "format": "pnpm exec prettier . --write"
+    "format:run": "pnpm exec prettier . --write",
+    "format": "pnpm exec prettier . --check"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.4.3",
