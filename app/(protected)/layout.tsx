@@ -8,9 +8,5 @@ export default async function ProtectedLayout({
 }) {
   const dbUser = await getCurrentUser();
 
-  if (dbUser && dbUser.status !== "approved") {
-    redirect("/pending-approval");
-  }
-
   return children;
 }

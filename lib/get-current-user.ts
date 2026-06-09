@@ -15,13 +15,13 @@ export async function getCurrentUser() {
     where: eq(users.clerkUserId, clerkUserId),
   });
 
-  if (!user) {
-    redirect("/pending-approval");
-  }
+  // if (!user) {
+  //   redirect("/pending-approval");
+  // }
 
-  if (user.status !== "approved") {
-    redirect("/pending-approval");
-  }
+  // if (user.status !== "approved") {
+  //   redirect("/pending-approval");
+  // }
 
   return user;
 }

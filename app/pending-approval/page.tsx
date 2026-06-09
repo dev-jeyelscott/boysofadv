@@ -1,12 +1,12 @@
 // app/pending-approval/page.tsx
 import { USER_STATUSES } from "@/lib/constants/user";
+import { getCurrentDbUser } from "@/lib/current-user";
 import { getCurrentUser } from "@/lib/get-current-user";
 import { SignOutButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 export default async function PendingApprovalPage() {
-
-const user = await getCurrentUser();
+  const user = await getCurrentDbUser();
 
   if (!user) {
     redirect("/sign-in");
@@ -16,7 +16,6 @@ const user = await getCurrentUser();
     redirect("/");
   }
 
-  
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 text-white">
       <div className="max-w-xl rounded-3xl border border-white/10 bg-white/4 p-8 text-center shadow-2xl shadow-red-950/30">

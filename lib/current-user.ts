@@ -5,7 +5,7 @@ import { users } from "@/db/schema";
 
 export async function getCurrentDbUser() {
   const { userId } = await auth();
-
+  console.log(userId);
   if (!userId) return null;
 
   const [dbUser] = await db
