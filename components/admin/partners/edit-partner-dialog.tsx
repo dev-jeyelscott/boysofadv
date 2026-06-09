@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,13 +31,8 @@ type Props = {
 };
 
 export function EditPartnerDialog({ partner, onClose }: Props) {
-  const [logoUrl, setLogoUrl] = useState(partner?.logoUrl ?? "");
-  const [logoKey, setLogoKey] = useState(partner?.logoKey ?? "");
-
-  useEffect(() => {
-    setLogoUrl(partner?.logoUrl ?? "");
-    setLogoKey(partner?.logoKey ?? "");
-  }, [partner?.id, partner?.logoUrl, partner?.logoKey]);
+  const [logoUrl, setLogoUrl] = useState(() => partner?.logoUrl ?? "");
+  const [logoKey, setLogoKey] = useState(() => partner?.logoKey ?? "");
 
   if (!partner) return null;
 

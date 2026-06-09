@@ -27,7 +27,7 @@ export function FeaturedBuildsCarousel({
   });
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+  const scrollSnaps = builds.map((_, index) => index);
 
   const scrollPrev = useCallback(() => {
     emblaApi?.scrollPrev();
@@ -42,12 +42,6 @@ export function FeaturedBuildsCarousel({
     [emblaApi],
   );
 
-  const onInit = useCallback(() => {
-    if (!emblaApi) return;
-
-    setScrollSnaps(emblaApi.scrollSnapList());
-  }, [emblaApi]);
-
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
 
@@ -57,23 +51,14 @@ export function FeaturedBuildsCarousel({
   useEffect(() => {
     if (!emblaApi) return;
 
-    onInit();
-    onSelect();
-
-    emblaApi.on("reInit", onInit);
-    emblaApi.on("reInit", onSelect);
     emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
 
     return () => {
-      emblaApi.off("reInit", onInit);
-      emblaApi.off("reInit", onSelect);
       emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
     };
-  }, [emblaApi, onInit, onSelect]);
-
-  if (builds.length === 0) {
-    return null;
-  }
+  }, [emblaApi, onSelect]);
 
   return (
     <section id="builds" className="relative overflow-hidden bg-black py-10">

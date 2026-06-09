@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { UploadDropzone } from "@/lib/uploadthing";
 
@@ -16,13 +16,8 @@ export function PartnerLogoUploader({
   defaultLogoKey,
   onChange,
 }: PartnerLogoUploaderProps) {
-  const [logoUrl, setLogoUrl] = useState(defaultLogoUrl ?? "");
-  const [logoKey, setLogoKey] = useState(defaultLogoKey ?? "");
-
-  useEffect(() => {
-    setLogoUrl(defaultLogoUrl ?? "");
-    setLogoKey(defaultLogoKey ?? "");
-  }, [defaultLogoUrl, defaultLogoKey]);
+  const [logoUrl, setLogoUrl] = useState(() => defaultLogoUrl ?? "");
+  const [logoKey, setLogoKey] = useState(() => defaultLogoKey ?? "");
 
   function updateLogo(nextLogoUrl: string, nextLogoKey: string) {
     setLogoUrl(nextLogoUrl);

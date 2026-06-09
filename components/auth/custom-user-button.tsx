@@ -48,9 +48,11 @@ export function CustomUserButton() {
         className="flex items-center gap-3 rounded-full border border-white/10 bg-white/4 px-2 py-2 text-left text-white transition hover:border-red-500/50 hover:bg-red-600/10"
       >
         <Image
+          height={36}
+          width={36}
           src={imageUrl}
           alt={displayName}
-          className="h-9 w-9 rounded-full border border-red-600/40 object-cover"
+          className="rounded-full border border-red-600/40 object-cover"
         />
 
         <div className="hidden leading-tight md:block">
@@ -74,9 +76,11 @@ export function CustomUserButton() {
           <div className="border-b border-white/10 bg-linear-to-r from-red-950/60 to-black p-4">
             <div className="flex items-center gap-3">
               <Image
+                height={48}
+                width={48}
                 src={imageUrl}
                 alt={displayName}
-                className="h-12 w-12 rounded-full border border-red-500/50 object-cover"
+                className="rounded-full border border-red-500/50 object-cover"
               />
 
               <div className="min-w-0">

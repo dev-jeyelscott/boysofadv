@@ -2,13 +2,14 @@ import { BuildsFilters } from "@/components/admin/build/builds-filter";
 import { getAdminBuilds } from "./queries";
 import { BuildDetailsDialogClient } from "./build-details-dialog-client";
 import { AdminBuildsClient } from "./admin-build-client";
+import { BuildStatus } from "@/lib/constants/build";
 
 type Props = {
   searchParams: Promise<{
     search?: string;
     model?: string;
     concept?: string;
-    status?: string;
+    status?: BuildStatus;
     isFeatured?: string;
     buildId?: string;
   }>;

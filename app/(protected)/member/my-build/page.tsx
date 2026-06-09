@@ -5,9 +5,14 @@ import { db } from "@/db/db";
 import { builds } from "@/db/schema";
 import { getCurrentUser } from "@/lib/get-current-user";
 import { MyBuildForm } from "./my-build-form";
+import { redirect } from "next/navigation";
 
 export default async function MyBuildPage() {
   const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
 
   const build = await db.query.builds.findFirst({
     where: eq(builds.userId, user.id),
