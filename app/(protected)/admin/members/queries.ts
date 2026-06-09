@@ -67,6 +67,8 @@ export async function getMembers({
       chapter: true,
       unit: true,
       status: true,
+      role: true,
+      bio: true,
       createdAt: true,
     },
   });
@@ -90,6 +92,8 @@ export async function getMembers({
       chapter: member.chapter,
       unit: member.unit,
       status: member.status,
+      role: member.role,
+      bio: member.bio,
       createdAt: member.createdAt,
     }));
 

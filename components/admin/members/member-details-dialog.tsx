@@ -31,19 +31,23 @@ export function MemberDetailsDialog({
             Member Details
           </DialogTitle>
         </DialogHeader>
-
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <Detail label="Name" value={getFullName(member)} />
-          <Detail label="Email" value={member.email} />
-          <Detail label="Nickname" value={member.nickname} />
-          <Detail label="Codename" value={member.codename} />
-          <Detail label="Motorcycle Unit" value={member.unit} />
-          <Detail label="Chapter" value={member.chapter} />
-          <Detail
-            label="Status"
-            value={member.status === "approved" ? "Active" : "Suspended"}
-          />
-          <Detail label="Joined" value={formatDate(member.createdAt)} />
+        <div className="-mx-4 no-scrollbar max-h-[80vh] overflow-y-auto px-4">
+          <div className="mt-4 grid gap-4 md:grid-cols-2 ">
+            <Detail label="Name" value={getFullName(member)} />
+            <Detail label="Email" value={member.email} />
+            <Detail label="Nickname" value={member.nickname} />
+            <Detail label="Codename" value={member.codename} />
+            <Detail label="Motorcycle Unit" value={member.unit} />
+            <Detail label="Chapter" value={member.chapter} />
+            <Detail
+              label="Status"
+              value={member.status === "approved" ? "Active" : "Suspended"}
+            />
+            <Detail label="Joined" value={formatDate(member.createdAt)} />
+          </div>
+          <div className="mt-4">
+            <Detail label="Bio" value={member.bio} />
+          </div>
         </div>
       </DialogContent>
     </Dialog>

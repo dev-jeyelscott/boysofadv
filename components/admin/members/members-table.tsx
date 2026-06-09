@@ -14,18 +14,20 @@ import {
 } from "@/components/ui/table";
 
 import { MemberDetailsDialog } from "./member-details-dialog";
-import { MemberStatusAction } from "./member-status-action";
+import { MemberActionsMenu } from "./member-action-menu";
 
 export type MemberRow = {
   id: string;
   firstName: string | null;
   lastName: string | null;
   email: string;
+  role: string;
+  bio: string | null;
   nickname: string | null;
   codename: string | null;
   unit: string | null;
   chapter: string | null;
-  status: "approved" | "suspended";
+  status: "approved" | "suspended" | "archived";
   createdAt: Date | string;
 };
 
@@ -44,15 +46,6 @@ export function MembersTable({ members }: MembersTableProps) {
                 Name
               </TableHead>
               <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
-                Email
-              </TableHead>
-              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
-                Nickname
-              </TableHead>
-              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
-                Codename
-              </TableHead>
-              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
                 MC Unit
               </TableHead>
               <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
@@ -60,6 +53,9 @@ export function MembersTable({ members }: MembersTableProps) {
               </TableHead>
               <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
                 Status
+              </TableHead>
+              <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
+                Role
               </TableHead>
               <TableHead className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50">
                 Joined
@@ -81,18 +77,12 @@ export function MembersTable({ members }: MembersTableProps) {
                     <div className="font-bold text-white">
                       {getFullName(member)}
                     </div>
-                  </TableCell>
-
-                  <TableCell className="p-4 text-center text-sm text-white/70">
-                    {member.email}
-                  </TableCell>
-
-                  <TableCell className="p-4 text-center text-sm text-white/70">
-                    {member.nickname || "—"}
-                  </TableCell>
-
-                  <TableCell className="p-4 text-center text-sm text-white/70">
-                    {member.codename || "—"}
+                    <div>
+                      <span className="text-xs">{member.email || "—"}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs">{member.codename || "—"}</span>
+                    </div>
                   </TableCell>
 
                   <TableCell className="p-4 text-center text-sm text-white/70">
@@ -103,8 +93,12 @@ export function MembersTable({ members }: MembersTableProps) {
                     {member.chapter || "—"}
                   </TableCell>
 
-                  <TableCell className="px-4 py-4">
+                  <TableCell className="px-4 py-4 text-center">
                     <StatusBadge status={member.status} />
+                  </TableCell>
+
+                  <TableCell className="px-4 py-4 text-center">
+                    <RoleBadge status={member.role} />
                   </TableCell>
 
                   <TableCell className="p-4 text-center text-sm text-white/70">
@@ -125,10 +119,7 @@ export function MembersTable({ members }: MembersTableProps) {
                         </Button>
                       </MemberDetailsDialog>
 
-                      <MemberStatusAction
-                        memberId={member.id}
-                        status={member.status}
-                      />
+                      <MemberActionsMenu member={member} />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -162,6 +153,22 @@ function StatusBadge({ status }: { status: MemberRow["status"] }) {
   return (
     <Badge className="border-yellow-500/20 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/10">
       Suspended
+    </Badge>
+  );
+}
+
+function RoleBadge({ status }: { status: MemberRow["role"] }) {
+  if (status === "admin") {
+    return (
+      <Badge className="border-green-500/20 bg-green-500/10 text-green-400 hover:bg-green-500/10">
+        Admin
+      </Badge>
+    );
+  }
+
+  return (
+    <Badge className="border-yellow-500/20 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/10">
+      Member
     </Badge>
   );
 }

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://boysofadv.vercel.app/sitemap.xml
