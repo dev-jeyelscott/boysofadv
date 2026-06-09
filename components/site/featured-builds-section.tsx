@@ -23,6 +23,10 @@ export async function FeaturedBuildsSection() {
     .orderBy(desc(builds.createdAt))
     .limit(10);
 
+  if (featuredBuilds.length === 0) {
+    return null;
+  }
+
   const carouselBuilds = featuredBuilds.map((build) => ({
     id: build.id,
     title: build.title || build.motorcycleModel || "Untitled Build",
