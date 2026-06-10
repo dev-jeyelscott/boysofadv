@@ -38,6 +38,12 @@ export type AdminBuildRow = {
   suspensionSetup: string | null;
   brakingSetup?: string | null;
   wheelSetup: string | null;
+  accessories: string | null;
+  galleryImages: {
+    id: string;
+    buildId: string;
+    imageUrl: string;
+  }[];
 
   createdAt: Date;
   updatedAt: Date;

@@ -1,7 +1,7 @@
-import { and, desc, eq, ilike, or, lt } from "drizzle-orm";
+import { and, desc, eq, ilike, or, lt, inArray } from "drizzle-orm";
 import { BUILD_STATUSES } from "@/lib/constants/build";
 import { db } from "@/db/db";
-import { builds, users } from "@/db/schema";
+import { builds, galleryImages, users } from "@/db/schema";
 
 type BuildStatus = (typeof BUILD_STATUSES)[keyof typeof BUILD_STATUSES];
 
@@ -79,6 +79,7 @@ export async function getAdminBuilds({
       suspensionSetup: builds.suspensionSetup,
       brakingSetup: builds.brakingSetup,
       wheelSetup: builds.wheelSetup,
+      accessories: builds.accessories,
       createdAt: builds.createdAt,
       updatedAt: builds.updatedAt,
 
@@ -98,8 +99,39 @@ export async function getAdminBuilds({
   const hasMore = rows.length > limit;
   const items = rows.slice(0, limit);
 
+  const buildIds = items.map((item) => item.id);
+
+  const imageRows = buildIds.length
+    ? await db
+        .select({
+          id: galleryImages.id,
+          buildId: galleryImages.buildId,
+          imageUrl: galleryImages.imageUrl,
+          // imageKey: galleryImages.imageKey,
+        })
+        .from(galleryImages)
+        .where(inArray(galleryImages.buildId, buildIds))
+    : [];
+
+  const imagesByBuildId = imageRows.reduce<Record<string, typeof imageRows>>(
+    (acc, image) => {
+      if (!image.buildId) return acc;
+
+      acc[image.buildId] ??= [];
+      acc[image.buildId].push(image);
+
+      return acc;
+    },
+    {},
+  );
+
+  const itemsWithGalleryImages = items.map((item) => ({
+    ...item,
+    galleryImages: imagesByBuildId[item.id] ?? [],
+  }));
+
   return {
-    items,
+    itemsWithGalleryImages,
     nextCursor: hasMore
       ? items[items.length - 1]?.createdAt.toISOString()
       : null,

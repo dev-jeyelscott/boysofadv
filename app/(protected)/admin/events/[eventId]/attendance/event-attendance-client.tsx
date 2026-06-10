@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { QrCode, RefreshCcw, ShieldCheck, Users } from "lucide-react";
+import { QrCode, RefreshCcw, Users } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
 import { Badge } from "@/components/ui/badge";
@@ -193,16 +193,6 @@ export function EventAttendanceClient({ event, attendance }: Props) {
               <RefreshCcw className="mr-2 h-4 w-4" />
               Rotate
             </Button>
-          </div>
-
-          <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-            <div className="flex gap-3">
-              <ShieldCheck className="mt-0.5 h-5 w-5 text-emerald-400" />
-              <p className="text-sm leading-6 text-white/60">
-                Next step: replace the temporary session value with a signed
-                server token that expires every 30 seconds.
-              </p>
-            </div>
           </div>
         </div>
 

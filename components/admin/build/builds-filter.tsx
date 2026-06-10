@@ -47,45 +47,44 @@ export function BuildsFilters({
 
   return (
     <div className="p-4">
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
+      <div className="grid gap-3 lg:grid-cols-[minmax(220px,1.4fr)_minmax(180px,1fr)_minmax(180px,1fr)_180px_150px_auto] lg:items-center">
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
-
           <Input
             defaultValue={search}
             placeholder="Search name, email, nickname, codename..."
-            className="pl-10"
+            className="h-11 w-full pl-10"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                updateFilter("search", (e.target as HTMLInputElement).value);
+                updateFilter("search", e.currentTarget.value.trim());
               }
             }}
           />
         </div>
 
-        <div className="relative flex-1">
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
           <Input
             defaultValue={model}
             placeholder="All Models"
-            className="pl-10"
+            className="h-11 w-full pl-10"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                updateFilter("model", e.currentTarget.value);
+                updateFilter("model", e.currentTarget.value.trim());
               }
             }}
           />
         </div>
 
-        <div className="relative flex-1">
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
           <Input
             defaultValue={concept}
             placeholder="All Concepts"
-            className="pl-10"
+            className="h-11 w-full pl-10"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                updateFilter("concept", e.currentTarget.value);
+                updateFilter("concept", e.currentTarget.value.trim());
               }
             }}
           />
@@ -95,7 +94,7 @@ export function BuildsFilters({
           value={status || "all"}
           onValueChange={(value) => updateFilter("status", value)}
         >
-          <SelectTrigger className="h-11 w-[180px] border-white/40 bg-black text-white">
+          <SelectTrigger className="h-11 w-full border-white/40 bg-black text-white">
             <SelectValue placeholder="All Statuses" />
           </SelectTrigger>
 
@@ -113,7 +112,7 @@ export function BuildsFilters({
           value={isFeatured || "all"}
           onValueChange={(value) => updateFilter("isFeatured", value)}
         >
-          <SelectTrigger className="h-11 w-[150px] border-white/40 bg-black text-white">
+          <SelectTrigger className="h-11 w-full border-white/40 bg-black text-white">
             <SelectValue placeholder="Featured" />
           </SelectTrigger>
 
@@ -124,11 +123,10 @@ export function BuildsFilters({
           </SelectContent>
         </Select>
 
-        {/* Clear */}
         <button
           type="button"
           onClick={clearFilters}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white lg:w-auto"
         >
           <X className="size-4" />
           Clear

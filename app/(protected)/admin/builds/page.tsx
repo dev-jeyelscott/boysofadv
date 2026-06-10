@@ -27,7 +27,9 @@ export default async function AdminBuildsPage({ searchParams }: Props) {
   });
 
   const selectedBuild = params.buildId
-    ? (data.items.find((build) => build.id === params.buildId) ?? null)
+    ? (data.itemsWithGalleryImages.find(
+        (build) => build.id === params.buildId,
+      ) ?? null)
     : null;
 
   return (
@@ -40,7 +42,7 @@ export default async function AdminBuildsPage({ searchParams }: Props) {
         isFeatured={params.isFeatured || ""}
       />
       <div className="p-4">
-        <AdminBuildsClient builds={data.items} />
+        <AdminBuildsClient builds={data.itemsWithGalleryImages} />
       </div>
 
       <BuildDetailsDialogClient build={selectedBuild} />

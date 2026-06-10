@@ -1,0 +1,1 @@
+ALTER TABLE "gallery_images" ALTER COLUMN "build_id" SET NOT NULL;

@@ -92,18 +92,18 @@ export default async function AdminEventViewPage({ params }: Props) {
         </div>
       </div>
 
-      <div className="grid h-[calc(100vh-180px)] gap-6 lg:grid-cols-[420px_1fr]">
-        <div className="sticky top-0 overflow-hidden rounded-3xl border border-white/10">
+      <div className="grid gap-6 lg:h-[calc(100vh-180px)] lg:grid-cols-[420px_1fr]">
+        <div className="overflow-hidden rounded-3xl border border-white/10 lg:sticky lg:top-0 lg:h-full">
           <Image
             src={event.posterImageUrl || "/images/event-placeholder.jpg"}
             alt={event.title}
             width={800}
             height={1200}
-            className="h-full w-full object-cover"
+            className="h-auto w-full object-contain lg:h-full lg:object-cover"
           />
         </div>
 
-        <div className="overflow-y-auto no-scrollbar rounded-3xl border border-white/10 bg-white/4 p-6">
+        <div className="rounded-3xl border border-white/10 bg-white/4 p-6 lg:overflow-y-auto no-scrollbar">
           <div className="mb-6 flex flex-wrap items-center gap-3">
             <Badge
               className={`${getStatusClass(

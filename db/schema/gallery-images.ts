@@ -16,9 +16,11 @@ export const galleryImages = pgTable("gallery_images", {
     onDelete: "cascade",
   }),
 
-  buildId: text("build_id").references(() => builds.id, {
-    onDelete: "cascade",
-  }),
+  buildId: text("build_id")
+    .notNull()
+    .references(() => builds.id, {
+      onDelete: "cascade",
+    }),
 
   type: galleryImageTypeEnum("type").notNull().default("general"),
 

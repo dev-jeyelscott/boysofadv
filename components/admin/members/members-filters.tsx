@@ -53,15 +53,15 @@ export function MembersFilters({ chapters, units }: MembersFiltersProps) {
 
   return (
     <div className="p-4">
-      <div className="flex items-center gap-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:flex lg:items-center lg:gap-4">
         {/* Search */}
-        <div className="relative flex-1">
+        <div className="relative sm:col-span-2 lg:min-w-[280px] lg:flex-1">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
 
           <Input
             defaultValue={search}
             placeholder="Search name, email, nickname, codename..."
-            className="pl-10"
+            className="h-11 pl-10"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 updateFilter("search", (e.target as HTMLInputElement).value);
@@ -75,7 +75,7 @@ export function MembersFilters({ chapters, units }: MembersFiltersProps) {
           value={status}
           onValueChange={(value) => updateFilter("status", value)}
         >
-          <SelectTrigger className="w-full lg:w-45">
+          <SelectTrigger className="h-11 w-full lg:w-45">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
 
@@ -91,7 +91,7 @@ export function MembersFilters({ chapters, units }: MembersFiltersProps) {
           value={unit}
           onValueChange={(value) => updateFilter("unit", value)}
         >
-          <SelectTrigger className="w-full lg:w-[220px]">
+          <SelectTrigger className="h-11 w-full lg:w-[220px]">
             <SelectValue placeholder="Motorcycle Unit" />
           </SelectTrigger>
 
@@ -111,7 +111,7 @@ export function MembersFilters({ chapters, units }: MembersFiltersProps) {
           value={chapter}
           onValueChange={(value) => updateFilter("chapter", value)}
         >
-          <SelectTrigger className="w-full lg:w-[220px]">
+          <SelectTrigger className="h-11 w-full lg:w-[220px]">
             <SelectValue placeholder="Chapter" />
           </SelectTrigger>
 
@@ -130,7 +130,7 @@ export function MembersFilters({ chapters, units }: MembersFiltersProps) {
         <button
           type="button"
           onClick={clearFilters}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white sm:w-auto lg:shrink-0"
         >
           <X className="size-4" />
           Clear
