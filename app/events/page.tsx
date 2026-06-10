@@ -49,53 +49,64 @@ export default async function EventsPage() {
               {eventList.map((event) => (
                 <article
                   key={event.id}
-                  className="group overflow-hidden rounded-2xl border border-white/10 bg-white/4 transition hover:border-red-600/50 hover:bg-white/[0.07]"
+                  className="hover:shadow-2xl hover:shadow-red-900/20 group overflow-hidden rounded-2xl border border-white/10 bg-white/4 transition-all duration-300 ease-out hover:scale-105 hover:border-red-600/50 hover:bg-white/[0.07]"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-white/5 sm:aspect-[16/10]">
-                    <Image
-                      src={
-                        event.posterImageUrl || "/images/event-placeholder.jpg"
-                      }
-                      alt={event.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition duration-500 group-hover:scale-105"
-                    />
-                  </div>
-
-                  <div className="flex min-h-[230px] flex-col p-4 sm:p-5 lg:p-6">
-                    <h2 className="line-clamp-2 text-xl font-black uppercase leading-tight sm:text-2xl">
-                      {event.title}
-                    </h2>
-
-                    <div className="mt-4 grid gap-3 text-sm text-white/60">
-                      {event.startDate ? (
-                        <div className="flex items-start gap-3">
-                          <CalendarDays className="mt-0.5 size-4 shrink-0 text-red-500" />
-                          <span>
-                            {new Intl.DateTimeFormat("en-PH", {
-                              month: "long",
-                              day: "numeric",
-                              year: "numeric",
-                            }).format(new Date(event.startDate))}
-                          </span>
-                        </div>
-                      ) : null}
-
-                      {event.location ? (
-                        <div className="flex items-start gap-3">
-                          <MapPin className="mt-0.5 size-4 shrink-0 text-red-500" />
-                          <span className="line-clamp-2">{event.location}</span>
-                        </div>
-                      ) : null}
+                  <div>
+                    <div className="relative aspect-[4/3] overflow-hidden bg-white/5 sm:aspect-[16/10]">
+                      <Image
+                        src={
+                          event.posterImageUrl ||
+                          "/images/event-placeholder.jpg"
+                        }
+                        alt={event.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover "
+                      />
                     </div>
 
-                    <Button
-                      asChild
-                      className="mt-auto w-full rounded-full bg-red-600 text-xs font-black uppercase tracking-widest text-white hover:bg-red-700 sm:text-sm"
-                    >
-                      <Link href={`/events/${event.id}`}>View Details</Link>
-                    </Button>
+                    <div className="flex min-h-[230px] flex-col p-4 sm:p-5 lg:p-6">
+                      <h2 className="line-clamp-2 text-xl font-black uppercase leading-tight sm:text-2xl">
+                        {event.title}
+                      </h2>
+
+                      <div className="mt-4 grid gap-3 text-sm text-white/60">
+                        {event.startDate ? (
+                          <div className="flex items-start gap-3">
+                            <CalendarDays className="mt-0.5 size-4 shrink-0 text-red-500" />
+                            <span>
+                              {new Intl.DateTimeFormat("en-PH", {
+                                month: "long",
+                                day: "numeric",
+                                year: "numeric",
+                              }).format(new Date(event.startDate))}
+                            </span>
+                          </div>
+                        ) : null}
+
+                        {event.location ? (
+                          <div className="flex items-start gap-3">
+                            <MapPin className="mt-0.5 size-4 shrink-0 text-red-500" />
+                            <span className="line-clamp-2">
+                              {event.location}
+                            </span>
+                          </div>
+                        ) : null}
+                      </div>
+
+                      <Button
+                        asChild
+                        className="mt-auto w-full items-center font-bold
+                      uppercase tracking-wider text-white transition
+                      hover:bg-red-700 sm:flex -skew-x-12 gap-2 border border-red-700/70 rounded-sm text-xs sm:text-sm"
+                      >
+                        {/* hidden items-center -skew-x-12 gap-2 rounded-sm border
+                      border-red-700/70 px-4 py-2 text-[10px] font-bold
+                      uppercase tracking-wider text-white transition
+                      hover:bg-red-700 sm:flex */}
+                        <Link href={`/events/${event.id}`}>View Details</Link>
+                      </Button>
+                    </div>
                   </div>
                 </article>
               ))}
