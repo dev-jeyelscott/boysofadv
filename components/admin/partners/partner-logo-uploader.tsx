@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { UploadDropzone } from "@/lib/uploadthing";
+import imageCompression from "browser-image-compression";
 
 type PartnerLogoUploaderProps = {
   defaultLogoUrl?: string | null;
@@ -46,6 +47,18 @@ export function PartnerLogoUploader({
         <div className="mt-3 rounded-2xl border border-dashed border-white/15 bg-black p-4">
           <UploadDropzone
             endpoint="partnerLogo"
+            onBeforeUploadBegin={async (files) => {
+              return await Promise.all(
+                files.map((file) =>
+                  imageCompression(file, {
+                    maxSizeMB: 0.4,
+                    maxWidthOrHeight: 800,
+                    useWebWorker: true,
+                    fileType: "image/webp",
+                  }),
+                ),
+              );
+            }}
             onClientUploadComplete={(res) => {
               const file = res?.[0];
 

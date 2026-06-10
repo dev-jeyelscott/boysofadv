@@ -73,10 +73,12 @@ export const uploadRouter = {
         userId: user.id,
       };
     })
-    .onUploadComplete(async ({ file }) => {
+    .onUploadComplete(async ({ metadata, file }) => {
       return {
-        url: file.url,
+        userId: metadata.userId,
+        url: file.ufsUrl,
         key: file.key,
+        name: file.name,
       };
     }),
 } satisfies FileRouter;

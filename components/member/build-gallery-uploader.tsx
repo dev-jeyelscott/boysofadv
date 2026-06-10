@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { UploadButton } from "@/lib/uploadthing";
+import imageCompression from "browser-image-compression";
 
 type GalleryImage = {
   id?: string;
@@ -54,6 +55,18 @@ export function BuildGalleryUploader({ defaultImages = [] }: Props) {
 
         <UploadButton
           endpoint="buildGallery"
+          onBeforeUploadBegin={async (files) => {
+            return await Promise.all(
+              files.map((file) =>
+                imageCompression(file, {
+                  maxSizeMB: 1,
+                  maxWidthOrHeight: 1920,
+                  useWebWorker: true,
+                  fileType: "image/webp",
+                }),
+              ),
+            );
+          }}
           onClientUploadComplete={(res) => {
             if (!res?.length) return;
 
