@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import { useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
 import { deleteEventAction } from "@/app/(protected)/admin/events/actions";
 import { EventRow } from "@/lib/constants/event";
 import EventEditDialog from "./event-edit-dialog";
+import Link from "next/link";
 
 type Props = {
   event: EventRow;
@@ -46,6 +47,13 @@ export function EventActionsMenu({ event }: Props) {
         align="end"
         className="w-48 border-white/10 bg-neutral-950 p-1 text-white"
       >
+        <Link
+          href={`/admin/events/${event.id}`}
+          className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-bold text-white hover:bg-white/10"
+        >
+          <Eye className="size-4" />
+          View Details
+        </Link>
         <EventEditDialog event={event} />
 
         <button

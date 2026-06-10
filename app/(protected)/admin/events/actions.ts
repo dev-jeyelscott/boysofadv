@@ -40,6 +40,9 @@ export async function createEventAction(
     const title = getString(formData, "title");
     const description = getString(formData, "description");
     const location = getString(formData, "location");
+    const latitude = getString(formData, "latitude");
+    const longitude = getString(formData, "longitude");
+    const geoRadiusMeters = getString(formData, "geoRadiusMeters");
     const startDate = getString(formData, "startDate");
     const endDate = getString(formData, "endDate");
     const statusValue = getString(formData, "status");
@@ -56,12 +59,22 @@ export async function createEventAction(
 
     const id = randomUUID();
 
+    const latitudeValue = latitude ? latitude.toString() : null;
+    const longitudeValue = longitude ? longitude.toString() : null;
+    const geoRadiusMetersValue =
+      typeof geoRadiusMeters === "string"
+        ? Number(geoRadiusMeters)
+        : geoRadiusMeters;
+
     await db.insert(events).values({
       id,
       slug: `${createSlug(title)}-${id.slice(0, 8)}`,
       title,
       description: description || null,
       location: location || null,
+      latitude: latitudeValue,
+      longitude: longitudeValue,
+      geoRadiusMeters: geoRadiusMetersValue || 80,
       startDate: new Date(startDate),
       endDate: endDate ? new Date(endDate) : null,
       status,
@@ -91,6 +104,9 @@ export async function updateEventAction(
     const title = getString(formData, "title");
     const description = getString(formData, "description");
     const location = getString(formData, "location");
+    const latitude = getString(formData, "latitude");
+    const longitude = getString(formData, "longitude");
+    const geoRadiusMeters = getString(formData, "geoRadiusMeters");
     const startDate = getString(formData, "startDate");
     const endDate = getString(formData, "endDate");
     const statusValue = getString(formData, "status");
@@ -105,12 +121,22 @@ export async function updateEventAction(
       throw new Error("Missing required event fields.");
     }
 
+    const latitudeValue = latitude ? latitude.toString() : null;
+    const longitudeValue = longitude ? longitude.toString() : null;
+    const geoRadiusMetersValue =
+      typeof geoRadiusMeters === "string"
+        ? Number(geoRadiusMeters)
+        : geoRadiusMeters;
+
     await db
       .update(events)
       .set({
         title,
         description: description || null,
         location: location || null,
+        latitude: latitudeValue,
+        longitude: longitudeValue,
+        geoRadiusMeters: geoRadiusMetersValue || 80,
         startDate: new Date(startDate),
         endDate: endDate ? new Date(endDate) : null,
         status,

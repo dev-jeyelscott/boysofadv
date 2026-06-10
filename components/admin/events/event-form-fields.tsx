@@ -13,6 +13,11 @@ type EventFormValue = {
   title?: string;
   description?: string | null;
   location?: string | null;
+
+  latitude?: string | number | null;
+  longitude?: string | number | null;
+  geoRadiusMeters?: number | null;
+
   startDate?: Date | string;
   endDate?: Date | string | null;
   status?: string;
@@ -57,6 +62,51 @@ export function EventFormFields({ event }: Props) {
         <input
           name="location"
           defaultValue={event?.location ?? ""}
+          className="mt-2 h-11 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-sm text-white outline-none focus:border-red-500"
+        />
+      </div>
+
+      <div>
+        <label className="text-xs font-black uppercase tracking-widest text-white/50">
+          Latitude
+        </label>
+
+        <input
+          type="number"
+          step="0.0000001"
+          name="latitude"
+          defaultValue={event?.latitude ?? ""}
+          placeholder="14.676041"
+          className="mt-2 h-11 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-sm text-white outline-none focus:border-red-500"
+        />
+      </div>
+
+      <div>
+        <label className="text-xs font-black uppercase tracking-widest text-white/50">
+          Longitude
+        </label>
+
+        <input
+          type="number"
+          step="0.0000001"
+          name="longitude"
+          defaultValue={event?.longitude ?? ""}
+          placeholder="121.043700"
+          className="mt-2 h-11 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-sm text-white outline-none focus:border-red-500"
+        />
+      </div>
+
+      <div>
+        <label className="text-xs font-black uppercase tracking-widest text-white/50">
+          Radius (Meters)
+        </label>
+
+        <input
+          type="number"
+          min="1"
+          name="geoRadiusMeters"
+          defaultValue={event?.geoRadiusMeters ?? 100}
+          placeholder="80"
           className="mt-2 h-11 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-sm text-white outline-none focus:border-red-500"
         />
       </div>

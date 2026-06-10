@@ -1,4 +1,12 @@
-import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  pgEnum,
+  numeric,
+  integer,
+} from "drizzle-orm/pg-core";
 
 export const eventStatusEnum = pgEnum("event_status", [
   "draft",
@@ -18,6 +26,18 @@ export const events = pgTable("events", {
 
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date"),
+
+  latitude: numeric("latitude", {
+    precision: 10,
+    scale: 7,
+  }),
+
+  longitude: numeric("longitude", {
+    precision: 10,
+    scale: 7,
+  }),
+
+  geoRadiusMeters: integer("geo_radius_meters").notNull().default(80),
 
   posterImageUrl: text("poster_image_url"),
   posterImageKey: text("poster_image_key"),

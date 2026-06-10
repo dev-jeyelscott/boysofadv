@@ -3,6 +3,9 @@ export type EventRow = {
   title: string;
   description: string | null;
   location: string | null;
+  latitude?: string | number | null;
+  longitude?: string | number | null;
+  geoRadiusMeters?: number | null;
   startDate: Date | string;
   endDate: Date | string | null;
   status: string;
