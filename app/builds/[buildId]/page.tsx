@@ -52,6 +52,7 @@ export default async function BuildDetailsPage({ params }: Props) {
       brakingSetup: builds.brakingSetup,
       wheelSetup: builds.wheelSetup,
       description: builds.description,
+      accessories: builds.accessories,
 
       ownerFirstName: users.firstName,
       ownerLastName: users.lastName,
@@ -210,6 +211,16 @@ export default async function BuildDetailsPage({ params }: Props) {
                 </h2>
                 <p className="mt-4 max-w-4xl whitespace-pre-line text-sm leading-7 text-white/65">
                   {build.wheelSetup}
+                </p>
+              </div>
+            ) : null}
+            {build.accessories ? (
+              <div className="border-t border-white/10 p-6 md:p-10">
+                <h2 className="text-xl font-black uppercase">
+                  Other Notable Upgrades
+                </h2>
+                <p className="mt-4 max-w-4xl whitespace-pre-line text-sm leading-7 text-white/65">
+                  {build.accessories}
                 </p>
               </div>
             ) : null}
