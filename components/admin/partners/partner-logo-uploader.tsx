@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { useState } from "react";
 
-import { UploadDropzone } from "@/lib/uploadthing";
+import { UploadButton } from "@/lib/uploadthing";
 import imageCompression from "browser-image-compression";
+import { toast } from "sonner";
 
 type PartnerLogoUploaderProps = {
   defaultLogoUrl?: string | null;
@@ -45,7 +46,7 @@ export function PartnerLogoUploader({
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="mt-3 rounded-2xl border border-dashed border-white/15 bg-black p-4">
-          <UploadDropzone
+          <UploadButton
             endpoint="partnerLogo"
             onBeforeUploadBegin={async (files) => {
               return await Promise.all(
@@ -75,15 +76,14 @@ export function PartnerLogoUploader({
               updateLogo(uploadedUrl, uploadedKey);
             }}
             onUploadError={(error) => {
-              console.error(error);
-              alert(error.message);
+              console.log(error);
+              toast.error(error.message);
             }}
             appearance={{
               container:
                 "border-0 bg-transparent p-0 text-white ut-label:text-white ut-allowed-content:text-white/40",
               button:
                 "bg-red-600 text-white font-black px-6 py-2 -skew-x-12 text-sm uppercase hover:bg-red-500 after:bg-red-700",
-              uploadIcon: "text-red-500",
             }}
           />
         </div>

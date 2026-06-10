@@ -8,6 +8,8 @@ import { builds, galleryImages, users } from "@/db/schema";
 import { Badge } from "@/components/ui/badge";
 import { BuildGallery } from "../build-gallery";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 type Props = {
   params: Promise<{
@@ -98,7 +100,13 @@ export default async function BuildDetailsPage({ params }: Props) {
             </p>
             <div className="h-px flex-1 bg-red-600/40" />
           </div>
-
+          <Link
+            href="/builds"
+            className="my-4 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white/60 transition hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Builds
+          </Link>
           <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/4">
             <div className="relative aspect-16/8 w-full bg-neutral-900">
               {build.coverImageUrl ? (

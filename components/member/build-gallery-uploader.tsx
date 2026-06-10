@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { UploadButton } from "@/lib/uploadthing";
 import imageCompression from "browser-image-compression";
+import { toast } from "sonner";
 
 type GalleryImage = {
   id?: string;
@@ -80,7 +81,8 @@ export function BuildGalleryUploader({ defaultImages = [] }: Props) {
             ]);
           }}
           onUploadError={(error) => {
-            console.error(error);
+            console.log(error);
+            toast.error(error.message);
           }}
           appearance={{
             container:

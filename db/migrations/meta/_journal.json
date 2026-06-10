@@ -64,6 +64,20 @@
       "when": 1780975750011,
       "tag": "0008_bored_zeigeist",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1781087258955,
+      "tag": "0009_closed_nehzno",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1781099236521,
+      "tag": "0010_low_silver_surfer",
+      "breakpoints": true
     }
   ]
 }

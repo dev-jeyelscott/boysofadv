@@ -1,65 +1,72 @@
-import AdminPageShell from "@/components/admin/admin-page-shell";
+import { and, desc, eq, ilike, or } from "drizzle-orm";
 
-const events = [
-  {
-    title: "Boys of ADV Breakfast Ride",
-    date: "June 30, 2026",
-    location: "Tagaytay",
-    status: "upcoming",
-  },
-  {
-    title: "ADV Night Meet",
-    date: "July 12, 2026",
-    location: "Manila",
-    status: "planning",
-  },
-];
+import { db } from "@/db/db";
+import { events } from "@/db/schema";
+import { EventCreateDialog } from "@/components/admin/events/event-create-dialog";
+import { EventsFilters } from "@/components/admin/events/events-filter";
+import { EventsTable } from "@/components/admin/events/events-table";
+import { EVENT_STATUSES } from "@/lib/constants/event";
 
-export default function EventsPage() {
+type Props = {
+  searchParams: Promise<{
+    q?: string;
+    status?: string;
+  }>;
+};
+
+type EventStatus = (typeof EVENT_STATUSES)[number];
+
+function isEventStatus(value: string): value is EventStatus {
+  return EVENT_STATUSES.includes(value as EventStatus);
+}
+
+export default async function EventsPage({ searchParams }: Props) {
+  const params = await searchParams;
+
+  const q = params.q?.trim() || "";
+
+  const statusParam = params.status?.trim() || "all";
+  const status = isEventStatus(statusParam) ? statusParam : "all";
+
+  const eventRows = await db
+    .select({
+      id: events.id,
+      title: events.title,
+      description: events.description,
+      location: events.location,
+      startDate: events.startDate,
+      endDate: events.endDate,
+      status: events.status,
+      posterImageUrl: events.posterImageUrl,
+      posterImageKey: events.posterImageKey,
+      createdAt: events.createdAt,
+    })
+    .from(events)
+    .where(
+      and(
+        q
+          ? or(
+              ilike(events.title, `%${q}%`),
+              ilike(events.location, `%${q}%`),
+              ilike(events.description, `%${q}%`),
+            )
+          : undefined,
+        status !== "all" ? eq(events.status, status) : undefined,
+      ),
+    )
+    .orderBy(desc(events.startDate));
+
   return (
-    <AdminPageShell
-      title="Events"
-      description="Manage rides, meetups, and community gatherings."
-    >
-      <section className="rounded-2xl border border-white/10 bg-white/4 p-6">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-xl font-black uppercase text-white">
-            Event Calendar
-          </h2>
+    <div className="space-y-6">
+      <EventsFilters />
 
-          <button className="rounded-full bg-red-600 px-5 py-3 text-sm font-black uppercase text-white hover:bg-red-500">
-            Add Event
-          </button>
-        </div>
+      <div className="flex justify-end px-4 py-2">
+        <EventCreateDialog />
+      </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {events.map((event) => (
-            <div
-              key={event.title}
-              className="overflow-hidden rounded-2xl border border-white/10 bg-black/40"
-            >
-              <div className="aspect-video bg-gradient-to-br from-neutral-900 via-black to-red-950" />
-
-              <div className="p-5">
-                <span className="rounded-full bg-red-600/20 px-3 py-1 text-xs font-black uppercase text-red-400">
-                  {event.status}
-                </span>
-
-                <h3 className="mt-4 text-lg font-black uppercase text-white">
-                  {event.title}
-                </h3>
-
-                <p className="mt-2 text-sm text-white/50">{event.date}</p>
-                <p className="mt-1 text-sm text-white/50">{event.location}</p>
-
-                <button className="mt-5 rounded-full border border-white/10 px-4 py-2 text-xs font-black uppercase text-white hover:bg-white/10">
-                  Manage Event
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </AdminPageShell>
+      <div className="mt-5">
+        <EventsTable events={eventRows} />
+      </div>
+    </div>
   );
 }

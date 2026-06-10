@@ -4,12 +4,15 @@ import { desc } from "drizzle-orm";
 import { SiteHeader } from "@/components/site/site-header";
 import { db } from "@/db/db";
 import { events } from "@/db/schema";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function EventsPage() {
   const eventList = await db
     .select()
     .from(events)
-    .orderBy(desc(events.createdAt));
+    .orderBy(desc(events.startDate));
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -46,42 +49,53 @@ export default async function EventsPage() {
               {eventList.map((event) => (
                 <article
                   key={event.id}
-                  className="group overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-6 transition hover:border-red-600/50 hover:bg-white/[0.07]"
+                  className="group overflow-hidden rounded-2xl border border-white/10 bg-white/4 transition hover:border-red-600/50 hover:bg-white/[0.07]"
                 >
-                  <div className="mb-5 inline-flex rounded-full border border-red-600/40 bg-red-600/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-red-400">
-                    Event
+                  <div className="relative aspect-[4/3] overflow-hidden bg-white/5 sm:aspect-[16/10]">
+                    <Image
+                      src={
+                        event.posterImageUrl || "/images/event-placeholder.jpg"
+                      }
+                      alt={event.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                    />
                   </div>
 
-                  <h2 className="text-2xl font-black uppercase leading-tight">
-                    {event.title}
-                  </h2>
+                  <div className="flex min-h-[230px] flex-col p-4 sm:p-5 lg:p-6">
+                    <h2 className="line-clamp-2 text-xl font-black uppercase leading-tight sm:text-2xl">
+                      {event.title}
+                    </h2>
 
-                  {event.description ? (
-                    <p className="mt-4 line-clamp-4 text-sm leading-7 text-white/60">
-                      {event.description}
-                    </p>
-                  ) : null}
+                    <div className="mt-4 grid gap-3 text-sm text-white/60">
+                      {event.startDate ? (
+                        <div className="flex items-start gap-3">
+                          <CalendarDays className="mt-0.5 size-4 shrink-0 text-red-500" />
+                          <span>
+                            {new Intl.DateTimeFormat("en-PH", {
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            }).format(new Date(event.startDate))}
+                          </span>
+                        </div>
+                      ) : null}
 
-                  <div className="mt-6 grid gap-3 text-sm text-white/60">
-                    {event.startDate ? (
-                      <div className="flex items-center gap-3">
-                        <CalendarDays className="size-4 text-red-500" />
-                        <span>
-                          {new Intl.DateTimeFormat("en-PH", {
-                            month: "long",
-                            day: "numeric",
-                            year: "numeric",
-                          }).format(event.startDate)}
-                        </span>
-                      </div>
-                    ) : null}
+                      {event.location ? (
+                        <div className="flex items-start gap-3">
+                          <MapPin className="mt-0.5 size-4 shrink-0 text-red-500" />
+                          <span className="line-clamp-2">{event.location}</span>
+                        </div>
+                      ) : null}
+                    </div>
 
-                    {event.location ? (
-                      <div className="flex items-center gap-3">
-                        <MapPin className="size-4 text-red-500" />
-                        <span>{event.location}</span>
-                      </div>
-                    ) : null}
+                    <Button
+                      asChild
+                      className="mt-auto w-full rounded-full bg-red-600 text-xs font-black uppercase tracking-widest text-white hover:bg-red-700 sm:text-sm"
+                    >
+                      <Link href={`/events/${event.id}`}>View Details</Link>
+                    </Button>
                   </div>
                 </article>
               ))}

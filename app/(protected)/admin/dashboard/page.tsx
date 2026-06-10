@@ -1,12 +1,15 @@
+import type { SQL } from "drizzle-orm";
+import type { PgTable } from "drizzle-orm/pg-core";
+
 import Link from "next/link";
 import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
 import {
+  ArrowRight,
   Bike,
   CalendarDays,
+  Clock,
   Handshake,
   Users,
-  Clock,
-  ArrowRight,
 } from "lucide-react";
 
 import AdminPageShell from "@/components/admin/admin-page-shell";
@@ -14,8 +17,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db/db";
 import { builds, events, partners, users } from "@/db/schema";
-import { USER_STATUSES } from "@/lib/constants/user";
 import { BUILD_STATUSES } from "@/lib/constants/build";
+import { USER_STATUSES } from "@/lib/constants/user";
+import { ReactNode } from "react";
 
 export default async function DashboardPage() {
   const today = new Date();
@@ -50,7 +54,10 @@ export default async function DashboardPage() {
     getCount(partners),
     getCount(partners, eq(partners.isOfficial, true)),
 
-    getCount(events, gte(events.startDate, today)),
+    getCount(
+      events,
+      and(eq(events.status, "published"), gte(events.startDate, today)),
+    ),
 
     db
       .select({
@@ -240,20 +247,15 @@ export default async function DashboardPage() {
   );
 }
 
-async function getCount(
-  table: any,
-  where?:
-    | ReturnType<typeof eq>
-    | ReturnType<typeof ne>
-    | ReturnType<typeof gte>,
-) {
-  const [result] = await db
+async function getCount(table: PgTable, where?: SQL) {
+  const query = db
     .select({
       value: sql<number>`count(*)::int`,
     })
     .from(table)
-    .$dynamic()
-    .where(where);
+    .$dynamic();
+
+  const [result] = where ? await query.where(where) : await query;
 
   return result?.value ?? 0;
 }
@@ -269,7 +271,7 @@ function StatCard({
   value: number;
   helper: string;
   href: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }) {
   return (
     <Link
@@ -315,7 +317,7 @@ function AdminPanel({
 }: {
   title: string;
   href: string;
-  children: React.ReactNode;
+  children: ReactNode;
   emptyText: string;
 }) {
   const items = Array.isArray(children) ? children.filter(Boolean) : children;
