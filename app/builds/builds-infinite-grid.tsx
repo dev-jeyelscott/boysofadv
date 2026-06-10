@@ -59,9 +59,9 @@ function BuildCard({ build }: { build: BuildItem }) {
   return (
     <Link
       href={`/builds/${build.id}`}
-      className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] transition hover:-translate-y-1 hover:border-red-500/50 hover:bg-white/[0.07]"
+      className="group overflow-hidden rounded-2xl border border-white/10 bg-white/4 transition hover:-translate-y-1 hover:border-red-500/50 hover:bg-white/[0.07]"
     >
-      <div className="relative aspect-square overflow-hidden bg-white/[0.03]">
+      <div className="relative aspect-square overflow-hidden bg-white/3">
         {build.coverImageUrl ? (
           <Image
             src={build.coverImageUrl}

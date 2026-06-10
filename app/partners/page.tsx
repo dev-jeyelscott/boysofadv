@@ -34,7 +34,7 @@ export default async function PartnersPage() {
           </p>
 
           {partnerRows.length === 0 ? (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-10 text-center">
+            <div className="rounded-2xl border border-white/10 bg-white/4 p-10 text-center">
               <p className="text-sm font-bold uppercase tracking-widest text-white/50">
                 No active partners yet.
               </p>
@@ -44,7 +44,7 @@ export default async function PartnersPage() {
               {partnerRows.map((partner) => (
                 <article
                   key={partner.id}
-                  className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:border-red-600/50 hover:bg-white/[0.07]"
+                  className="group overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-5 transition hover:border-red-600/50 hover:bg-white/[0.07]"
                 >
                   <Link href={partner.websiteUrl ?? partner.facebookUrl ?? ""}>
                     <div className="flex aspect-video items-center justify-center rounded-2xl border border-white/10 bg-black p-6">
@@ -57,7 +57,7 @@ export default async function PartnersPage() {
                           className="max-h-full max-w-full object-contain transition duration-300 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center rounded-xl bg-white/[0.03]">
+                        <div className="flex h-full w-full items-center justify-center rounded-xl bg-white/3">
                           <span className="text-center text-xs font-black uppercase tracking-widest text-white/30">
                             No Logo
                           </span>

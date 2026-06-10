@@ -85,7 +85,7 @@ function Info({
   value: string | number | null | undefined;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
+    <div className="rounded-xl border border-white/10 bg-white/4 p-4">
       <p className="text-xs font-black uppercase tracking-widest text-white/40">
         {label}
       </p>
@@ -102,7 +102,7 @@ function Section({
   value: string | null | undefined;
 }) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+    <section className="rounded-2xl border border-white/10 bg-white/4 p-5">
       <h3 className="text-sm font-black uppercase tracking-widest text-white/50">
         {title}
       </h3>

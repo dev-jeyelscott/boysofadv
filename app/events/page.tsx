@@ -33,7 +33,7 @@ export default async function EventsPage() {
           </p>
 
           {eventList.length === 0 ? (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-10 text-center">
+            <div className="rounded-2xl border border-white/10 bg-white/4 p-10 text-center">
               <h2 className="text-xl font-black uppercase">
                 No Events Available
               </h2>
@@ -46,7 +46,7 @@ export default async function EventsPage() {
               {eventList.map((event) => (
                 <article
                   key={event.id}
-                  className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:border-red-600/50 hover:bg-white/[0.07]"
+                  className="group overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-6 transition hover:border-red-600/50 hover:bg-white/[0.07]"
                 >
                   <div className="mb-5 inline-flex rounded-full border border-red-600/40 bg-red-600/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-red-400">
                     Event

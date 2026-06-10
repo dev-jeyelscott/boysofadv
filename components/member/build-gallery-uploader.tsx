@@ -83,7 +83,7 @@ export function BuildGalleryUploader({ defaultImages = [] }: Props) {
           {images.map((image) => (
             <div
               key={image.imageUrl}
-              className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]"
+              className="overflow-hidden rounded-2xl border border-white/10 bg-white/4"
             >
               <div className="relative aspect-[4/3] bg-neutral-900">
                 <Image

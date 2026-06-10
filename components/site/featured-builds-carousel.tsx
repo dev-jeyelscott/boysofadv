@@ -107,7 +107,7 @@ export function FeaturedBuildsCarousel({
                           className="object-cover"
                         />
 
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
                       </div>
 
                       <div className="border-t border-red-600/30 p-4">

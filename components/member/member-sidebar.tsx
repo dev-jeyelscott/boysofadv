@@ -2,11 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bike, UserRound, LogOut } from "lucide-react";
+import { Bike, UserRound, LogOut, Home } from "lucide-react";
 import Image from "next/image";
 import { useClerk } from "@clerk/nextjs";
 
 const navItems = [
+  {
+    label: "Home",
+    href: "/",
+    icon: Home,
+  },
   {
     label: "Profile",
     href: "/member/profile",

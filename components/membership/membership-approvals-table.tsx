@@ -39,7 +39,7 @@ export function MembershipApprovalsTable({
   members,
 }: MembershipApprovalsTableProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/4">
       <div className="overflow-x-auto">
         <Table className="min-w-[1100px]">
           <TableHeader>
@@ -74,7 +74,7 @@ export function MembershipApprovalsTable({
               return (
                 <TableRow
                   key={member.id}
-                  className="border-white/10 hover:bg-white/[0.03]"
+                  className="border-white/10 hover:bg-white/3"
                 >
                   <TableCell className="px-5 py-4 text-center">
                     <div>

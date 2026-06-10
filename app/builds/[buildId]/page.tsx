@@ -7,6 +7,7 @@ import { db } from "@/db/db";
 import { builds, galleryImages, users } from "@/db/schema";
 import { Badge } from "@/components/ui/badge";
 import { BuildGallery } from "../build-gallery";
+import type { Metadata } from "next";
 
 type Props = {
   params: Promise<{
@@ -97,12 +98,12 @@ export default async function BuildDetailsPage({ params }: Props) {
             <div className="h-px flex-1 bg-red-600/40" />
           </div>
 
-          <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04]">
-            <div className="relative aspect-[16/8] w-full bg-neutral-900">
+          <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/4">
+            <div className="relative aspect-16/8 w-full bg-neutral-900">
               {build.coverImageUrl ? (
                 <Image
                   src={build.coverImageUrl}
-                  alt={build.title}
+                  alt={build.title || "Boys of ADV Build"}
                   fill
                   priority
                   className="object-cover"
@@ -115,7 +116,7 @@ export default async function BuildDetailsPage({ params }: Props) {
                 </div>
               )}
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
 
               <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
                 <div className="mb-4 flex flex-wrap gap-2">
@@ -220,4 +221,63 @@ export default async function BuildDetailsPage({ params }: Props) {
       </section>
     </main>
   );
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { buildId } = await params;
+
+  const [build] = await db
+    .select({
+      id: builds.id,
+      title: builds.title,
+      status: builds.status,
+      coverImageUrl: builds.coverImageUrl,
+      ownerNickname: users.nickname,
+      ownerCodename: users.codename,
+      ownerFirstName: users.firstName,
+      ownerLastName: users.lastName,
+    })
+    .from(builds)
+    .leftJoin(users, eq(builds.userId, users.id))
+    .where(eq(builds.id, buildId))
+    .limit(1);
+
+  if (!build || build.status !== "published") {
+    return {
+      title: "Build Not Found | Boys of ADV",
+      description: "This motorcycle build could not be found.",
+    };
+  }
+
+  const ownerName = getOwnerName(build);
+  const buildTitle = build.title || "Untitled Build";
+
+  const title = `${buildTitle} | Boys of ADV`;
+  const description = `View ${ownerName}'s motorcycle build on Boys of ADV.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      images: build.coverImageUrl
+        ? [
+            {
+              url: build.coverImageUrl,
+              width: 1200,
+              height: 630,
+              alt: buildTitle,
+            },
+          ]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: build.coverImageUrl ? [build.coverImageUrl] : [],
+    },
+  };
 }

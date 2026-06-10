@@ -42,7 +42,7 @@ export default async function BeAPartnerPage({
 
             <form
               action={submitPartnerInquiry}
-              className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-red-950/20 md:p-8"
+              className="rounded-2xl border border-white/10 bg-white/4 p-6 shadow-2xl shadow-red-950/20 md:p-8"
             >
               <div className="grid gap-5 md:grid-cols-2">
                 <Field

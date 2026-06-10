@@ -9,7 +9,7 @@ export default function AboutPage() {
 
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.24),transparent_45%)]" />
-        <div className="mx-auto grid min-h-[520px] max-w-7xl items-center gap-10 px-4 py-20 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="mx-auto grid min-h-130 max-w-7xl items-center gap-10 px-4 py-20 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="relative z-10">
             <p className="text-sm font-black uppercase tracking-[0.35em] text-red-500">
               About Boys of ADV
@@ -28,8 +28,8 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="relative z-10 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-3">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-white/5">
+          <div className="relative z-10 overflow-hidden rounded-4xl border border-white/10 bg-white/4 p-3">
+            <div className="relative aspect-4/5 overflow-hidden rounded-3xl bg-white/5">
               <Image
                 src="/images/about/about-hero.jpg"
                 alt="Boys of ADV riders"
@@ -37,7 +37,7 @@ export default function AboutPage() {
                 priority
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
             </div>
           </div>
         </div>
@@ -60,7 +60,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-y border-white/10 bg-white/[0.03]">
+      <section className="border-y border-white/10 bg-white/3">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-2">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.3em] text-red-500">
@@ -89,7 +89,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16">
-        <div className="rounded-[2rem] border border-red-600/30 bg-red-600/10 p-8 md:p-10">
+        <div className="rounded-4xl border border-red-600/30 bg-red-600/10 p-8 md:p-10">
           <p className="text-sm font-black uppercase tracking-[0.3em] text-red-400">
             The Culture Behind The Build
           </p>
@@ -117,7 +117,7 @@ function AboutCard({
   description: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+    <div className="rounded-2xl border border-white/10 bg-white/4 p-6">
       <div className="mb-5 h-1.5 w-12 rounded-full bg-red-600" />
       <h3 className="text-xl font-black uppercase text-white">{title}</h3>
       <p className="mt-3 text-sm leading-7 text-white/60">{description}</p>

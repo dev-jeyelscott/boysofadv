@@ -49,7 +49,7 @@ export function BuildGallery({ images, buildTitle }: Props) {
               key={image.id}
               type="button"
               onClick={() => setActiveIndex(index)}
-              className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] text-left"
+              className="group overflow-hidden rounded-3xl border border-white/10 bg-white/4 text-left"
             >
               <div className="relative aspect-[4/3] bg-neutral-900">
                 <Image
