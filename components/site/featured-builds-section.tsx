@@ -1,8 +1,9 @@
-import { desc, eq } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 
 import { db } from "@/db/db";
 import { builds, users } from "@/db/schema";
 import { FeaturedBuildsCarousel } from "./featured-builds-carousel";
+import { BUILD_STATUSES } from "@/lib/constants/build";
 
 export async function FeaturedBuildsSection() {
   const featuredBuilds = await db
@@ -19,8 +20,10 @@ export async function FeaturedBuildsSection() {
     })
     .from(builds)
     .leftJoin(users, eq(builds.userId, users.id))
-    .where(eq(builds.isFeatured, true))
-    .orderBy(desc(builds.createdAt))
+    .where(
+      and(eq(builds.isFeatured, true), ne(builds.status, BUILD_STATUSES.DRAFT)),
+    )
+    .orderBy(sql`RANDOM()`)
     .limit(10);
 
   if (featuredBuilds.length === 0) {
@@ -38,7 +41,7 @@ export async function FeaturedBuildsSection() {
     mods: [
       build.motorcycleModel,
       build.concept,
-      build.description?.slice(0, 400) + "...",
+      build.description?.slice(0, 200) + "...",
     ].filter((mod): mod is string => Boolean(mod)),
   }));
 

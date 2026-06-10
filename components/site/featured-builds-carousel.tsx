@@ -72,7 +72,7 @@ export function FeaturedBuildsCarousel({
         </div>
 
         <div className="relative">
-          {builds.length > 1 && (
+          {builds.length > 1 ? (
             <>
               <button
                 type="button"
@@ -90,15 +90,18 @@ export function FeaturedBuildsCarousel({
                 <ChevronRight size={20} />
               </button>
             </>
-          )}
+          ) : null}
 
           <div className="overflow-hidden px-12 py-5" ref={emblaRef}>
             <div className="flex gap-4">
               {builds.map((build) => (
-                <div key={build.id} className="flex-[0_0_280px] px-1 py-3">
-                  <Link href={`/builds/${build.id}`} className="cursor-pointer">
-                    <div className="group overflow-hidden border border-white/10 bg-zinc-950 transition-all duration-300 ease-out hover:-translate-y-3 hover:scale-[1.02] hover:border-red-600/70 hover:bg-zinc-900 hover:shadow-[0_0_30px_rgba(220,38,38,0.25)]">
-                      <div className="relative h-56 overflow-hidden">
+                <div key={build.id} className="flex flex-[0_0_280px] px-1 py-3">
+                  <Link
+                    href={`/builds/${build.id}`}
+                    className="flex w-full cursor-pointer"
+                  >
+                    <div className="group flex min-h-[500px] w-full flex-col overflow-hidden border border-white/10 bg-zinc-950 transition-all duration-300 ease-out hover:-translate-y-3 hover:scale-[1.02] hover:border-red-600/70 hover:bg-zinc-900 hover:shadow-[0_0_30px_rgba(220,38,38,0.25)]">
+                      <div className="relative h-56 shrink-0 overflow-hidden">
                         <Image
                           src={build.image}
                           alt={build.title}
@@ -107,11 +110,11 @@ export function FeaturedBuildsCarousel({
                           className="object-cover"
                         />
 
-                        <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                       </div>
 
-                      <div className="border-t border-red-600/30 p-4">
-                        <h3 className="mb-2 text-sm font-black uppercase text-white">
+                      <div className="flex flex-1 flex-col border-t border-red-600/30 p-4">
+                        <h3 className="mb-2 line-clamp-2 text-sm font-black uppercase text-white">
                           {build.title}
                         </h3>
 
@@ -121,12 +124,18 @@ export function FeaturedBuildsCarousel({
 
                         <ul className="space-y-1 text-xs text-zinc-300">
                           {build.mods.slice(0, 4).map((mod) => (
-                            <li key={mod} className="flex gap-2">
-                              <span className="text-red-500">•</span>
-                              {mod}
+                            <li key={mod} className="line-clamp-2 flex gap-2">
+                              <span className="shrink-0 text-red-500">•</span>
+                              <span>{mod}</span>
                             </li>
                           ))}
                         </ul>
+
+                        <div className="mt-auto pt-4">
+                          <div className="flex items-center justify-center rounded-md border border-red-600/40 bg-red-600/10 px-3 py-2 text-xs font-black uppercase tracking-wider text-red-500 transition-all duration-300 group-hover:border-red-500 group-hover:bg-red-600/20 group-hover:text-red-400">
+                            View Full Specs →
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -135,7 +144,7 @@ export function FeaturedBuildsCarousel({
             </div>
           </div>
 
-          {builds.length > 1 && (
+          {builds.length > 1 ? (
             <div className="mt-6 flex justify-center gap-2">
               {scrollSnaps.map((_, index) => (
                 <button
@@ -151,21 +160,30 @@ export function FeaturedBuildsCarousel({
                 />
               ))}
             </div>
-          )}
+          ) : null}
         </div>
+
         {builds.length > 5 ? (
           <>
             <div className="mt-5 flex justify-center">
-              <button className="hidden items-center -skew-x-12 gap-2 rounded-sm border border-red-700/70 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-red-700 sm:flex">
-                View All Builds
-                <span className="text-red-500">›</span>
-              </button>
+              <Link
+                href="/builds"
+                className="hidden items-center -skew-x-12 gap-2 rounded-sm border border-red-700/70 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-red-700 sm:flex"
+              >
+                <span className="skew-x-12">View All Builds</span>
+                <span className="skew-x-12 text-red-500">›</span>
+              </Link>
             </div>
 
             <div className="mt-5 flex justify-center sm:hidden">
-              <button className="rounded-sm border  -skew-x-12 border-red-700/70 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-red-700">
-                View All Builds <span className="text-red-500">›</span>
-              </button>
+              <Link
+                href="/builds"
+                className="-skew-x-12 rounded-sm border border-red-700/70 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-red-700"
+              >
+                <span className="inline-block skew-x-12">
+                  View All Builds <span className="text-red-500">›</span>
+                </span>
+              </Link>
             </div>
           </>
         ) : null}
