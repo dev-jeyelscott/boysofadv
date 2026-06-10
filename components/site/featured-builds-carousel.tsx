@@ -100,7 +100,7 @@ export function FeaturedBuildsCarousel({
                     href={`/builds/${build.id}`}
                     className="flex w-full cursor-pointer"
                   >
-                    <div className="group flex min-h-[500px] w-full flex-col overflow-hidden border border-white/10 bg-zinc-950 transition-all duration-300 ease-out hover:-translate-y-3 hover:scale-[1.02] hover:border-red-600/70 hover:bg-zinc-900 hover:shadow-[0_0_30px_rgba(220,38,38,0.25)]">
+                    <div className="group flex min-h-125 w-full flex-col overflow-hidden border border-white/10 bg-zinc-950 transition-all duration-300 ease-out hover:-translate-y-3 hover:scale-[1.02] hover:border-red-600/70 hover:bg-zinc-900 hover:shadow-[0_0_30px_rgba(220,38,38,0.25)]">
                       <div className="relative h-56 shrink-0 overflow-hidden">
                         <Image
                           src={build.image}
@@ -110,7 +110,7 @@ export function FeaturedBuildsCarousel({
                           className="object-cover"
                         />
 
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
                       </div>
 
                       <div className="flex flex-1 flex-col border-t border-red-600/30 p-4">
