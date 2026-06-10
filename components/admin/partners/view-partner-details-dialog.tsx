@@ -148,7 +148,7 @@ function InfoItem({
           <ExternalLink className="size-4 shrink-0" />
         </a>
       ) : (
-        <p className="break-words text-sm text-white/70">{displayValue}</p>
+        <p className="wrap-break-word text-sm text-white/70">{displayValue}</p>
       )}
     </div>
   );

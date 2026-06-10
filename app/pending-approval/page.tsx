@@ -31,6 +31,36 @@ export default async function PendingApprovalPage() {
           approval before you can access member features.
         </p>
 
+        <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+          <p className="text-sm font-black uppercase tracking-wider text-red-500">
+            Need Assistance?
+          </p>
+
+          <p className="mt-2 text-sm text-white/70">
+            If your approval is taking longer than expected, you can message
+            <a
+              href="https://www.facebook.com/papichulomotovlog"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold  tracking-widest text-red-600"
+            >
+              {" "}
+              PAPiCHULO{" "}
+            </a>
+            or
+            <a
+              href="https://www.facebook.com/profile.php?id=61576342027040"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold  tracking-widest text-red-600"
+            >
+              {" "}
+              Pulang ADV{" "}
+            </a>
+            on Facebook.
+          </p>
+        </div>
+
         <div className="mt-8 flex justify-between gap-4">
           <Link
             href={"/"}

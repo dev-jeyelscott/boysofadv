@@ -67,7 +67,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
                 className="border-white/10 text-sm text-white/80 hover:bg-white/3"
               >
                 <TableCell className="p-4 align-top text-center">
-                  <div className="whitespace-normal break-words font-black text-white">
+                  <div className="whitespace-normal wrap-break-word font-black text-white">
                     {build.title}
                   </div>
                 </TableCell>
@@ -81,13 +81,13 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
                 </TableCell>
 
                 <TableCell className="p-4 align-top text-center text-white/70">
-                  <div className="whitespace-normal break-words">
+                  <div className="whitespace-normal wrap-break-word">
                     {build.motorcycleModel}
                   </div>
                 </TableCell>
 
                 <TableCell className="p-4 align-top text-center text-white/70">
-                  <div className="whitespace-normal break-words">
+                  <div className="whitespace-normal wrap-break-word">
                     {build.concept || "—"}
                   </div>
                 </TableCell>

@@ -80,7 +80,7 @@ export function MembersTable({ members }: MembersTableProps) {
                   className="border-white/10 transition hover:bg-white/3"
                 >
                   <TableCell className="p-4 align-top text-center">
-                    <div className="whitespace-normal break-words font-bold text-white">
+                    <div className="whitespace-normal wrap-break-word font-bold text-white">
                       {getFullName(member)}
                     </div>
 
@@ -88,19 +88,19 @@ export function MembersTable({ members }: MembersTableProps) {
                       {member.email || "—"}
                     </div>
 
-                    <div className="whitespace-normal break-words text-xs text-white/60">
+                    <div className="whitespace-normal wrap-break-word text-xs text-white/60">
                       {member.codename || "—"}
                     </div>
                   </TableCell>
 
                   <TableCell className="p-4 align-top text-center text-sm text-white/70">
-                    <div className="whitespace-normal break-words">
+                    <div className="whitespace-normal wrap-break-word">
                       {member.unit || "—"}
                     </div>
                   </TableCell>
 
                   <TableCell className="p-4 align-top text-center text-sm text-white/70">
-                    <div className="whitespace-normal break-words">
+                    <div className="whitespace-normal wrap-break-word">
                       {member.chapter || "—"}
                     </div>
                   </TableCell>
