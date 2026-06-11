@@ -72,6 +72,11 @@ export default async function AdminEventViewPage({ params }: Props) {
 
         <div className="flex gap-2">
           <Button
+            disabled={
+              event.status === "cancelled" ||
+              event.status === "draft" ||
+              event.status === "completed"
+            }
             asChild
             className="w-fit rounded-full bg-none px-4 border-white/50 font-black uppercase hover:bg-white/20 hover:border-white/70"
           >

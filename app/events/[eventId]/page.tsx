@@ -115,68 +115,67 @@ export default async function EventDetailsPage({ params }: Props) {
     <>
       <SiteHeader />
 
-      <main className="min-h-75vh bg-black text-white">
-        <section className="mx-auto max-w-6xl px-4 py-8 md:py-4">
-          <article className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]">
-            <div className="grid h-[80vh] lg:grid-cols-[420px_1fr]">
-              {/* LEFT - IMAGE */}
-              <div className="border-b border-white/10 bg-black lg:border-b-0 lg:border-r">
-                <Link
-                  href="/events"
-                  className="ml-4 mt-4 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white/60 transition hover:text-white"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Events
-                </Link>
-                <div className="sticky top-0 flex h-full items-center justify-center bg-black p-4">
+      <main className="min-h-screen bg-black text-white">
+        <section className="mx-auto max-w-6xl px-4 py-4 sm:py-6 lg:py-8">
+          <Link
+            href="/events"
+            className="mb-4 inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/50 transition hover:text-white"
+          >
+            <ArrowLeft className="size-4" />
+            Back to Events
+          </Link>
+
+          <article className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] lg:rounded-3xl">
+            <div className="grid gap-0 lg:grid-cols-[420px_1fr]">
+              {/* Poster */}
+              <div className="border-b border-white/10 bg-black lg:border-b-0 lg:border-r lg:border-white/10">
+                <div className="relative aspect-[4/5] w-full bg-neutral-950 sm:aspect-[16/10] lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] lg:aspect-auto">
                   {event.posterImageUrl ? (
-                    <div className="relative h-full w-full">
-                      <Image
-                        src={event.posterImageUrl}
-                        alt={event.title}
-                        fill
-                        priority
-                        sizes="420px"
-                        className="object-contain"
-                      />
-                    </div>
+                    <Image
+                      src={event.posterImageUrl}
+                      alt={event.title}
+                      fill
+                      priority
+                      sizes="(max-width: 1024px) 100vw, 420px"
+                      className="object-contain p-3 sm:p-4"
+                    />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-white/30">
+                    <div className="flex h-full items-center justify-center px-6 text-center text-sm font-bold uppercase tracking-widest text-white/30">
                       No Poster Available
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* RIGHT - DETAILS */}
-              <div className="no-scrollbar overflow-y-auto p-6 md:p-8">
+              {/* Details */}
+              <div className="p-4 sm:p-6 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:p-8">
                 <Badge
-                  className={`mb-4 border font-black uppercase tracking-wider ${getStatusClasses(
+                  className={`mb-4 border text-[10px] font-black uppercase tracking-widest ${getStatusClasses(
                     status,
                   )}`}
                 >
                   {status}
                 </Badge>
 
-                <h1 className="text-3xl font-black uppercase leading-tight md:text-5xl">
+                <h1 className="text-2xl font-black uppercase leading-tight tracking-tight sm:text-4xl lg:text-5xl">
                   {event.title}
                 </h1>
 
-                <div className="mt-6 grid gap-4">
+                <div className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2 lg:grid-cols-1">
                   <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                    <CalendarDays className="mt-1 h-5 w-5 shrink-0 text-red-500" />
+                    <CalendarDays className="mt-0.5 size-5 shrink-0 text-red-500" />
 
-                    <div>
-                      <p className="text-xs font-black uppercase tracking-widest text-white/40">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
                         Event Date
                       </p>
 
-                      <p className="mt-1 text-sm text-white/80">
+                      <p className="mt-1 text-sm leading-6 text-white/80">
                         {formatDate(event.startDate)}
                       </p>
 
                       {event.endDate && (
-                        <p className="text-sm text-white/50">
+                        <p className="mt-1 text-sm leading-6 text-white/50">
                           Until {formatDate(event.endDate)}
                         </p>
                       )}
@@ -184,14 +183,14 @@ export default async function EventDetailsPage({ params }: Props) {
                   </div>
 
                   <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                    <MapPin className="mt-1 h-5 w-5 shrink-0 text-red-500" />
+                    <MapPin className="mt-0.5 size-5 shrink-0 text-red-500" />
 
-                    <div>
-                      <p className="text-xs font-black uppercase tracking-widest text-white/40">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
                         Location
                       </p>
 
-                      <p className="mt-1 text-sm text-white/80">
+                      <p className="mt-1 break-words text-sm leading-6 text-white/80">
                         {event.location || "TBA"}
                       </p>
                     </div>
@@ -199,13 +198,13 @@ export default async function EventDetailsPage({ params }: Props) {
                 </div>
 
                 {event.description && (
-                  <section className="mt-8">
-                    <h2 className="mb-4 text-lg text-red-600 font-black uppercase tracking-wide">
+                  <section className="mt-6 sm:mt-8">
+                    <h2 className="mb-3 text-sm font-black uppercase tracking-widest text-red-500 sm:text-base">
                       About This Event
                     </h2>
 
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-                      <p className="whitespace-pre-wrap leading-8 text-white/70">
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+                      <p className="whitespace-pre-wrap text-sm leading-7 text-white/70 sm:text-base sm:leading-8">
                         {event.description}
                       </p>
                     </div>

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { SQL } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 
@@ -19,7 +20,6 @@ import { db } from "@/db/db";
 import { builds, events, partners, users } from "@/db/schema";
 import { BUILD_STATUSES } from "@/lib/constants/build";
 import { USER_STATUSES } from "@/lib/constants/user";
-import { ReactNode } from "react";
 
 export default async function DashboardPage() {
   const today = new Date();
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
         createdAt: events.createdAt,
       })
       .from(events)
-      .where(gte(events.startDate, today))
+      .where(and(eq(events.status, "published"), gte(events.startDate, today)))
       .orderBy(events.startDate)
       .limit(5),
   ]);
@@ -123,8 +123,8 @@ export default async function DashboardPage() {
       title="Dashboard"
       description="Live overview of members, builds, partners, and events."
     >
-      <div className="space-y-4">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="space-y-4 sm:space-y-5">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
             label="Total Members"
             value={totalMembers}
@@ -144,7 +144,7 @@ export default async function DashboardPage() {
           <StatCard
             label="Partners"
             value={totalPartners}
-            helper={`${featuredPartners} featured partners`}
+            helper={`${featuredPartners} official partners`}
             href="/admin/partners"
             icon={<Handshake className="size-5" />}
           />
@@ -158,14 +158,14 @@ export default async function DashboardPage() {
           />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <MiniStat label="Active Members" value={approvedMembers} />
           <MiniStat label="Suspended Members" value={suspendedMembers} />
           <MiniStat label="Published Builds" value={publishedBuilds} />
           <MiniStat label="Featured Builds" value={featuredBuildsCount} />
         </div>
 
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <AdminPanel
             title="Recent Members"
             href="/admin/members"
@@ -218,7 +218,7 @@ export default async function DashboardPage() {
                 meta={
                   partner.isOfficial ? "Official Partner" : "Standard Partner"
                 }
-                badge={partner.isOfficial ? "Official Partner" : "Partner"}
+                badge={partner.isOfficial ? "Official" : "Partner"}
                 href="/admin/partners"
               />
             ))}
@@ -276,23 +276,28 @@ function StatCard({
   return (
     <Link
       href={href}
-      className="group rounded-2xl border border-white/10 bg-white/4 p-5 transition hover:border-red-500/40 hover:bg-white/7"
+      className="group rounded-2xl border border-white/10 bg-white/4 p-4 transition hover:border-red-500/40 hover:bg-white/7 sm:p-5"
     >
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-xs font-black uppercase tracking-widest text-white/50">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-[11px] font-black uppercase tracking-widest text-white/50 sm:text-xs">
           {label}
         </p>
 
-        <div className="rounded-xl border border-white/10 bg-black/40 p-2 text-red-500">
+        <div className="shrink-0 rounded-xl border border-white/10 bg-black/40 p-2 text-red-500">
           {icon}
         </div>
       </div>
 
-      <h2 className="mt-4 text-4xl font-black text-white">{value}</h2>
+      <h2 className="mt-4 text-3xl font-black text-white sm:text-4xl">
+        {value}
+      </h2>
 
       <div className="mt-3 flex items-center justify-between gap-3">
-        <p className="text-sm text-white/50">{helper}</p>
-        <ArrowRight className="size-4 text-white/40 transition group-hover:translate-x-1 group-hover:text-red-500" />
+        <p className="line-clamp-2 text-xs text-white/50 sm:text-sm">
+          {helper}
+        </p>
+
+        <ArrowRight className="size-4 shrink-0 text-white/40 transition group-hover:translate-x-1 group-hover:text-red-500" />
       </div>
     </Link>
   );
@@ -301,10 +306,11 @@ function StatCard({
 function MiniStat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
-      <p className="text-xs font-black uppercase tracking-widest text-white/40">
+      <p className="text-[10px] font-black uppercase tracking-widest text-white/40 sm:text-xs">
         {label}
       </p>
-      <p className="mt-2 text-2xl font-black text-white">{value}</p>
+
+      <p className="mt-2 text-2xl font-black text-white sm:text-3xl">{value}</p>
     </div>
   );
 }
@@ -321,28 +327,27 @@ function AdminPanel({
   emptyText: string;
 }) {
   const items = Array.isArray(children) ? children.filter(Boolean) : children;
+  const isEmpty = Array.isArray(items) && items.length === 0;
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/4 p-6">
-      <div className="flex items-center justify-between gap-4">
-        <h2 className="text-xl font-black uppercase text-white">{title}</h2>
+    <section className="rounded-2xl border border-white/10 bg-white/4 p-4 sm:p-6">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-base font-black uppercase text-white sm:text-xl">
+          {title}
+        </h2>
 
         <Button
           asChild
           size="sm"
           variant="outline"
-          className="border-white/10 bg-white/3 text-white hover:bg-white/10 hover:text-white"
+          className="h-9 shrink-0 border-white/10 bg-white/3 px-3 text-xs text-white hover:bg-white/10 hover:text-white sm:text-sm"
         >
           <Link href={href}>View all</Link>
         </Button>
       </div>
 
-      <div className="mt-5 grid gap-3">
-        {Array.isArray(items) && items.length === 0 ? (
-          <EmptyState text={emptyText} />
-        ) : (
-          children
-        )}
+      <div className="mt-4 grid gap-3 sm:mt-5">
+        {isEmpty ? <EmptyState text={emptyText} /> : children}
       </div>
     </section>
   );
@@ -362,17 +367,20 @@ function ListItem({
   return (
     <Link
       href={href}
-      className="group rounded-xl border border-white/10 bg-black/40 p-4 transition hover:border-red-500/40 hover:bg-black/60"
+      className="group block rounded-xl border border-white/10 bg-black/40 p-4 transition hover:border-red-500/40 hover:bg-black/60"
     >
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="font-black text-white group-hover:text-red-400">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <p className="line-clamp-1 font-black text-white group-hover:text-red-400">
             {title}
           </p>
-          <p className="mt-1 text-sm text-white/50">{meta || "—"}</p>
+
+          <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/50 sm:text-sm">
+            {meta || "—"}
+          </p>
         </div>
 
-        <Badge className="border-white/10 bg-white/10 text-white hover:bg-white/10">
+        <Badge className="w-fit shrink-0 border-white/10 bg-white/10 text-xs text-white hover:bg-white/10">
           {badge}
         </Badge>
       </div>
