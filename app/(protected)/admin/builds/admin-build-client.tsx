@@ -25,14 +25,14 @@ export function AdminBuildsClient({ builds }: Props) {
     router.push(`/admin/builds?${params.toString()}`);
   }
 
-  async function handlePublish(buildId: string, userId: string) {
-    await publishBuild(buildId, userId);
+  async function handlePublish(buildId: string) {
+    await publishBuild(buildId);
     toast.success("Build published.");
     router.refresh();
   }
 
-  async function handleReject(buildId: string, userId: string) {
-    await rejectBuild(buildId, userId);
+  async function handleReject(buildId: string) {
+    await rejectBuild(buildId);
     toast.success("Build rejected.");
     router.refresh();
   }

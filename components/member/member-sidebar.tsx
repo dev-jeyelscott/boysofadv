@@ -249,7 +249,7 @@ export function MemberSidebar() {
           return;
         }
 
-        const response = await fetch("/api/push-subscriptions/status", {
+        const response = await fetch("/api/push/status", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

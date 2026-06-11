@@ -98,7 +98,7 @@ async function savePushSubscription(subscription: PushSubscriptionPayload) {
 }
 
 async function checkPushSubscriptionEnabled(endpoint: string) {
-  const response = await fetch("/api/push-subscriptions/status", {
+  const response = await fetch("/api/push/status", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

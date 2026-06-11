@@ -91,7 +91,7 @@ export async function toggleBuildLike(buildId: string) {
 
       try {
         await sendPushNotificationToUser(build.ownerId, {
-          title: "❤️ New Build Like",
+          title: "New Build Like",
           body: `${likerName} liked your build "${build.title}".`,
           url: `/builds/${build.slug}`,
         });
