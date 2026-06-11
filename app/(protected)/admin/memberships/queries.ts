@@ -1,4 +1,3 @@
-// app/(protected)/admin/membership-approvals/queries.ts
 import { and, desc, eq, ilike, ne, or, sql } from "drizzle-orm";
 
 import { db } from "@/db/db";

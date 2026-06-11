@@ -1,4 +1,3 @@
-// db/schema.ts
 import { pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { builds } from "./builds";
 import { users } from "./users";

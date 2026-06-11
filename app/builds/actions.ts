@@ -7,6 +7,7 @@ import { buildLikes, builds, users } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { nanoid } from "nanoid";
 import { getCurrentDbUser } from "@/lib/current-user";
+import { sendPushNotificationToUser } from "@/lib/send-push-notification";
 
 const LIMIT = 20;
 
@@ -59,11 +60,46 @@ export async function toggleBuildLike(buildId: string) {
   if (existingLike) {
     await db.delete(buildLikes).where(eq(buildLikes.id, existingLike.id));
   } else {
+    const [build] = await db
+      .select({
+        id: builds.id,
+        title: builds.title,
+        slug: builds.slug,
+        ownerId: builds.userId,
+      })
+      .from(builds)
+      .where(eq(builds.id, buildId))
+      .limit(1);
+
+    if (!build) {
+      return {
+        ok: false,
+        message: "This build no longer exists.",
+      };
+    }
+
     await db.insert(buildLikes).values({
       id: nanoid(),
       buildId,
       userId: user.id,
     });
+
+    // Don't notify yourself when liking your own build
+    if (build && build.ownerId !== user.id) {
+      const likerName =
+        user.nickname || user.firstName || user.codename || "A member";
+
+      try {
+        await sendPushNotificationToUser(build.ownerId, {
+          title: "❤️ New Build Like",
+          body: `${likerName} liked your build "${build.title}".`,
+          url: `/builds/${build.slug}`,
+        });
+      } catch (error) {
+        // Log but don't fail the action - like was successful
+        console.error("Failed to send build like notification:", error);
+      }
+    }
   }
 
   revalidatePath(`/builds/${buildId}`);

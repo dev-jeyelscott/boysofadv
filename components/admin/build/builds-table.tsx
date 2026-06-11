@@ -15,8 +15,8 @@ import { BuildActionMenu } from "./build-action-menu";
 type Props = {
   builds: AdminBuildRow[];
   onView: (build: AdminBuildRow) => void;
-  onPublish: (buildId: string) => void;
-  onReject: (buildId: string) => void;
+  onPublish: (buildId: string, stringId: string) => void;
+  onReject: (buildId: string, stringId: string) => void;
 };
 
 export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
@@ -45,8 +45,8 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
               <BuildActionMenu
                 status={build.status}
                 onView={() => onView(build)}
-                onPublish={() => onPublish(build.id)}
-                onReject={() => onReject(build.id)}
+                onPublish={() => onPublish(build.id, build.ownerId)}
+                onReject={() => onReject(build.id, build.ownerId)}
               />
             </div>
 
@@ -188,8 +188,8 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
                       <BuildActionMenu
                         status={build.status}
                         onView={() => onView(build)}
-                        onPublish={() => onPublish(build.id)}
-                        onReject={() => onReject(build.id)}
+                        onPublish={() => onPublish(build.id, build.ownerId)}
+                        onReject={() => onReject(build.id, build.ownerId)}
                       />
                     </div>
                   </TableCell>

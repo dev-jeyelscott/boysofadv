@@ -211,20 +211,3 @@ export async function updateMyBuild(formData: FormData) {
     };
   }
 }
-
-// export async function updateAccountSettings(formData: FormData) {
-//   const user = await getCurrentMember();
-
-//   await db
-//     .update(users)
-//     .set({
-//       displayName: String(formData.get("displayName") || ""),
-//       showProfilePublicly: formData.get("showProfilePublicly") === "on",
-//       showBuildPublicly: formData.get("showBuildPublicly") === "on",
-//       showSocialLinks: formData.get("showSocialLinks") === "on",
-//       updatedAt: new Date(),
-//     })
-//     .where(eq(users.id, user.id));
-
-//   revalidatePath("/member/account-settings");
-// }

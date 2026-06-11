@@ -23,57 +23,9 @@ const navigation = [
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
-        <Link href="/" className="flex shrink-0 items-center">
-          <Image
-            src="/images/boysofadv.png"
-            alt="Boys of ADV"
-            width={110}
-            height={42}
-            priority
-            className="h-auto w-[105px] sm:w-[130px]"
-          />
-        </Link>
-
-        <div className="hidden items-center gap-8 md:flex">
-          <nav className="flex items-center gap-8 text-sm font-black uppercase tracking-wide text-white/70">
-            {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="transition duration-300 ease-out hover:scale-105 hover:text-white"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <Show when="signed-out">
-              <SignInButton>
-                <button className="-skew-x-12 bg-red-600 px-5 py-2 text-sm font-black uppercase tracking-wide text-white transition duration-300 ease-out hover:scale-105 hover:bg-red-700">
-                  Sign In
-                </button>
-              </SignInButton>
-
-              <SignUpButton>
-                <button className="-skew-x-12 border border-red-600 px-5 py-2 text-sm font-black uppercase tracking-wide text-white transition duration-300 ease-out hover:scale-105 hover:bg-white/20">
-                  Sign Up
-                </button>
-              </SignUpButton>
-            </Show>
-
-            <Show when="signed-in">
-              <CustomUserButton />
-            </Show>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 md:hidden">
-          <Show when="signed-in">
-            <CustomUserButton />
-          </Show>
-
+      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4 sm:h-20 sm:px-6 md:flex md:justify-between lg:px-8">
+        {/* Mobile left: menu */}
+        <div className="flex items-center justify-start md:hidden">
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -87,10 +39,11 @@ export function SiteHeader() {
             </SheetTrigger>
 
             <SheetContent
-              side="right"
+              side="left"
               className="w-[82vw] max-w-xs border-white/10 bg-zinc-950 px-5 text-white"
             >
               <SheetTitle className="sr-only">Site navigation</SheetTitle>
+
               <div className="flex h-full flex-col pt-12">
                 <nav className="flex flex-col gap-2">
                   {navigation.map((item) => (
@@ -127,6 +80,74 @@ export function SiteHeader() {
               </div>
             </SheetContent>
           </Sheet>
+        </div>
+
+        {/* Center logo on mobile */}
+        <Link
+          href="/"
+          className="flex shrink-0 items-center justify-center md:justify-start"
+        >
+          <Image
+            src="/images/boysofadv.png"
+            alt="Boys of ADV"
+            width={110}
+            height={42}
+            priority
+            className="h-auto w-[105px] sm:w-[130px]"
+          />
+        </Link>
+
+        {/* Mobile right: user menu */}
+        <div className="flex items-center justify-end md:hidden">
+          <Show when="signed-in">
+            <CustomUserButton />
+          </Show>
+
+          <Show when="signed-out">
+            <SignInButton>
+              <Button
+                size="sm"
+                className="h-9 bg-red-600 px-3 text-xs font-black uppercase hover:bg-red-700"
+              >
+                Sign In
+              </Button>
+            </SignInButton>
+          </Show>
+        </div>
+
+        {/* Desktop nav */}
+        <div className="hidden items-center gap-8 md:flex">
+          <nav className="flex items-center gap-8 text-sm font-black uppercase tracking-wide text-white/70">
+            {navigation.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="transition duration-300 ease-out hover:scale-105 hover:text-white"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <Show when="signed-out">
+              <SignInButton>
+                <button className="-skew-x-12 bg-red-600 px-5 py-2 text-sm font-black uppercase tracking-wide text-white transition duration-300 ease-out hover:scale-105 hover:bg-red-700">
+                  Sign In
+                </button>
+              </SignInButton>
+
+              <SignUpButton>
+                <button className="-skew-x-12 border border-red-600 px-5 py-2 text-sm font-black uppercase tracking-wide text-white transition duration-300 ease-out hover:scale-105 hover:bg-white/20">
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </Show>
+
+            <Show when="signed-in">
+              <CustomUserButton />
+            </Show>
+          </div>
         </div>
       </div>
     </header>

@@ -107,7 +107,6 @@ export async function getAdminBuilds({
           id: galleryImages.id,
           buildId: galleryImages.buildId,
           imageUrl: galleryImages.imageUrl,
-          // imageKey: galleryImages.imageKey,
         })
         .from(galleryImages)
         .where(inArray(galleryImages.buildId, buildIds))

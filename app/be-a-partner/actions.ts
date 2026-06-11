@@ -2,6 +2,7 @@
 
 import { db } from "@/db/db";
 import { partnerInquiries } from "@/db/schema";
+import { sendPushNotificationToAllAdmins } from "@/lib/send-push-notification";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -21,6 +22,12 @@ export async function submitPartnerInquiry(formData: FormData) {
     status: "new",
     createdAt: new Date(),
     updatedAt: new Date(),
+  });
+
+  await sendPushNotificationToAllAdmins({
+    title: "Partnership",
+    body: `There's a new partnership inquiry for us. Check it out!`,
+    url: "/admin/partnerships",
   });
 
   revalidatePath("/be-a-partner");

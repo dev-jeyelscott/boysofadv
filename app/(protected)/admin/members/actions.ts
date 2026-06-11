@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 
 import { db } from "@/db/db";
 import { users } from "@/db/schema";
+import { sendPushNotificationToUser } from "@/lib/send-push-notification";
 
 export async function suspendMember(memberId: string) {
   await db
@@ -21,6 +22,12 @@ export async function markMemberAsActive(memberId: string) {
     .set({ status: "approved", updatedAt: new Date() })
     .where(eq(users.id, memberId));
 
+  await sendPushNotificationToUser(memberId, {
+    title: "Account Active",
+    body: `Your account is now active.`,
+    url: "/member/profile",
+  });
+
   revalidatePath("/admin/members");
 }
 
@@ -29,6 +36,12 @@ export async function promoteMemberToAdmin(memberId: string) {
     .update(users)
     .set({ role: "admin", updatedAt: new Date() })
     .where(eq(users.id, memberId));
+
+  await sendPushNotificationToUser(memberId, {
+    title: "You've been Promoted",
+    body: `Congratulations! You've been promoted as Boys of ADV Admin.`,
+    url: "/admin/dashboard",
+  });
 
   revalidatePath("/admin/members");
 }

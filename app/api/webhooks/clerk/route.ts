@@ -3,6 +3,7 @@ import { db } from "@/db/db";
 import { users } from "@/db/schema";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextRequest } from "next/server";
+import { sendPushNotificationToAllAdmins } from "@/lib/send-push-notification";
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,6 +34,17 @@ export async function POST(req: NextRequest) {
       lastName: user.last_name,
       role: role,
       status: status,
+    });
+
+    const nameOrEmail =
+      user.first_name && user.last_name
+        ? `${user.first_name} ${user.last_name}`
+        : user.email_addresses[0].email_address;
+
+    await sendPushNotificationToAllAdmins({
+      title: "New Member Registration",
+      body: `${nameOrEmail} submitted a membership application.`,
+      url: "/admin/members",
     });
 
     return Response.json({ received: true });

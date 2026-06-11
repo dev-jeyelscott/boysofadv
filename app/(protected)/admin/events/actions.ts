@@ -7,6 +7,7 @@ import { randomUUID } from "crypto";
 import { db } from "@/db/db";
 import { events } from "@/db/schema";
 import { EVENT_STATUSES } from "@/lib/constants/event";
+import { sendPushNotificationToAllApprovedUsers } from "@/lib/send-push-notification";
 
 type EventStatus = (typeof EVENT_STATUSES)[number];
 
@@ -26,6 +27,52 @@ function createSlug(value: string) {
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
+}
+
+function getEventNotificationPayload(params: {
+  eventId: string;
+  title: string;
+  status: EventStatus;
+  action: "created" | "updated";
+}) {
+  const { eventId, title, status, action } = params;
+
+  if (status === "draft") return null;
+
+  if (status === "published") {
+    return {
+      title: action === "created" ? "New Event Published" : "Event Published",
+      body: title,
+      url: `/events/${eventId}`,
+    };
+  }
+
+  if (status === "cancelled") {
+    return {
+      title: "Event Cancelled",
+      body: title,
+      url: `/events/${eventId}`,
+    };
+  }
+
+  return {
+    title: "Event Status Updated",
+    body: `${title} is now ${status}.`,
+    url: `/events/${eventId}`,
+  };
+}
+
+async function sendEventStatusPushNotification(params: {
+  eventId: string;
+  title: string;
+  status: EventStatus;
+  action: "created" | "updated";
+}) {
+  const payload = getEventNotificationPayload(params);
+
+  if (!payload) return;
+
+  await sendPushNotificationToAllApprovedUsers(payload);
 }
 
 export type EventActionState = {
@@ -59,12 +106,9 @@ export async function createEventAction(
 
     const id = randomUUID();
 
-    const latitudeValue = latitude ? latitude.toString() : null;
-    const longitudeValue = longitude ? longitude.toString() : null;
-    const geoRadiusMetersValue =
-      typeof geoRadiusMeters === "string"
-        ? Number(geoRadiusMeters)
-        : geoRadiusMeters;
+    const latitudeValue = latitude || null;
+    const longitudeValue = longitude || null;
+    const geoRadiusMetersValue = geoRadiusMeters ? Number(geoRadiusMeters) : 80;
 
     await db.insert(events).values({
       id,
@@ -74,12 +118,19 @@ export async function createEventAction(
       location: location || null,
       latitude: latitudeValue,
       longitude: longitudeValue,
-      geoRadiusMeters: geoRadiusMetersValue || 80,
+      geoRadiusMeters: geoRadiusMetersValue,
       startDate: new Date(startDate),
       endDate: endDate ? new Date(endDate) : null,
       status,
       posterImageUrl: posterImageUrl || null,
       posterImageKey: posterImageKey || null,
+    });
+
+    await sendEventStatusPushNotification({
+      eventId: id,
+      title,
+      status,
+      action: "created",
     });
 
     revalidatePath("/admin/events");
@@ -121,12 +172,21 @@ export async function updateEventAction(
       throw new Error("Missing required event fields.");
     }
 
-    const latitudeValue = latitude ? latitude.toString() : null;
-    const longitudeValue = longitude ? longitude.toString() : null;
-    const geoRadiusMetersValue =
-      typeof geoRadiusMeters === "string"
-        ? Number(geoRadiusMeters)
-        : geoRadiusMeters;
+    const [currentEvent] = await db
+      .select({
+        status: events.status,
+      })
+      .from(events)
+      .where(eq(events.id, id))
+      .limit(1);
+
+    if (!currentEvent) {
+      throw new Error("Event not found.");
+    }
+
+    const latitudeValue = latitude || null;
+    const longitudeValue = longitude || null;
+    const geoRadiusMetersValue = geoRadiusMeters ? Number(geoRadiusMeters) : 80;
 
     await db
       .update(events)
@@ -136,7 +196,7 @@ export async function updateEventAction(
         location: location || null,
         latitude: latitudeValue,
         longitude: longitudeValue,
-        geoRadiusMeters: geoRadiusMetersValue || 80,
+        geoRadiusMeters: geoRadiusMetersValue,
         startDate: new Date(startDate),
         endDate: endDate ? new Date(endDate) : null,
         status,
@@ -146,7 +206,17 @@ export async function updateEventAction(
       })
       .where(eq(events.id, id));
 
+    if (currentEvent.status !== status) {
+      await sendEventStatusPushNotification({
+        eventId: id,
+        title,
+        status,
+        action: "updated",
+      });
+    }
+
     revalidatePath("/admin/events");
+
     return {
       success: true,
       message: "Event successfully updated.",
