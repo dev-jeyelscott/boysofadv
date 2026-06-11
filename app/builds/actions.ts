@@ -1,9 +1,12 @@
 "use server";
 
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 import { db } from "@/db/db";
-import { builds, users } from "@/db/schema";
+import { buildLikes, builds, users } from "@/db/schema";
+import { revalidatePath } from "next/cache";
+import { nanoid } from "nanoid";
+import { getCurrentDbUser } from "@/lib/current-user";
 
 const LIMIT = 20;
 
@@ -34,5 +37,39 @@ export async function getPublishedBuilds(offset = 0) {
   return {
     builds: rows.slice(0, LIMIT),
     hasMore: rows.length > LIMIT,
+  };
+}
+
+export async function toggleBuildLike(buildId: string) {
+  const user = await getCurrentDbUser();
+
+  if (!user) {
+    return {
+      ok: false,
+      message: "You need to sign in to like this build.",
+    };
+  }
+
+  const [existingLike] = await db
+    .select({ id: buildLikes.id })
+    .from(buildLikes)
+    .where(and(eq(buildLikes.buildId, buildId), eq(buildLikes.userId, user.id)))
+    .limit(1);
+
+  if (existingLike) {
+    await db.delete(buildLikes).where(eq(buildLikes.id, existingLike.id));
+  } else {
+    await db.insert(buildLikes).values({
+      id: nanoid(),
+      buildId,
+      userId: user.id,
+    });
+  }
+
+  revalidatePath(`/builds/${buildId}`);
+
+  return {
+    ok: true,
+    liked: !existingLike,
   };
 }
