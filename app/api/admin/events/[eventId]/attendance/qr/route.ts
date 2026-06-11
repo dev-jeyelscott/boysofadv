@@ -21,7 +21,7 @@ export async function GET(_request: Request, { params }: Props) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  if (user.role !== "admin") {
+  if (user.role === "member") {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }
 

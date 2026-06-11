@@ -38,16 +38,13 @@ const QR_ROTATION_SECONDS = 30;
 
 export function EventAttendanceClient({ event, attendance }: Props) {
   const [secondsLeft, setSecondsLeft] = useState(QR_ROTATION_SECONDS);
-
   const [checkInUrl, setCheckInUrl] = useState("");
   const [isLoadingQr, setIsLoadingQr] = useState(true);
+  const [qrError, setQrError] = useState<string | null>(null);
 
   useEffect(() => {
     refreshQr();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [event.id]);
 
-  useEffect(() => {
     const timer = setInterval(() => {
       setSecondsLeft((current) => {
         if (current <= 1) {
@@ -64,28 +61,46 @@ export function EventAttendanceClient({ event, attendance }: Props) {
   }, [event.id]);
 
   async function refreshQr() {
-    setIsLoadingQr(true);
+    try {
+      setIsLoadingQr(true);
+      setQrError(null);
 
-    const response = await fetch(
-      `/api/admin/events/${event.id}/attendance/qr`,
-      {
-        cache: "no-store",
-      },
-    );
+      const response = await fetch(
+        `/api/admin/events/${event.id}/attendance/qr?t=${Date.now()}`,
+        {
+          cache: "no-store",
+        },
+      );
 
-    if (!response.ok) {
+      if (!response.ok) {
+        const message = await response.text();
+
+        setCheckInUrl("");
+        setQrError(`QR request failed: ${response.status} ${message}`);
+        return;
+      }
+
+      const data = (await response.json()) as {
+        checkInUrl?: string;
+        expiresInSeconds?: number;
+      };
+
+      if (!data.checkInUrl) {
+        setCheckInUrl("");
+        setQrError("API did not return checkInUrl.");
+        return;
+      }
+
+      setCheckInUrl(data.checkInUrl);
+      setSecondsLeft(data.expiresInSeconds ?? QR_ROTATION_SECONDS);
+    } catch (error) {
+      setCheckInUrl("");
+      setQrError(
+        error instanceof Error ? error.message : "Failed to generate QR.",
+      );
+    } finally {
       setIsLoadingQr(false);
-      return;
     }
-
-    const data = (await response.json()) as {
-      checkInUrl: string;
-      expiresInSeconds: number;
-    };
-
-    setCheckInUrl(data.checkInUrl);
-    setSecondsLeft(data.expiresInSeconds);
-    setIsLoadingQr(false);
   }
 
   return (
@@ -126,6 +141,7 @@ export function EventAttendanceClient({ event, attendance }: Props) {
 
           <div className="grid gap-3 text-sm text-white/60">
             <Info label="Location" value={event.location || "—"} />
+
             <Info
               label="Start"
               value={
@@ -134,6 +150,7 @@ export function EventAttendanceClient({ event, attendance }: Props) {
                   : "—"
               }
             />
+
             <Info
               label="End"
               value={
@@ -163,12 +180,16 @@ export function EventAttendanceClient({ event, attendance }: Props) {
           </div>
 
           <div className="rounded-3xl bg-white p-5">
-            {checkInUrl && !isLoadingQr ? (
+            {qrError ? (
+              <div className="flex aspect-square items-center justify-center p-4 text-center text-xs font-black uppercase leading-5 text-red-600">
+                {qrError}
+              </div>
+            ) : checkInUrl && !isLoadingQr ? (
               <QRCodeSVG
                 value={checkInUrl}
                 size={340}
                 level="H"
-                className="h-full w-full"
+                className="h-auto w-full"
               />
             ) : (
               <div className="flex aspect-square items-center justify-center text-sm font-black uppercase text-black/50">
@@ -177,17 +198,19 @@ export function EventAttendanceClient({ event, attendance }: Props) {
             )}
           </div>
 
-          <div className="mt-5 flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/30 p-4">
+          <div className="mt-5 flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/30 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-white/40">
                 Refreshes In
               </p>
+
               <p className="text-3xl font-black text-white">{secondsLeft}s</p>
             </div>
 
             <Button
               type="button"
               onClick={refreshQr}
+              disabled={isLoadingQr}
               className="rounded-full bg-red-600 font-black uppercase text-white hover:bg-red-500"
             >
               <RefreshCcw className="mr-2 h-4 w-4" />
@@ -279,6 +302,7 @@ function Info({ label, value }: { label: string; value: string }) {
       <p className="text-xs font-black uppercase tracking-widest text-white/40">
         {label}
       </p>
+
       <p className="mt-1 break-words font-semibold text-white">{value}</p>
     </div>
   );
