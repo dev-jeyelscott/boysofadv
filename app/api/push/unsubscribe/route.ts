@@ -27,5 +27,5 @@ export async function POST(request: Request) {
       ),
     );
 
-  return NextResponse.json({ message: "Unsubscribed." });
+  return NextResponse.json({ message: "Push notification disablded." });
 }

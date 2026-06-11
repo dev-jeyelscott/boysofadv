@@ -5,21 +5,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bike, Home, LogOut, Menu, UserRound, X, Bell } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Switch } from "@/components/ui/switch";
-import {
-  deletePushSubscriptionsAction,
-  getPushNotificationStatusAction,
-  savePushSubscriptionAction,
-} from "./member-sidebar-action";
 
 const navItems = [
   { label: "Home", href: "/", icon: Home },
   { label: "Profile", href: "/member/profile", icon: UserRound },
   { label: "My Build", href: "/member/my-build", icon: Bike },
 ];
+
+type PushSubscriptionPayload = {
+  endpoint: string;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
+};
+
+type PushApiResponse = {
+  message?: string;
+};
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -32,31 +39,84 @@ function urlBase64ToUint8Array(base64String: string) {
   return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
 
+function toPushSubscriptionPayload(
+  subscription: PushSubscription,
+): PushSubscriptionPayload {
+  const subscriptionJson = subscription.toJSON();
+
+  return {
+    endpoint: subscriptionJson.endpoint ?? "",
+    keys: {
+      p256dh: subscriptionJson.keys?.p256dh ?? "",
+      auth: subscriptionJson.keys?.auth ?? "",
+    },
+  };
+}
+
+async function getServiceWorkerRegistration() {
+  if (!("serviceWorker" in navigator)) return null;
+
+  const registration = await navigator.serviceWorker.getRegistration();
+
+  if (registration) return registration;
+
+  return Promise.race<ServiceWorkerRegistration | null>([
+    navigator.serviceWorker.ready,
+    new Promise((resolve) => {
+      window.setTimeout(() => resolve(null), 3000);
+    }),
+  ]);
+}
+
+async function savePushSubscription(subscription: PushSubscriptionPayload) {
+  const response = await fetch("/api/push/subscribe", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(subscription),
+  });
+
+  const data = (await response.json().catch(() => ({}))) as PushApiResponse;
+
+  return {
+    success: response.ok,
+    message: data.message ?? "Failed to subscribe push subscription.",
+  };
+}
+
+async function unsubscribePushSubscription(endpoint: string) {
+  const response = await fetch("/api/push/unsubscribe", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ endpoint }),
+  });
+
+  const data = (await response.json().catch(() => ({}))) as PushApiResponse;
+
+  return {
+    success: response.ok,
+    message: data.message ?? "Failed to unsubscribe.",
+  };
+}
+
 export function MemberSidebar() {
   const { signOut } = useClerk();
   const pathname = usePathname();
 
   const [open, setOpen] = useState(false);
   const [alertsEnabled, setAlertsEnabled] = useState(false);
-  const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    startTransition(async () => {
-      const enabled = await getPushNotificationStatusAction();
-      setAlertsEnabled(enabled);
-    });
-  }, []);
+  const [isAlertsLoading, setIsAlertsLoading] = useState(false);
 
   async function enableAlerts() {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+    if (
+      !("serviceWorker" in navigator) ||
+      !("PushManager" in window) ||
+      !("Notification" in window)
+    ) {
       toast.error("Push notifications are not supported on this browser.");
-      return;
-    }
-
-    const permission = await Notification.requestPermission();
-
-    if (permission !== "granted") {
-      toast.error("Notification permission was denied.");
       setAlertsEnabled(false);
       return;
     }
@@ -69,7 +129,21 @@ export function MemberSidebar() {
       return;
     }
 
-    const registration = await navigator.serviceWorker.ready;
+    const permission = await Notification.requestPermission();
+
+    if (permission !== "granted") {
+      toast.error("Notification permission was denied.");
+      setAlertsEnabled(false);
+      return;
+    }
+
+    const registration = await getServiceWorkerRegistration();
+
+    if (!registration) {
+      toast.error("Service worker is not ready. Build and run the PWA first.");
+      setAlertsEnabled(false);
+      return;
+    }
 
     const existingSubscription =
       await registration.pushManager.getSubscription();
@@ -81,14 +155,8 @@ export function MemberSidebar() {
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
       }));
 
-    const result = await savePushSubscriptionAction(
-      subscription.toJSON() as {
-        endpoint: string;
-        keys: {
-          p256dh: string;
-          auth: string;
-        };
-      },
+    const result = await savePushSubscription(
+      toPushSubscriptionPayload(subscription),
     );
 
     if (!result.success) {
@@ -102,16 +170,23 @@ export function MemberSidebar() {
   }
 
   async function disableAlerts() {
-    if ("serviceWorker" in navigator) {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
+    const registration = await getServiceWorkerRegistration();
 
-      if (subscription) {
-        await subscription.unsubscribe();
-      }
+    if (!registration) {
+      setAlertsEnabled(false);
+      toast.success("Alerts disabled.");
+      return;
     }
 
-    const result = await deletePushSubscriptionsAction();
+    const subscription = await registration.pushManager.getSubscription();
+
+    if (!subscription) {
+      setAlertsEnabled(false);
+      toast.success("Alerts disabled.");
+      return;
+    }
+
+    const result = await unsubscribePushSubscription(subscription.endpoint);
 
     if (!result.success) {
       setAlertsEnabled(true);
@@ -119,34 +194,102 @@ export function MemberSidebar() {
       return;
     }
 
+    await subscription.unsubscribe();
+
     setAlertsEnabled(false);
     toast.success(result.message);
   }
 
-  function handleAlertsChange(checked: boolean) {
-    setAlertsEnabled(checked);
+  async function handleAlertsChange(checked: boolean) {
+    if (isAlertsLoading) return;
 
-    startTransition(async () => {
-      try {
-        if (checked) {
-          await enableAlerts();
-        } else {
-          await disableAlerts();
-        }
-      } catch (error) {
-        console.error(error);
-        setAlertsEnabled(!checked);
-        toast.error("Failed to update alert settings.");
+    const previousValue = alertsEnabled;
+
+    setAlertsEnabled(checked);
+    setIsAlertsLoading(true);
+
+    try {
+      if (checked) {
+        await enableAlerts();
+      } else {
+        await disableAlerts();
       }
-    });
+    } catch (error) {
+      console.error("Failed to update alert settings:", error);
+      setAlertsEnabled(previousValue);
+      toast.error("Failed to update alert settings.");
+    } finally {
+      setIsAlertsLoading(false);
+    }
   }
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function checkAlertsStatus() {
+      setIsAlertsLoading(true);
+
+      try {
+        if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+          if (mounted) setAlertsEnabled(false);
+          return;
+        }
+
+        const registration = await getServiceWorkerRegistration();
+
+        if (!registration) {
+          if (mounted) setAlertsEnabled(false);
+          return;
+        }
+
+        const subscription = await registration.pushManager.getSubscription();
+
+        if (!subscription) {
+          if (mounted) setAlertsEnabled(false);
+          return;
+        }
+
+        const response = await fetch("/api/push-subscriptions/status", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            endpoint: subscription.endpoint,
+          }),
+        });
+
+        if (!response.ok) {
+          if (mounted) setAlertsEnabled(false);
+          return;
+        }
+
+        const result = (await response.json()) as {
+          enabled: boolean;
+        };
+
+        if (mounted) setAlertsEnabled(result.enabled);
+      } catch (error) {
+        console.error("Failed to check alerts status:", error);
+        if (mounted) setAlertsEnabled(false);
+      } finally {
+        if (mounted) setIsAlertsLoading(false);
+      }
+    }
+
+    checkAlertsStatus();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed left-4 top-4 z-50 flex size-11 items-center justify-center rounded-xl border border-white/10 bg-black/90 text-white shadow-lg backdrop-blur transition hover:bg-white/10"
+        className="fixed right-4 top-4 z-40 flex size-11 items-center justify-center rounded-xl border border-white/10 bg-black/90 text-white shadow-lg backdrop-blur transition hover:bg-white/10 md:hidden"
         aria-label="Open member menu"
       >
         <Menu className="size-5" />
@@ -156,15 +299,16 @@ export function MemberSidebar() {
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm md:hidden"
           aria-label="Close member menu overlay"
         />
       )}
 
       <aside
         className={[
-          "fixed left-0 top-0 z-50 flex h-dvh w-72 flex-col border-r border-white/10 bg-black p-4 shadow-2xl transition-transform duration-300",
-          open ? "translate-x-0" : "-translate-x-full",
+          "fixed right-0 top-0 z-50 flex h-dvh w-72 flex-col border-l border-white/10 bg-black p-4 shadow-2xl transition-transform duration-300",
+          "md:sticky md:left-0 md:right-auto md:h-screen md:translate-x-0 md:border-r md:border-l-0",
+          open ? "translate-x-0" : "translate-x-full",
         ].join(" ")}
       >
         <div className="mb-8 flex items-center justify-between gap-4">
@@ -182,7 +326,7 @@ export function MemberSidebar() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="flex size-10 items-center justify-center rounded-xl border border-white/10 text-white/70 transition hover:bg-white/10 hover:text-white"
+            className="flex size-10 items-center justify-center rounded-xl border border-white/10 text-white/70 transition hover:bg-white/10 hover:text-white md:hidden"
             aria-label="Close member menu"
           >
             <X className="size-5" />
@@ -259,7 +403,7 @@ export function MemberSidebar() {
 
               <Switch
                 checked={alertsEnabled}
-                disabled={isPending}
+                disabled={isAlertsLoading}
                 onCheckedChange={handleAlertsChange}
               />
             </div>

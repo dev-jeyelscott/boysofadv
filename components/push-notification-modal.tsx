@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,15 +18,102 @@ import {
 const REMIND_LATER_KEY = "push-remind-later-until";
 const REMIND_LATER_MS = 12 * 60 * 60 * 1000;
 
+type PushSubscriptionPayload = {
+  endpoint: string;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
+};
+
+type PushApiResponse = {
+  message?: string;
+};
+
+type PushStatusResponse = {
+  enabled: boolean;
+};
+
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+
   const base64 = `${base64String}${padding}`
-    .replaceAll("-", "+")
-    .replaceAll("_", "/");
+    .replace(/-/g, "+")
+    .replace(/_/g, "/");
 
   const rawData = window.atob(base64);
 
   return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+}
+
+function isPushSupported() {
+  return (
+    "serviceWorker" in navigator &&
+    "PushManager" in window &&
+    "Notification" in window
+  );
+}
+
+async function getActiveServiceWorkerRegistration() {
+  await navigator.serviceWorker.register("/sw.js");
+
+  const registration = await navigator.serviceWorker.ready;
+
+  if (!registration.active) {
+    throw new Error("No active service worker.");
+  }
+
+  return registration;
+}
+
+function toPushSubscriptionPayload(
+  subscription: PushSubscription,
+): PushSubscriptionPayload {
+  const subscriptionJson = subscription.toJSON();
+
+  return {
+    endpoint: subscriptionJson.endpoint ?? "",
+    keys: {
+      p256dh: subscriptionJson.keys?.p256dh ?? "",
+      auth: subscriptionJson.keys?.auth ?? "",
+    },
+  };
+}
+
+async function savePushSubscription(subscription: PushSubscriptionPayload) {
+  const response = await fetch("/api/push/subscribe", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(subscription),
+  });
+
+  const data = (await response.json().catch(() => ({}))) as PushApiResponse;
+
+  return {
+    success: response.ok,
+    message: data.message ?? "Failed to save push subscription.",
+  };
+}
+
+async function checkPushSubscriptionEnabled(endpoint: string) {
+  const response = await fetch("/api/push-subscriptions/status", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+    body: JSON.stringify({ endpoint }),
+  });
+
+  if (!response.ok) {
+    return false;
+  }
+
+  const data = (await response.json()) as PushStatusResponse;
+
+  return data.enabled;
 }
 
 export function PushNotificationModal() {
@@ -36,48 +124,55 @@ export function PushNotificationModal() {
 
   useEffect(() => {
     async function checkShouldShowModal() {
-      if (!isLoaded) {
-        return;
-      }
-
-      if (!isSignedIn) {
+      if (!isLoaded || !isSignedIn) {
         setOpen(false);
         return;
       }
 
-      if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-        return;
-      }
-
-      if (!("Notification" in window)) {
-        return;
-      }
-
-      if (Notification.permission === "granted") {
+      if (!isPushSupported()) {
+        setOpen(false);
         return;
       }
 
       if (Notification.permission === "denied") {
+        setOpen(false);
         return;
       }
 
       const remindUntil = Number(localStorage.getItem(REMIND_LATER_KEY) ?? 0);
 
       if (Date.now() < remindUntil) {
+        setOpen(false);
         return;
       }
 
-      const registration = await navigator.serviceWorker.register("/sw.js");
-      const subscription = await registration.pushManager.getSubscription();
+      const registration = await getActiveServiceWorkerRegistration();
 
-      if (subscription) {
-        return;
+      const existingSubscription =
+        await registration.pushManager.getSubscription();
+
+      if (existingSubscription) {
+        const isEnabledInDb = await checkPushSubscriptionEnabled(
+          existingSubscription.endpoint,
+        );
+
+        if (isEnabledInDb) {
+          setOpen(false);
+          return;
+        }
+
+        await existingSubscription.unsubscribe();
       }
 
-      setOpen(true);
+      if (Notification.permission !== "granted") {
+        setOpen(true);
+      }
     }
 
-    checkShouldShowModal();
+    checkShouldShowModal().catch((error) => {
+      console.error("Push modal check failed:", error);
+      setOpen(false);
+    });
   }, [isLoaded, isSignedIn]);
 
   function remindMeLater() {
@@ -90,39 +185,58 @@ export function PushNotificationModal() {
   }
 
   async function enableAlerts() {
-    if (!isLoaded || !isSignedIn) {
-      setOpen(false);
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      const permission = await Notification.requestPermission();
-
-      if (permission !== "granted") {
+      if (!isPushSupported()) {
+        toast.error("Push notifications are not supported on this browser.");
+        setOpen(false);
         return;
       }
 
-      const registration = await navigator.serviceWorker.ready;
+      const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-        ),
-      });
+      if (!vapidPublicKey) {
+        toast.error("Missing VAPID public key.");
+        return;
+      }
 
-      await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(subscription),
-      });
+      const permission = await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        toast.error("Notification permission was denied.");
+        setOpen(false);
+        return;
+      }
+
+      const registration = await getActiveServiceWorkerRegistration();
+
+      const existingSubscription =
+        await registration.pushManager.getSubscription();
+
+      const subscription =
+        existingSubscription ??
+        (await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+        }));
+
+      const result = await savePushSubscription(
+        toPushSubscriptionPayload(subscription),
+      );
+
+      if (!result.success) {
+        toast.error(result.message);
+        return;
+      }
 
       localStorage.removeItem(REMIND_LATER_KEY);
+
+      toast.success(result.message);
       setOpen(false);
+    } catch (error) {
+      console.error("Enable alerts failed:", error);
+      toast.error("Failed to enable alerts.");
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +271,7 @@ export function PushNotificationModal() {
             disabled={isLoading}
             className="h-12 rounded-xl bg-red-600 font-black uppercase text-white hover:bg-red-700"
           >
-            Enable Alerts
+            {isLoading ? "Enabling..." : "Enable Alerts"}
           </Button>
 
           <Button

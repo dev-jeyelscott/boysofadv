@@ -112,9 +112,8 @@ export default function RootLayout({
         lang="en"
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
+        <PushNotificationModal />
         <body className="min-h-screen bg-black text-white">
-          <PushNotificationModal />
-
           {children}
 
           <Toaster richColors position="top-right" theme="dark" />

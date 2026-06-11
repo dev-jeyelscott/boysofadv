@@ -9,7 +9,10 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
+
   allowedDevOrigins: ["unsworn-stock-naturist.ngrok-free.dev"],
+
   images: {
     remotePatterns: [
       {
@@ -18,7 +21,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "*.ufs.sh",
+        hostname: "**.ufs.sh",
       },
       {
         protocol: "https",

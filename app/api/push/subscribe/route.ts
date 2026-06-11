@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { db } from "@/db/db";
 import { getCurrentDbUser } from "@/lib/current-user";
 import { pushSubscriptions } from "@/db/schema/push-subscriptions";
-import { eq } from "drizzle-orm";
 
 type PushSubscriptionBody = {
   endpoint: string;
@@ -45,12 +44,12 @@ export async function POST(request: Request) {
     .onConflictDoUpdate({
       target: pushSubscriptions.endpoint,
       set: {
+        userId: user.id,
         p256dh: subscription.keys.p256dh,
         auth: subscription.keys.auth,
         updatedAt: new Date(),
       },
-      where: eq(pushSubscriptions.userId, user.id),
     });
 
-  return NextResponse.json({ message: "Subscribed." });
+  return NextResponse.json({ message: "Push notification enabled." });
 }
