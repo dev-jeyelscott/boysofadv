@@ -2,9 +2,19 @@ import { SiteHeader } from "@/components/site/site-header";
 
 import { getPublishedBuilds } from "./actions";
 import { BuildsInfiniteGrid } from "./builds-infinite-grid";
+import { BuildsSearch } from "@/components/builds/buil-search";
 
-export default async function BuildsPage() {
-  const { builds, hasMore } = await getPublishedBuilds(0);
+type BuildsPageProps = {
+  searchParams: Promise<{
+    q?: string;
+  }>;
+};
+
+export default async function BuildsPage({ searchParams }: BuildsPageProps) {
+  const { q } = await searchParams;
+  const search = q ?? "";
+
+  const { builds, hasMore } = await getPublishedBuilds(0, search);
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -16,19 +26,28 @@ export default async function BuildsPage() {
         <div className="relative mx-auto max-w-7xl">
           <div className="mb-10 flex items-center justify-center gap-4">
             <div className="h-px flex-1 bg-red-600/40" />
+
             <h1 className="text-center text-3xl font-black uppercase tracking-tight text-white md:text-5xl">
               Member&apos;s Builds
             </h1>
+
             <div className="h-px flex-1 bg-red-600/40" />
           </div>
 
-          <p className="mx-auto mb-12 max-w-2xl text-center text-sm leading-7 text-white/60 md:text-base">
+          <p className="mx-auto mb-8 max-w-2xl text-center text-sm leading-7 text-white/60 md:text-base">
             Explore published Honda ADV builds from the community — engine
             setups, CVT setups, concepts, and featured member machines.
           </p>
+
+          <BuildsSearch />
         </div>
 
-        <BuildsInfiniteGrid initialBuilds={builds} initialHasMore={hasMore} />
+        <BuildsInfiniteGrid
+          key={search}
+          initialBuilds={builds}
+          initialHasMore={hasMore}
+          search={search}
+        />
       </section>
     </main>
   );

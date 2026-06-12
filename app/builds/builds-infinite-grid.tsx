@@ -14,9 +14,14 @@ type BuildItem = Awaited<
 type Props = {
   initialBuilds: BuildItem[];
   initialHasMore: boolean;
+  search?: string;
 };
 
-export function BuildsInfiniteGrid({ initialBuilds, initialHasMore }: Props) {
+export function BuildsInfiniteGrid({
+  initialBuilds,
+  initialHasMore,
+  search,
+}: Props) {
   const [builds, setBuilds] = useState<BuildItem[]>(initialBuilds);
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [offset, setOffset] = useState(initialBuilds.length);

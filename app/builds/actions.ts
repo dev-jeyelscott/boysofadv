@@ -1,6 +1,6 @@
 "use server";
 
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 
 import { db } from "@/db/db";
 import { buildLikes, builds, users } from "@/db/schema";
@@ -8,10 +8,44 @@ import { revalidatePath } from "next/cache";
 import { nanoid } from "nanoid";
 import { getCurrentDbUser } from "@/lib/current-user";
 import { sendPushNotificationToUser } from "@/lib/send-push-notification";
+import { BUILD_STATUSES } from "@/lib/constants/build";
 
 const LIMIT = 20;
 
-export async function getPublishedBuilds(offset = 0) {
+export async function getPublishedBuilds(offset = 0, search = "") {
+  const query = search.trim();
+
+  const searchCondition = query
+    ? or(
+        // Build fields
+        ilike(builds.title, `%${query}%`),
+        ilike(builds.motorcycleModel, `%${query}%`),
+        ilike(builds.description, `%${query}%`),
+        ilike(builds.engineSetup, `%${query}%`),
+        ilike(builds.brakingSetup, `%${query}%`),
+        ilike(builds.suspensionSetup, `%${query}%`),
+        ilike(builds.cvtSetup, `%${query}%`),
+        ilike(builds.wheelSetup, `%${query}%`),
+        ilike(builds.accessories, `%${query}%`),
+
+        // Owner fields
+        ilike(users.firstName, `%${query}%`),
+        ilike(users.lastName, `%${query}%`),
+        ilike(users.nickname, `%${query}%`),
+        ilike(users.codename, `%${query}%`),
+
+        // Full name searches
+        ilike(
+          sql`concat(${users.firstName}, ' ', ${users.lastName})`,
+          `%${query}%`,
+        ),
+        ilike(
+          sql`concat(${users.lastName}, ' ', ${users.firstName})`,
+          `%${query}%`,
+        ),
+      )
+    : undefined;
+
   const rows = await db
     .select({
       id: builds.id,
@@ -21,6 +55,13 @@ export async function getPublishedBuilds(offset = 0) {
       motorcycleModel: builds.motorcycleModel,
       yearModel: builds.yearModel,
       concept: builds.concept,
+      description: builds.description,
+      engineSetup: builds.engineSetup,
+      brakingSetup: builds.brakingSetup,
+      suspensionSetup: builds.suspensionSetup,
+      cvtSetup: builds.cvtSetup,
+      wheelSetup: builds.wheelSetup,
+      accessories: builds.accessories,
       isFeatured: builds.isFeatured,
       createdAt: builds.createdAt,
       ownerFirstName: users.firstName,
@@ -30,7 +71,11 @@ export async function getPublishedBuilds(offset = 0) {
     })
     .from(builds)
     .leftJoin(users, eq(builds.userId, users.id))
-    .where(eq(builds.status, "published"))
+    .where(
+      query
+        ? and(eq(builds.status, BUILD_STATUSES.PUBLISHED), searchCondition)
+        : eq(builds.status, BUILD_STATUSES.PUBLISHED),
+    )
     .orderBy(desc(builds.isFeatured), desc(builds.createdAt))
     .limit(LIMIT + 1)
     .offset(offset);
