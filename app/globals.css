@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+
+  --background: #050505;
+  --foreground: #f8f8f8;
   --boa-black: #050505;
   --boa-white: #f8f8f8;
   --boa-red: #dc2626;
@@ -29,13 +31,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 @layer clerk {
   .cl-formFieldInput::placeholder {
     color: rgba(255, 255, 255, 0.45) !important;
@@ -47,6 +42,6 @@
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
