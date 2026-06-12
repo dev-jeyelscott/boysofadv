@@ -1,7 +1,8 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { ChevronDown, Filter, Search, X } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -11,12 +12,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useCallback } from "react";
+
+const controlClassName =
+  "h-8 w-full border-white/40 bg-black text-white placeholder:text-white/30";
+
+const selectContentClassName = "border-white/10 bg-zinc-950 text-white";
+
+const clearButtonClassName =
+  "inline-flex h-8 w-full items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white lg:w-auto";
 
 export function EventsFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const hasActiveFilters =
+    Boolean(searchParams.get("q")) ||
+    (searchParams.get("status") ?? "all") !== "all";
+
+  const [isOpen, setIsOpen] = useState(hasActiveFilters);
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -34,27 +48,49 @@ export function EventsFilters() {
   );
 
   const updateFilter = (key: string, value: string) => {
-    router.push(`${pathname}?${createQueryString(key, value)}`);
+    const queryString = createQueryString(key, value);
+    router.push(queryString ? `${pathname}?${queryString}` : pathname);
   };
 
   const clearFilters = () => {
+    setIsOpen(false);
     router.push(pathname);
   };
 
-  const search = searchParams.get("search") ?? "";
+  const search = searchParams.get("q") ?? "";
   const status = searchParams.get("status") ?? "all";
 
   return (
     <div className="p-4">
-      <div className="flex items-center gap-4">
-        {/* Search */}
-        <div className="relative flex-1">
+      {/* Mobile only toggle */}
+      <button
+        type="button"
+        onClick={() => setIsOpen((value) => !value)}
+        aria-expanded={isOpen}
+        className="inline-flex h-8 w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/4 px-4 text-sm font-medium text-white transition hover:bg-white/10 lg:hidden"
+      >
+        <Filter className="size-4" />
+        Filters
+        <ChevronDown
+          className={`size-4 transition-transform ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      <div
+        className={`mt-3 grid gap-3 lg:mt-0 lg:grid lg:grid-cols-[minmax(220px,1fr)_220px_auto] lg:items-center ${
+          isOpen ? "grid" : "hidden lg:grid"
+        }`}
+      >
+        <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
+
           <Input
             defaultValue={search}
             placeholder="Search title, location, description..."
             onChange={(e) => updateFilter("q", e.target.value)}
-            className="border-white/10 bg-black/40 pl-10 text-white placeholder:text-white/30"
+            className={`${controlClassName} pl-10`}
           />
         </div>
 
@@ -62,11 +98,11 @@ export function EventsFilters() {
           value={status}
           onValueChange={(value) => updateFilter("status", value)}
         >
-          <SelectTrigger className="w-full lg:w-[220px]">
+          <SelectTrigger className={controlClassName}>
             <SelectValue placeholder="Status" />
           </SelectTrigger>
 
-          <SelectContent>
+          <SelectContent className={selectContentClassName}>
             <SelectItem value="all">All Status</SelectItem>
             <SelectItem value="planning">Planning</SelectItem>
             <SelectItem value="upcoming">Upcoming</SelectItem>
@@ -76,11 +112,10 @@ export function EventsFilters() {
           </SelectContent>
         </Select>
 
-        {/* Clear */}
         <button
           type="button"
           onClick={clearFilters}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white"
+          className={clearButtonClassName}
         >
           <X className="size-4" />
           Clear
