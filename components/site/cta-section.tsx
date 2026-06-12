@@ -7,7 +7,7 @@ const ctas = [
     title: "With us?",
     description: "Be part of the brotherhood. Join Boys of ADV today!",
     button: "Join us now",
-    image: "/images/cta-riders.jpg",
+    image: "/images/cta-riders.webp",
     url: "/sign-up",
   },
   {
@@ -15,7 +15,7 @@ const ctas = [
     title: "Us!",
     description: "Partner with Boys of ADV and let's go further together.",
     button: "Be a partner",
-    image: "/images/cta-partner.jpg",
+    image: "/images/cta-partner.webp",
     url: "/be-a-partner",
   },
 ];

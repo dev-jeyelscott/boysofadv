@@ -297,7 +297,7 @@ function StatCard({
           {helper}
         </p>
 
-        <ArrowRight className="size-4 shrink-0 text-white/40 transition group-hover:translate-x-1 group-hover:text-red-500" />
+        <ArrowRight className="size-4 shrink-0 text-white/70 transition group-hover:translate-x-1 group-hover:text-red-500" />
       </div>
     </Link>
   );
@@ -306,7 +306,7 @@ function StatCard({
 function MiniStat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
-      <p className="text-[10px] font-black uppercase tracking-widest text-white/40 sm:text-xs">
+      <p className="text-[10px] font-black uppercase tracking-widest text-white/70 sm:text-xs">
         {label}
       </p>
 

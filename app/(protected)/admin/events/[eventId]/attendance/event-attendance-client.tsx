@@ -202,7 +202,7 @@ export function EventAttendanceClient({ event, attendance }: Props) {
 
           <div className="mt-5 flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/30 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs font-black uppercase tracking-widest text-white/40">
+              <p className="text-xs font-black uppercase tracking-widest text-white/70">
                 Refreshes In
               </p>
 
@@ -258,7 +258,7 @@ export function EventAttendanceClient({ event, attendance }: Props) {
                           {name}
                         </p>
 
-                        <p className="mt-1 text-xs text-white/40">
+                        <p className="mt-1 text-xs text-white/70">
                           {item.email || "No email"}
                         </p>
                       </div>
@@ -301,7 +301,7 @@ export function EventAttendanceClient({ event, attendance }: Props) {
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-      <p className="text-xs font-black uppercase tracking-widest text-white/40">
+      <p className="text-xs font-black uppercase tracking-widest text-white/70">
         {label}
       </p>
 

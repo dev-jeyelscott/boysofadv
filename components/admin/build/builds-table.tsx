@@ -52,7 +52,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
 
             <div className="mt-4 grid gap-3 text-sm">
               <div>
-                <p className="text-xs font-black uppercase tracking-widest text-white/40">
+                <p className="text-xs font-black uppercase tracking-widest text-white/70">
                   Model
                 </p>
                 <p className="mt-1 wrap-break-word text-white/80">
@@ -61,7 +61,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
               </div>
 
               <div>
-                <p className="text-xs font-black uppercase tracking-widest text-white/40">
+                <p className="text-xs font-black uppercase tracking-widest text-white/70">
                   Concept
                 </p>
                 <p className="mt-1 wrap-break-word text-white/70">
@@ -71,7 +71,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
 
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-white/40">
+                  <p className="text-xs font-black uppercase tracking-widest text-white/70">
                     Featured
                   </p>
                   <p className="mt-1 text-white/70">
@@ -80,7 +80,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
                 </div>
 
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-white/40">
+                  <p className="text-xs font-black uppercase tracking-widest text-white/70">
                     Status
                   </p>
                   <div className="mt-1">
@@ -89,7 +89,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
                 </div>
 
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-white/40">
+                  <p className="text-xs font-black uppercase tracking-widest text-white/70">
                     Submitted
                   </p>
                   <p className="mt-1 text-white/70">
@@ -205,7 +205,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
       </div>
 
       {builds.length === 0 && (
-        <div className="p-10 text-center text-sm text-white/40">
+        <div className="p-10 text-center text-sm text-white/70">
           No builds found.
         </div>
       )}

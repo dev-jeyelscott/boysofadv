@@ -67,7 +67,7 @@ export async function EventsSection() {
               )}
 
               <div className="mt-6 border-t border-white/10 pt-4">
-                <span className="block text-xs font-black uppercase tracking-widest text-white/40">
+                <span className="block text-xs font-black uppercase tracking-widest text-white/70">
                   Event Date
                 </span>
 

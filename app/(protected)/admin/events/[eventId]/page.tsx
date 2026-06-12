@@ -129,7 +129,7 @@ export default async function AdminEventViewPage({ params }: Props) {
             <div className="flex gap-3 rounded-2xl border border-white/10 bg-black/20 p-4">
               <CalendarDays className="mt-0.5 size-5 shrink-0 text-red-400" />
               <div>
-                <p className="text-xs font-black uppercase tracking-widest text-white/40">
+                <p className="text-xs font-black uppercase tracking-widest text-white/70">
                   Start Date
                 </p>
                 <p className="mt-1 font-semibold text-white">
@@ -141,7 +141,7 @@ export default async function AdminEventViewPage({ params }: Props) {
             <div className="flex gap-3 rounded-2xl border border-white/10 bg-black/20 p-4">
               <MapPin className="mt-0.5 size-5 shrink-0 text-red-400" />
               <div>
-                <p className="text-xs font-black uppercase tracking-widest text-white/40">
+                <p className="text-xs font-black uppercase tracking-widest text-white/70">
                   Location
                 </p>
                 <p className="mt-1 font-semibold text-white">
@@ -152,7 +152,7 @@ export default async function AdminEventViewPage({ params }: Props) {
           </div>
 
           <div className="mt-8">
-            <p className="text-xs font-black uppercase tracking-widest text-white/40">
+            <p className="text-xs font-black uppercase tracking-widest text-white/70">
               Description
             </p>
 

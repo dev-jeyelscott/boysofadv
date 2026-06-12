@@ -57,7 +57,7 @@ export function BuildCoverUploader({
             }}
             appearance={{
               container:
-                "border-0 bg-transparent p-0 text-white ut-label:text-white ut-allowed-content:text-white/40",
+                "border-0 bg-transparent p-0 text-white ut-label:text-white ut-allowed-content:text-white/70",
               button:
                 "bg-red-600 text-white font-black px-6 py-2 -skew-x-12 text-sm uppercase hover:bg-red-500 after:bg-red-700",
             }}
@@ -94,7 +94,7 @@ export function BuildCoverUploader({
         ) : null}
       </div>
 
-      <p className="mt-2 text-xs text-white/40">
+      <p className="mt-2 text-xs text-white/70">
         Upload one cover image. Recommended ratio: 16:9.
       </p>
     </div>

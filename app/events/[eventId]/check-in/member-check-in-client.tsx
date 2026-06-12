@@ -154,7 +154,7 @@ export function MemberCheckInClient({ event, token }: Props) {
           )}
         </Button>
 
-        <p className="mt-5 text-center text-xs leading-6 text-white/40">
+        <p className="mt-5 text-center text-xs leading-6 text-white/70">
           Your QR token, login session, and GPS location will be validated by
           the server.
         </p>
@@ -166,7 +166,7 @@ export function MemberCheckInClient({ event, token }: Props) {
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs font-black uppercase tracking-widest text-white/40">
+      <p className="text-xs font-black uppercase tracking-widest text-white/70">
         {label}
       </p>
       <p className="mt-1 wrap-break-word text-sm font-semibold text-white">

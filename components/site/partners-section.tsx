@@ -42,13 +42,13 @@ export async function PartnersSection() {
               >
                 {partner.logoUrl ? (
                   <Image
-                    width={400}
-                    height={400}
-                    loading="lazy"
-                    quality={75}
                     src={partner.logoUrl}
                     alt={partner.name}
-                    className="max-h-20 w-full object-contain transition duration-300 ease-out group-hover:scale-105 sm:max-h-28 lg:max-h-32"
+                    width={240}
+                    height={120}
+                    quality={60}
+                    sizes="(max-width: 640px) 70vw, (max-width: 1024px) 30vw, 240px"
+                    className="max-h-20 w-full object-contain transition duration-300 ease-out group-hover:scale-105"
                   />
                 ) : (
                   <span className="text-center text-xs font-black uppercase tracking-wider text-white/60 sm:text-sm">

@@ -155,19 +155,23 @@ export function FeaturedBuildsCarousel({
           </div>
 
           {builds.length > 1 ? (
-            <div className="mt-5 flex justify-center gap-2">
+            <div className="mt-5 flex justify-center gap-1">
               {scrollSnaps.map((_, index) => (
                 <button
                   key={index}
                   type="button"
                   onClick={() => scrollTo(index)}
                   aria-label={`Go to slide ${index + 1}`}
-                  className={
-                    selectedIndex === index
-                      ? "h-2.5 w-2.5 rounded-full bg-red-600"
-                      : "h-2.5 w-2.5 rounded-full bg-white/30 transition hover:bg-white/60"
-                  }
-                />
+                  className="flex size-8 items-center justify-center rounded-full"
+                >
+                  <span
+                    className={
+                      selectedIndex === index
+                        ? "block h-2.5 w-2.5 rounded-full bg-red-600"
+                        : "block h-2.5 w-2.5 rounded-full bg-white/30 transition hover:bg-white/60"
+                    }
+                  />
+                </button>
               ))}
             </div>
           ) : null}

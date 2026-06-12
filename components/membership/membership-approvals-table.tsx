@@ -44,7 +44,7 @@ export function MembershipApprovalsTable({
         <p className="text-sm font-black uppercase tracking-widest text-white/60">
           No pending approvals
         </p>
-        <p className="mt-2 text-sm text-white/40">
+        <p className="mt-2 text-sm text-white/70">
           New member registrations will appear here.
         </p>
       </div>
@@ -69,7 +69,7 @@ export function MembershipApprovalsTable({
                   <h3 className="truncate font-black uppercase text-white">
                     {fullName}
                   </h3>
-                  <p className="mt-1 truncate text-xs uppercase tracking-widest text-white/40">
+                  <p className="mt-1 truncate text-xs uppercase tracking-widest text-white/70">
                     {member.codename || member.nickname || "No codename"}
                   </p>
                 </div>
@@ -81,7 +81,7 @@ export function MembershipApprovalsTable({
 
               <div className="mt-4 space-y-3 rounded-xl border border-white/10 bg-black/20 p-3">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
                     Email
                   </p>
                   <p className="mt-1 break-all text-sm text-white/70">
@@ -91,7 +91,7 @@ export function MembershipApprovalsTable({
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
                       Unit
                     </p>
                     <p className="mt-1 text-sm text-white/70">
@@ -100,7 +100,7 @@ export function MembershipApprovalsTable({
                   </div>
 
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
                       Chapter
                     </p>
                     <p className="mt-1 text-sm text-white/70">
@@ -177,7 +177,7 @@ export function MembershipApprovalsTable({
                     <TableCell className="px-5 py-4 text-center">
                       <div>
                         <p className="font-bold text-white">{fullName}</p>
-                        <p className="text-xs uppercase tracking-widest text-white/40">
+                        <p className="text-xs uppercase tracking-widest text-white/70">
                           {member.codename || member.nickname || "No codename"}
                         </p>
                       </div>

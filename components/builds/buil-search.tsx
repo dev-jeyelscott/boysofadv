@@ -73,7 +73,7 @@ export function BuildsSearch({ currentSearch = "" }: BuildsSearchProps) {
   return (
     <div className="mx-auto mb-10 max-w-2xl">
       <div className="relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-white/40" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-white/70" />
 
         <Input
           value={search}
@@ -87,7 +87,7 @@ export function BuildsSearch({ currentSearch = "" }: BuildsSearchProps) {
             type="button"
             onClick={clearSearch}
             disabled={isPending}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 transition hover:text-white"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 transition hover:text-white"
             aria-label="Clear search"
           >
             {isSearching ? (

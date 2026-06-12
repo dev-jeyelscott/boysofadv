@@ -70,12 +70,11 @@ function BuildCard({ build }: { build: BuildItem }) {
         {build.coverImageUrl ? (
           <Image
             src={build.coverImageUrl}
-            alt={build.title ?? "Member build"}
+            alt={build.title}
             fill
-            loading="lazy"
-            quality={75}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 240px"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            quality={60}
+            sizes="(max-width: 640px) 82vw, (max-width: 1024px) 46vw, 280px"
+            className="object-cover transition duration-300 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-xs font-black uppercase tracking-widest text-white/30">
@@ -114,7 +113,7 @@ function BuildCard({ build }: { build: BuildItem }) {
 
 function BuildsLoader() {
   return (
-    <div className="py-10 text-center text-xs font-black uppercase tracking-[0.3em] text-white/40">
+    <div className="py-10 text-center text-xs font-black uppercase tracking-[0.3em] text-white/70">
       Loading more builds...
     </div>
   );

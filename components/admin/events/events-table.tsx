@@ -139,7 +139,7 @@ export function EventsTable({ events }: Props) {
                     <p className="mt-1 text-sm text-white/50">
                       {event.location || "No location"}
                     </p>
-                    <p className="mt-2 line-clamp-2 text-sm text-white/40">
+                    <p className="mt-2 line-clamp-2 text-sm text-white/70">
                       {event.description || "No description"}
                     </p>
                   </TableCell>

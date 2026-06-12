@@ -63,7 +63,7 @@ function Detail({
 }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/3 p-4">
-      <p className="text-xs font-black uppercase tracking-widest text-white/40">
+      <p className="text-xs font-black uppercase tracking-widest text-white/70">
         {label}
       </p>
       <p className="mt-2 text-sm font-semibold text-white">{value || "—"}</p>

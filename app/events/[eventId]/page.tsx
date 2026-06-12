@@ -167,7 +167,7 @@ export default async function EventDetailsPage({ params }: Props) {
                     <CalendarDays className="mt-0.5 size-5 shrink-0 text-red-500" />
 
                     <div className="min-w-0">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
                         Event Date
                       </p>
 
@@ -187,7 +187,7 @@ export default async function EventDetailsPage({ params }: Props) {
                     <MapPin className="mt-0.5 size-5 shrink-0 text-red-500" />
 
                     <div className="min-w-0">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
                         Location
                       </p>
 

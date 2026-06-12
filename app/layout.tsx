@@ -80,7 +80,7 @@ export const metadata: Metadata = {
       "Discover custom ADV builds, events, partners, and the community driving the ADV lifestyle.",
     images: [
       {
-        url: "/images/og-image.jpg",
+        url: "/images/og-image.webp",
         width: 1200,
         height: 630,
         alt: "Boys of ADV",
@@ -93,7 +93,7 @@ export const metadata: Metadata = {
     title: "Boys of ADV",
     description:
       "Discover custom ADV builds, events, partners, and the community driving the ADV lifestyle.",
-    images: ["/images/og-image.jpg"],
+    images: ["/images/og-image.webp"],
   },
 
   alternates: {

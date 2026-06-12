@@ -87,7 +87,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
       </div>
 
       <div className="grid gap-4 border-t border-white/10 pt-5">
-        <p className="text-xs font-black uppercase tracking-[0.25em] text-white/40">
+        <p className="text-xs font-black uppercase tracking-[0.25em] text-white/70">
           Social Links
         </p>
 

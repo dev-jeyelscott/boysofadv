@@ -34,7 +34,7 @@ export function BuildDetailsDialog({ build, onClose }: Props) {
             {build.title || "Untitled Build"}
           </DialogTitle>
 
-          <p className="line-clamp-1 text-xs text-white/40 sm:text-sm">
+          <p className="line-clamp-1 text-xs text-white/70 sm:text-sm">
             Owner: {ownerName}
           </p>
         </DialogHeader>
@@ -134,7 +134,7 @@ function Info({
 }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/4 p-4">
-      <p className="text-[10px] font-black uppercase tracking-widest text-white/40 sm:text-xs">
+      <p className="text-[10px] font-black uppercase tracking-widest text-white/70 sm:text-xs">
         {label}
       </p>
 

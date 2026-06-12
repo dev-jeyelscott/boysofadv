@@ -67,7 +67,7 @@ export function MembersTable({ members }: MembersTableProps) {
                   {member.email}
                 </p>
 
-                <p className="mt-1 wrap-break-word text-xs text-white/40">
+                <p className="mt-1 wrap-break-word text-xs text-white/70">
                   {member.codename || member.nickname || "No codename"}
                 </p>
               </div>
@@ -95,7 +95,7 @@ export function MembersTable({ members }: MembersTableProps) {
               <InfoRow label="Joined" value={formatDate(member.createdAt)} />
 
               <div className="flex items-center justify-between gap-3">
-                <span className="text-xs font-black uppercase tracking-widest text-white/40">
+                <span className="text-xs font-black uppercase tracking-widest text-white/70">
                   Role
                 </span>
                 <RoleBadge role={member.role} />
@@ -151,7 +151,7 @@ export function MembersTable({ members }: MembersTableProps) {
                         {member.email}
                       </div>
 
-                      <div className="wrap-break-word text-xs text-white/40">
+                      <div className="wrap-break-word text-xs text-white/70">
                         {member.codename || member.nickname || "—"}
                       </div>
                     </div>
@@ -211,7 +211,7 @@ export function MembersTable({ members }: MembersTableProps) {
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-3">
-      <span className="shrink-0 text-xs font-black uppercase tracking-widest text-white/40">
+      <span className="shrink-0 text-xs font-black uppercase tracking-widest text-white/70">
         {label}
       </span>
 

@@ -3,15 +3,17 @@ import Link from "next/link";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-black">
+    <section className="relative min-h-[70vh] overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <Image
-          src="/images/hero-bg.jpg"
+          src="/images/hero-bg.webp"
           alt="Boys of ADV"
           fill
-          quality={75}
+          quality={65}
           priority
+          fetchPriority="high"
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1440px"
           className="object-cover object-center opacity-80"
         />
       </div>
