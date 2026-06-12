@@ -44,7 +44,7 @@ export function BuildsInfiniteGrid({
         loader={<BuildsLoader />}
         endMessage={<BuildsEndMessage />}
       >
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {builds.map((build) => (
             <BuildCard key={build.id} build={build} />
           ))}
@@ -91,15 +91,15 @@ function BuildCard({ build }: { build: BuildItem }) {
       </div>
 
       <div className="p-4">
-        <h3 className="line-clamp-1 text-sm font-black uppercase text-white">
+        <h3 className="line-clamp-1 text-lg font-black uppercase text-white">
           {build.title || "Untitled Build"}
         </h3>
 
-        <p className="mt-1 line-clamp-1 text-xs font-bold uppercase tracking-wider text-red-500">
+        <p className="mt-1 line-clamp-1 text-sm font-bold uppercase tracking-wider text-red-500">
           {owner}
         </p>
 
-        <div className="mt-4 space-y-1 text-xs text-white/50">
+        <div className="mt-4 space-y-1 text-sm text-white/50">
           <p className="line-clamp-1">{build.motorcycleModel || "Honda ADV"}</p>
 
           <p className="line-clamp-1">

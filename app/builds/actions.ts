@@ -10,7 +10,7 @@ import { getCurrentDbUser } from "@/lib/current-user";
 import { sendPushNotificationToUser } from "@/lib/send-push-notification";
 import { BUILD_STATUSES } from "@/lib/constants/build";
 
-const LIMIT = 20;
+const LIMIT = 9;
 
 export async function getPublishedBuilds(offset = 0, search = "") {
   const query = search.trim();
