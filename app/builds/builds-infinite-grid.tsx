@@ -27,7 +27,7 @@ export function BuildsInfiniteGrid({
   const [offset, setOffset] = useState(initialBuilds.length);
 
   async function loadMoreBuilds() {
-    const result = await getPublishedBuilds(offset);
+    const result = await getPublishedBuilds(offset, search ?? "");
 
     setBuilds((current) => [...current, ...result.builds]);
     setHasMore(result.hasMore);
@@ -72,8 +72,10 @@ function BuildCard({ build }: { build: BuildItem }) {
             src={build.coverImageUrl}
             alt={build.title ?? "Member build"}
             fill
-            sizes="(min-width: 1024px) 20vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover transition duration-500 group-hover:scale-105"
+            loading="lazy"
+            quality={75}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 240px"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-xs font-black uppercase tracking-widest text-white/30">

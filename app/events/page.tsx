@@ -52,7 +52,7 @@ export default async function EventsPage() {
                   className="hover:shadow-2xl hover:shadow-red-900/20 group overflow-hidden rounded-2xl border border-white/10 bg-white/4 transition-all duration-300 ease-out hover:scale-105 hover:border-red-600/50 hover:bg-white/[0.07]"
                 >
                   <div>
-                    <div className="relative aspect-[4/3] overflow-hidden bg-white/5 sm:aspect-[16/10]">
+                    <div className="relative aspect-4/3 overflow-hidden bg-white/5 sm:aspect-16/10">
                       <Image
                         src={
                           event.posterImageUrl ||
@@ -60,12 +60,14 @@ export default async function EventsPage() {
                         }
                         alt={event.title}
                         fill
+                        loading="lazy"
+                        quality={75}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover "
                       />
                     </div>
 
-                    <div className="flex min-h-[230px] flex-col p-4 sm:p-5 lg:p-6">
+                    <div className="flex min-h-57.5 flex-col p-4 sm:p-5 lg:p-6">
                       <h2 className="line-clamp-2 text-xl font-black uppercase leading-tight sm:text-2xl">
                         {event.title}
                       </h2>

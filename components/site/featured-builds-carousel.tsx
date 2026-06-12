@@ -108,11 +108,13 @@ export function FeaturedBuildsCarousel({
                   className="min-w-0 flex-[0_0_82%] pl-3 sm:flex-[0_0_46%] sm:pl-4 lg:flex-[0_0_280px]"
                 >
                   <Link href={`/builds/${build.id}`} className="block h-full">
-                    <article className="group flex h-full min-h-[440px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 transition-all duration-300 ease-out hover:border-red-600/70 hover:bg-zinc-900 hover:shadow-[0_0_30px_rgba(220,38,38,0.25)] sm:min-h-[500px] lg:rounded-none lg:hover:-translate-y-3 lg:hover:scale-[1.02]">
+                    <article className="group flex h-full min-h-110 flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 transition-all duration-300 ease-out hover:border-red-600/70 hover:bg-zinc-900 hover:shadow-[0_0_30px_rgba(220,38,38,0.25)] sm:min-h-125 lg:rounded-none lg:hover:-translate-y-3 lg:hover:scale-[1.02]">
                       <div className="relative h-52 shrink-0 overflow-hidden sm:h-56">
                         <Image
                           src={build.image}
                           alt={build.title}
+                          loading="lazy"
+                          quality={75}
                           fill
                           sizes="(max-width: 640px) 82vw, (max-width: 1024px) 46vw, 280px"
                           className="object-cover transition duration-300 group-hover:scale-105"

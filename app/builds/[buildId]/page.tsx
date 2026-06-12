@@ -143,13 +143,14 @@ export default async function BuildDetailsPage({ params }: Props) {
             <ArrowLeft className="h-4 w-4" />
             Back to Builds
           </Link>
-          <div className="relative aspect-[4/5] w-full bg-neutral-900 sm:aspect-[16/9] lg:aspect-[16/8]">
+          <div className="relative aspect-4/5 w-full bg-neutral-900 sm:aspect-video lg:aspect-16/8">
             {build.coverImageUrl ? (
               <Image
                 src={build.coverImageUrl}
                 alt={build.title || "Boys of ADV Build"}
                 fill
                 priority
+                quality={75}
                 className="object-cover"
               />
             ) : (
@@ -187,6 +188,8 @@ export default async function BuildDetailsPage({ params }: Props) {
                         src={build.ownerAvatarUrl}
                         alt={ownerName}
                         fill
+                        loading="lazy"
+                        quality={75}
                         className="object-cover"
                       />
                     ) : null}

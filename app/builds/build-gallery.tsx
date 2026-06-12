@@ -51,11 +51,13 @@ export function BuildGallery({ images, buildTitle }: Props) {
               onClick={() => setActiveIndex(index)}
               className="group overflow-hidden rounded-3xl border border-white/10 bg-white/4 text-left"
             >
-              <div className="relative aspect-[4/3] bg-neutral-900">
+              <div className="relative aspect-4/3 bg-neutral-900">
                 <Image
                   src={image.imageUrl}
                   alt={image.caption || buildTitle}
                   fill
+                  loading="lazy"
+                  quality={75}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition duration-500 group-hover:scale-105"
                 />
@@ -74,7 +76,7 @@ export function BuildGallery({ images, buildTitle }: Props) {
       </section>
 
       {activeImage ? (
-        <div className="fixed inset-0 z-[100] bg-black/90 p-4 backdrop-blur">
+        <div className="fixed inset-0 z-100 bg-black/90 p-4 backdrop-blur">
           <button
             type="button"
             onClick={() => setActiveIndex(null)}
@@ -107,6 +109,8 @@ export function BuildGallery({ images, buildTitle }: Props) {
             <div className="w-full max-w-6xl">
               <div className="relative h-[80vh] w-full overflow-hidden rounded-3xl md:h-[90vh]">
                 <Image
+                  loading="lazy"
+                  quality={75}
                   src={activeImage.imageUrl}
                   alt={activeImage.caption || buildTitle}
                   fill

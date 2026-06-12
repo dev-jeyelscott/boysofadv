@@ -100,11 +100,13 @@ export function BuildGalleryUploader({ defaultImages = [] }: Props) {
               key={image.imageUrl}
               className="overflow-hidden rounded-2xl border border-white/10 bg-white/4"
             >
-              <div className="relative aspect-[4/3] bg-neutral-900">
+              <div className="relative aspect-4/3 bg-neutral-900">
                 <Image
                   src={image.imageUrl}
                   alt={image.caption || "Build gallery image"}
                   fill
+                  loading="lazy"
+                  quality={75}
                   className="object-cover"
                 />
 

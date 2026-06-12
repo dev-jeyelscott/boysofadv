@@ -51,6 +51,8 @@ export function CustomUserButton() {
           height={36}
           width={36}
           src={imageUrl}
+          loading="lazy"
+          quality={75}
           alt={displayName}
           className="rounded-full border border-red-600/40 object-cover"
         />
@@ -79,6 +81,8 @@ export function CustomUserButton() {
                 height={48}
                 width={48}
                 src={imageUrl}
+                loading="lazy"
+                quality={75}
                 alt={displayName}
                 className="rounded-full border border-red-500/50 object-cover"
               />

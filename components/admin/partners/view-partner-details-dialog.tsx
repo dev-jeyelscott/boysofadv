@@ -43,6 +43,8 @@ export function ViewPartnerDetailsDialog({ partner, onClose }: Props) {
                   <Image
                     src={partner.logoUrl}
                     alt={partner.name}
+                    loading="lazy"
+                    quality={75}
                     fill
                     className="object-contain p-3"
                   />

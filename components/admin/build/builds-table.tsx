@@ -31,7 +31,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <h3 className="break-words text-base font-black uppercase leading-tight text-white">
+                <h3 className="wrap-break-word text-base font-black uppercase leading-tight text-white">
                   {build.title}
                 </h3>
 
@@ -55,7 +55,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
                 <p className="text-xs font-black uppercase tracking-widest text-white/40">
                   Model
                 </p>
-                <p className="mt-1 break-words text-white/80">
+                <p className="mt-1 wrap-break-word text-white/80">
                   {build.motorcycleModel}
                 </p>
               </div>
@@ -64,7 +64,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
                 <p className="text-xs font-black uppercase tracking-widest text-white/40">
                   Concept
                 </p>
-                <p className="mt-1 break-words text-white/70">
+                <p className="mt-1 wrap-break-word text-white/70">
                   {build.concept || "—"}
                 </p>
               </div>
@@ -146,7 +146,7 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
                   className="border-white/10 text-sm text-white/80 hover:bg-white/3"
                 >
                   <TableCell className="p-4 align-top text-center">
-                    <div className="break-words font-black text-white">
+                    <div className="wrap-break-word font-black text-white">
                       {build.title}
                     </div>
                   </TableCell>
@@ -160,11 +160,15 @@ export function BuildsTable({ builds, onView, onPublish, onReject }: Props) {
                   </TableCell>
 
                   <TableCell className="p-4 align-top text-center text-white/70">
-                    <div className="break-words">{build.motorcycleModel}</div>
+                    <div className="wrap-break-word">
+                      {build.motorcycleModel}
+                    </div>
                   </TableCell>
 
                   <TableCell className="p-4 align-top text-center text-white/70">
-                    <div className="break-words">{build.concept || "—"}</div>
+                    <div className="wrap-break-word">
+                      {build.concept || "—"}
+                    </div>
                   </TableCell>
 
                   <TableCell className="p-4 align-top text-center text-white/70">

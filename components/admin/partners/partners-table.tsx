@@ -39,6 +39,8 @@ export function PartnersTable({ partners }: Props) {
                       src={partner.logoUrl}
                       alt={partner.name}
                       fill
+                      loading="lazy"
+                      quality={75}
                       className="object-contain p-1"
                     />
                   ) : (

@@ -92,8 +92,9 @@ export function SiteHeader() {
             alt="Boys of ADV"
             width={110}
             height={42}
+            quality={75}
             priority
-            className="h-auto w-[105px] sm:w-[130px]"
+            className="h-auto w-26.25 sm:w-32.5"
           />
         </Link>
 

@@ -44,6 +44,8 @@ export async function PartnersSection() {
                   <Image
                     width={400}
                     height={400}
+                    loading="lazy"
+                    quality={75}
                     src={partner.logoUrl}
                     alt={partner.name}
                     className="max-h-20 w-full object-contain transition duration-300 ease-out group-hover:scale-105 sm:max-h-28 lg:max-h-32"

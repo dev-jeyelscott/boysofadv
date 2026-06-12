@@ -125,17 +125,18 @@ export default async function EventDetailsPage({ params }: Props) {
             Back to Events
           </Link>
 
-          <article className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] lg:rounded-3xl">
+          <article className="overflow-hidden rounded-2xl border border-white/10 bg-white/3 lg:rounded-3xl">
             <div className="grid gap-0 lg:grid-cols-[420px_1fr]">
               {/* Poster */}
               <div className="border-b border-white/10 bg-black lg:border-b-0 lg:border-r lg:border-white/10">
-                <div className="relative aspect-[4/5] w-full bg-neutral-950 sm:aspect-[16/10] lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] lg:aspect-auto">
+                <div className="relative aspect-4/5 w-full bg-neutral-950 sm:aspect-16/10 lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] lg:aspect-auto">
                   {event.posterImageUrl ? (
                     <Image
                       src={event.posterImageUrl}
                       alt={event.title}
                       fill
                       priority
+                      quality={75}
                       sizes="(max-width: 1024px) 100vw, 420px"
                       className="object-contain p-3 sm:p-4"
                     />
@@ -162,7 +163,7 @@ export default async function EventDetailsPage({ params }: Props) {
                 </h1>
 
                 <div className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2 lg:grid-cols-1">
-                  <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/3 p-4">
                     <CalendarDays className="mt-0.5 size-5 shrink-0 text-red-500" />
 
                     <div className="min-w-0">
@@ -182,7 +183,7 @@ export default async function EventDetailsPage({ params }: Props) {
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/3 p-4">
                     <MapPin className="mt-0.5 size-5 shrink-0 text-red-500" />
 
                     <div className="min-w-0">
@@ -190,7 +191,7 @@ export default async function EventDetailsPage({ params }: Props) {
                         Location
                       </p>
 
-                      <p className="mt-1 break-words text-sm leading-6 text-white/80">
+                      <p className="mt-1 wrap-break-word text-sm leading-6 text-white/80">
                         {event.location || "TBA"}
                       </p>
                     </div>
@@ -203,7 +204,7 @@ export default async function EventDetailsPage({ params }: Props) {
                       About This Event
                     </h2>
 
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+                    <div className="rounded-2xl border border-white/10 bg-white/3 p-4 sm:p-5">
                       <p className="whitespace-pre-wrap text-sm leading-7 text-white/70 sm:text-base sm:leading-8">
                         {event.description}
                       </p>

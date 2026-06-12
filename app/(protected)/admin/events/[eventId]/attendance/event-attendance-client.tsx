@@ -106,7 +106,7 @@ export function EventAttendanceClient({ event, attendance }: Props) {
   return (
     <div className="grid gap-5 xl:grid-cols-[420px_1fr]">
       <section className="overflow-hidden rounded-3xl border border-white/10 bg-white/4">
-        <div className="relative aspect-[4/3] bg-white/5">
+        <div className="relative aspect-4/3 bg-white/5">
           {event.posterImageUrl ? (
             <Image
               src={event.posterImageUrl}
@@ -114,6 +114,8 @@ export function EventAttendanceClient({ event, attendance }: Props) {
               fill
               sizes="420px"
               className="object-cover"
+              loading="lazy"
+              quality={75}
             />
           ) : (
             <div className="flex h-full items-center justify-center text-white/30">
@@ -303,7 +305,7 @@ function Info({ label, value }: { label: string; value: string }) {
         {label}
       </p>
 
-      <p className="mt-1 break-words font-semibold text-white">{value}</p>
+      <p className="mt-1 wrap-break-word font-semibold text-white">{value}</p>
     </div>
   );
 }

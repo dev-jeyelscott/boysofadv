@@ -82,7 +82,7 @@ export function EventsTable({ events }: Props) {
         <Table>
           <TableHeader>
             <TableRow className="border-white/10 hover:bg-transparent">
-              <TableHead className="w-[110px] p-4 text-xs font-black uppercase tracking-widest text-white/50">
+              <TableHead className="w-27.5 p-4 text-xs font-black uppercase tracking-widest text-white/50">
                 Poster
               </TableHead>
               <TableHead className="p-4 text-xs font-black uppercase tracking-widest text-white/50">
@@ -114,15 +114,17 @@ export function EventsTable({ events }: Props) {
               events.map((event) => (
                 <TableRow
                   key={event.id}
-                  className="border-white/10 align-top hover:bg-white/[0.03]"
+                  className="border-white/10 align-top hover:bg-white/3"
                 >
                   <TableCell className="p-4">
-                    <div className="relative aspect-video w-24 overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-neutral-900 via-black to-red-950">
+                    <div className="relative aspect-video w-24 overflow-hidden rounded-xl border border-white/10 bg-linear-to-br from-neutral-900 via-black to-red-950">
                       {event.posterImageUrl ? (
                         <Image
                           src={event.posterImageUrl}
                           alt={event.title}
                           fill
+                          loading="lazy"
+                          quality={75}
                           sizes="100px"
                           className="object-cover"
                         />

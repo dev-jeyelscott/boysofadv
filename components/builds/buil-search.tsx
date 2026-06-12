@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2, Search, X } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 
 import { Input } from "@/components/ui/input";
@@ -9,35 +9,26 @@ import { Input } from "@/components/ui/input";
 const SEARCH_DEBOUNCE_MS = 1000;
 
 type BuildsSearchProps = {
-  onSearchingChange?: (isSearching: boolean) => void;
+  currentSearch?: string;
 };
 
-export function BuildsSearch({ onSearchingChange }: BuildsSearchProps) {
+export function BuildsSearch({ currentSearch = "" }: BuildsSearchProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const currentSearch = searchParams.get("q") ?? "";
-  const [search, setSearch] = useState(currentSearch);
+  const [search, setSearch] = useState(() => currentSearch);
+
+  const trimmedSearch = search.trim();
+  const isSearching = trimmedSearch !== currentSearch;
 
   useEffect(() => {
-    setSearch(currentSearch);
-    onSearchingChange?.(false);
-  }, [currentSearch, onSearchingChange]);
-
-  useEffect(() => {
-    const trimmedSearch = search.trim();
-
     if (trimmedSearch === currentSearch) {
-      onSearchingChange?.(false);
       return;
     }
 
-    onSearchingChange?.(true);
-
     const timeout = window.setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search);
 
       if (trimmedSearch) {
         params.set("q", trimmedSearch);
@@ -45,38 +36,39 @@ export function BuildsSearch({ onSearchingChange }: BuildsSearchProps) {
         params.delete("q");
       }
 
+      const queryString = params.toString();
+      const nextUrl = queryString ? `${pathname}?${queryString}` : pathname;
+      const currentUrl = `${window.location.pathname}${window.location.search}`;
+
+      if (nextUrl === currentUrl) {
+        return;
+      }
+
       startTransition(() => {
-        router.replace(`${pathname}?${params.toString()}`, {
+        router.replace(nextUrl, {
           scroll: false,
         });
       });
     }, SEARCH_DEBOUNCE_MS);
 
     return () => window.clearTimeout(timeout);
-  }, [
-    search,
-    currentSearch,
-    pathname,
-    router,
-    searchParams,
-    onSearchingChange,
-  ]);
+  }, [trimmedSearch, currentSearch, pathname, router]);
 
   function clearSearch() {
     setSearch("");
-    onSearchingChange?.(true);
 
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     params.delete("q");
 
+    const queryString = params.toString();
+    const nextUrl = queryString ? `${pathname}?${queryString}` : pathname;
+
     startTransition(() => {
-      router.replace(`${pathname}?${params.toString()}`, {
+      router.replace(nextUrl, {
         scroll: false,
       });
     });
   }
-
-  const isSearching = isPending || search.trim() !== currentSearch;
 
   return (
     <div className="mx-auto mb-10 max-w-2xl">

@@ -34,6 +34,7 @@ export default function AboutPage() {
                 src="/images/about/about-hero.jpg"
                 alt="Boys of ADV riders"
                 fill
+                quality={75}
                 priority
                 className="object-cover"
               />

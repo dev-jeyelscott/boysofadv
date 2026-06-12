@@ -41,12 +41,14 @@ export function BuildDetailsDialog({ build, onClose }: Props) {
 
         <div className="max-h-[calc(92dvh-88px)] overflow-y-auto no-scrollbar lg:grid lg:grid-cols-[420px_1fr]">
           <div className="border-b border-white/10 p-4 sm:p-6 lg:border-b-0 lg:border-r">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-black sm:aspect-square">
+            <div className="relative aspect-4/3 overflow-hidden rounded-2xl border border-white/10 bg-black sm:aspect-square">
               {build.coverImageUrl ? (
                 <Image
                   src={build.coverImageUrl}
                   alt={build.title || "Build cover"}
                   fill
+                  loading="lazy"
+                  quality={75}
                   sizes="(max-width: 1024px) 100vw, 420px"
                   className="object-contain sm:object-cover"
                 />
@@ -111,6 +113,8 @@ function GallerySection({
               src={image.imageUrl}
               alt={`${title} gallery image ${index + 1}`}
               fill
+              loading="lazy"
+              quality={75}
               sizes="(max-width: 640px) 50vw, 33vw"
               className="object-cover"
             />
@@ -134,7 +138,7 @@ function Info({
         {label}
       </p>
 
-      <p className="mt-1 break-words text-sm font-bold capitalize text-white">
+      <p className="mt-1 wrap-break-word text-sm font-bold capitalize text-white">
         {value || "—"}
       </p>
     </div>
@@ -154,7 +158,7 @@ function Section({
         {title}
       </h3>
 
-      <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-7 text-white/75">
+      <p className="mt-3 whitespace-pre-wrap wrap-break-word text-sm leading-7 text-white/75">
         {value || "—"}
       </p>
     </section>

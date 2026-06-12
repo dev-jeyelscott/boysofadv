@@ -78,6 +78,8 @@ export function AdminSidebar() {
             src="/images/boysofadv.png"
             alt="Boys of ADV"
             width={120}
+            loading="lazy"
+            quality={75}
             height={60}
             className="h-auto w-auto"
           />
@@ -106,6 +108,8 @@ export function AdminSidebar() {
               alt="Boys of ADV"
               width={180}
               height={90}
+              loading="lazy"
+              quality={75}
             />
           </Link>
 

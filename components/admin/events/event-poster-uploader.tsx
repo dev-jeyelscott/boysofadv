@@ -36,6 +36,8 @@ export function EventPosterUploader({
               alt="Event poster"
               fill
               sizes="600px"
+              loading="lazy"
+              quality={75}
               className="object-contain"
             />
           </div>

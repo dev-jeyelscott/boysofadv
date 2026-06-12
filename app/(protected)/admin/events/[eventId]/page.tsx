@@ -104,6 +104,8 @@ export default async function AdminEventViewPage({ params }: Props) {
             alt={event.title}
             width={800}
             height={1200}
+            loading="lazy"
+            quality={75}
             className="h-auto w-full object-contain lg:h-full lg:object-cover"
           />
         </div>

@@ -39,7 +39,7 @@ export default async function BuildsPage({ searchParams }: BuildsPageProps) {
             setups, CVT setups, concepts, and featured member machines.
           </p>
 
-          <BuildsSearch />
+          <BuildsSearch key={search} currentSearch={search} />
         </div>
 
         <BuildsInfiniteGrid

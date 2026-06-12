@@ -54,6 +54,8 @@ export default async function PartnersPage() {
                           alt={`${partner.name} logo`}
                           width={400}
                           height={400}
+                          loading="lazy"
+                          quality={75}
                           className="max-h-full max-w-full object-contain transition duration-300 group-hover:scale-105"
                         />
                       ) : (

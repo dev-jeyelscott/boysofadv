@@ -10,21 +10,21 @@ export function HeroSection() {
           src="/images/hero-bg.jpg"
           alt="Boys of ADV"
           fill
+          quality={75}
           priority
           className="object-cover object-center opacity-80"
         />
       </div>
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black md:bg-gradient-to-r md:from-black md:via-black/80 md:to-black/30" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/70 to-black md:bg-linear-to-r md:from-black md:via-black/80 md:to-black/30" />
 
       {/* Content */}
-      <div className="relative mx-auto flex min-h-[calc(100svh-80px)] max-w-7xl items-center px-4 py-16 sm:px-6 lg:min-h-[750px] lg:py-6">
+      <div className="relative mx-auto flex min-h-[calc(100svh-80px)] max-w-7xl items-center px-4 py-16 sm:px-6 lg:min-h-187.5 lg:py-6">
         <div className="grid w-full items-center gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Left */}
           <div className="mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
             <div className="mb-5 flex items-center justify-center gap-3 lg:justify-start">
-              <div className="h-[4px] w-10 bg-red-600 sm:w-16" />
+              <div className="h-1 w-10 bg-red-600 sm:w-16" />
               <span className="text-xs font-bold uppercase tracking-[0.28em] text-white sm:text-sm sm:tracking-[0.35em]">
                 Boys of <span className="text-red-600">ADV</span>
               </span>

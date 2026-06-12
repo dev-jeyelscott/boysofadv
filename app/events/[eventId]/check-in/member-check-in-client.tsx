@@ -169,7 +169,7 @@ function Info({ label, value }: { label: string; value: string }) {
       <p className="text-xs font-black uppercase tracking-widest text-white/40">
         {label}
       </p>
-      <p className="mt-1 break-words text-sm font-semibold text-white">
+      <p className="mt-1 wrap-break-word text-sm font-semibold text-white">
         {value}
       </p>
     </div>

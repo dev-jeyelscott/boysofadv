@@ -317,6 +317,7 @@ export function MemberSidebar() {
               src="/images/boysofadv.png"
               alt="Boys of ADV"
               width={180}
+              quality={75}
               height={90}
               priority
               className="h-auto w-36"

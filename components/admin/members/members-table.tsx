@@ -56,7 +56,7 @@ export function MembersTable({ members }: MembersTableProps) {
             <div className="flex items-start justify-between gap-3 p-4">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="break-words text-sm font-black uppercase leading-5 text-white sm:text-base">
+                  <h3 className="wrap-break-word text-sm font-black uppercase leading-5 text-white sm:text-base">
                     {getFullName(member)}
                   </h3>
 
@@ -67,7 +67,7 @@ export function MembersTable({ members }: MembersTableProps) {
                   {member.email}
                 </p>
 
-                <p className="mt-1 break-words text-xs text-white/40">
+                <p className="mt-1 wrap-break-word text-xs text-white/40">
                   {member.codename || member.nickname || "No codename"}
                 </p>
               </div>
@@ -143,7 +143,7 @@ export function MembersTable({ members }: MembersTableProps) {
                 >
                   <TableCell className="p-4 align-top">
                     <div className="max-w-[260px]">
-                      <div className="break-words font-bold text-white">
+                      <div className="wrap-break-word font-bold text-white">
                         {getFullName(member)}
                       </div>
 
@@ -151,20 +151,20 @@ export function MembersTable({ members }: MembersTableProps) {
                         {member.email}
                       </div>
 
-                      <div className="break-words text-xs text-white/40">
+                      <div className="wrap-break-word text-xs text-white/40">
                         {member.codename || member.nickname || "—"}
                       </div>
                     </div>
                   </TableCell>
 
                   <TableCell className="p-4 align-top text-sm text-white/70">
-                    <div className="max-w-[180px] break-words">
+                    <div className="max-w-[180px] wrap-break-word">
                       {member.unit || "—"}
                     </div>
                   </TableCell>
 
                   <TableCell className="p-4 align-top text-sm text-white/70">
-                    <div className="max-w-[180px] break-words">
+                    <div className="max-w-[180px] wrap-break-word">
                       {member.chapter || "—"}
                     </div>
                   </TableCell>
@@ -215,7 +215,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
         {label}
       </span>
 
-      <span className="min-w-0 break-words text-right text-sm text-white/70">
+      <span className="min-w-0 wrap-break-word text-right text-sm text-white/70">
         {value}
       </span>
     </div>

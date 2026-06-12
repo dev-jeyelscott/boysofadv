@@ -70,6 +70,8 @@ export function BuildCoverUploader({
                 src={coverImageUrl}
                 alt="Build cover image"
                 height={250}
+                loading="lazy"
+                quality={75}
                 width={250}
                 className="object-cover"
               />

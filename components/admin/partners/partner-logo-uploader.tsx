@@ -94,6 +94,8 @@ export function PartnerLogoUploader({
               <Image
                 src={logoUrl}
                 alt="Partner logo"
+                loading="lazy"
+                quality={75}
                 height={180}
                 width={180}
                 className="aspect-square rounded-xl object-contain"
