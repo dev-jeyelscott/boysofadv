@@ -1,12 +1,19 @@
 "use client";
 
-import { Edit, Eye } from "lucide-react";
+import { Edit, Eye, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Table } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { PartnerRow } from "@/lib/constants/partner";
 import { EditPartnerDialog } from "./edit-partner-dialog";
 import { ViewPartnerDetailsDialog } from "./view-partner-details-dialog";
@@ -21,9 +28,10 @@ export function PartnersTable({ partners }: Props) {
 
   return (
     <>
+      {/* Mobile cards */}
       <div className="space-y-3 md:hidden">
         {partners.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-white/4 p-5 text-center text-sm text-white/60">
+          <div className="rounded-2xl border border-white/10 bg-white/4 p-6 text-center text-sm text-white/70">
             No partners found.
           </div>
         ) : (
@@ -51,79 +59,178 @@ export function PartnersTable({ partners }: Props) {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-sm font-black uppercase text-white">
+                  <h3 className="truncate text-sm font-black text-white">
                     {partner.name}
                   </h3>
 
-                  <div className="mt-1">
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
                     <StatusBadge status={partner.status} />
+
+                    <span className="rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold text-white/60">
+                      {partner.category ?? "No category"}
+                    </span>
                   </div>
 
-                  <div className="mt-3 space-y-2 text-xs text-white/50">
-                    <div className="flex justify-between gap-3">
-                      <span className="uppercase tracking-widest">
-                        Category
-                      </span>
-                      <span className="text-right text-white/80">
-                        {partner.category ?? "—"}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between gap-3">
-                      <span className="uppercase tracking-widest">Created</span>
-                      <span className="text-right text-white/80">
-                        {formatDate(partner.createdAt)}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between gap-3">
-                      <span className="uppercase tracking-widest">Website</span>
-                      {partner.websiteUrl ? (
-                        <a
-                          href={partner.websiteUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-right font-bold text-red-400"
-                        >
-                          Visit Website
-                        </a>
-                      ) : (
-                        <span className="text-white/80">—</span>
-                      )}
-                    </div>
-                  </div>
+                  <p className="mt-2 text-[11px] text-white/40">
+                    Created {formatDate(partner.createdAt)}
+                  </p>
                 </div>
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <Button
                   type="button"
-                  variant="secondary"
+                  variant="outline"
                   onClick={() => setViewingPartner(partner)}
-                  className="rounded-full bg-white/10 text-white hover:bg-white/15"
+                  className="h-10 border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white"
                 >
-                  <Eye className="mr-2 h-4 w-4" />
+                  <Eye className="mr-2 size-4" />
                   View
                 </Button>
 
                 <Button
                   type="button"
+                  variant="outline"
                   onClick={() => setEditingPartner(partner)}
-                  className="rounded-full bg-red-600 font-black uppercase text-white hover:bg-red-500"
+                  className="h-10 border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white"
                 >
-                  <Edit className="mr-2 h-4 w-4" />
+                  <Edit className="mr-2 size-4" />
                   Edit
                 </Button>
               </div>
+
+              {partner.websiteUrl ? (
+                <a
+                  href={partner.websiteUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 flex h-10 items-center justify-center rounded-xl border border-red-500/20 bg-red-500/10 text-xs font-black uppercase tracking-widest text-red-400 transition hover:bg-red-500/20"
+                >
+                  Visit Website
+                  <ExternalLink className="ml-2 size-3.5" />
+                </a>
+              ) : null}
             </article>
           ))
         )}
       </div>
 
+      {/* Desktop table */}
       <div className="hidden overflow-hidden rounded-2xl border border-white/10 bg-white/4 md:block">
         <div className="overflow-x-auto">
           <Table className="min-w-225">
-            {/* keep your existing table code here */}
+            <TableHeader>
+              <TableRow className="border-white/10 hover:bg-transparent">
+                {[
+                  "Partner",
+                  "Category",
+                  "Website",
+                  "Status",
+                  "Created",
+                  "Actions",
+                ].map((heading) => (
+                  <TableHead
+                    key={heading}
+                    className="p-4 text-center text-xs font-black uppercase tracking-widest text-white/50"
+                  >
+                    {heading}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {partners.length === 0 ? (
+                <TableRow className="border-white/10 text-sm text-white/80 hover:bg-white/3">
+                  <TableCell colSpan={6} className="p-4 text-center">
+                    No partners found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                partners.map((partner) => (
+                  <TableRow
+                    key={partner.id}
+                    className="border-white/10 text-sm text-white/80 hover:bg-white/3"
+                  >
+                    <TableCell className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="relative size-12 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-black">
+                          {partner.logoUrl ? (
+                            <Image
+                              src={partner.logoUrl}
+                              alt={partner.name}
+                              fill
+                              loading="lazy"
+                              quality={75}
+                              className="object-contain"
+                            />
+                          ) : (
+                            <div className="flex size-full items-center justify-center text-[10px] text-white/30">
+                              N/A
+                            </div>
+                          )}
+                        </div>
+
+                        <span className="font-black text-white">
+                          {partner.name}
+                        </span>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="p-4 text-center">
+                      {partner.category ?? "—"}
+                    </TableCell>
+
+                    <TableCell className="p-4 text-center">
+                      {partner.websiteUrl ? (
+                        <a
+                          href={partner.websiteUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:text-red-400"
+                        >
+                          Visit Website
+                        </a>
+                      ) : (
+                        "—"
+                      )}
+                    </TableCell>
+
+                    <TableCell className="p-4 text-center">
+                      <StatusBadge status={partner.status} />
+                    </TableCell>
+
+                    <TableCell className="p-4 text-center">
+                      {formatDate(partner.createdAt)}
+                    </TableCell>
+
+                    <TableCell className="p-4 text-center">
+                      <div className="flex justify-center gap-2">
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setViewingPartner(partner)}
+                          className="size-10 text-white/60 hover:bg-white/10 hover:text-white"
+                        >
+                          <Eye className="size-4" />
+                        </Button>
+
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setEditingPartner(partner)}
+                          className="size-10 text-white/60 hover:bg-white/10 hover:text-white"
+                        >
+                          <Edit className="size-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
           </Table>
         </div>
       </div>
