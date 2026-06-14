@@ -43,8 +43,11 @@ export const events = pgTable("events", {
   posterImageKey: text("poster_image_key"),
 
   status: eventStatusEnum("status").notNull().default("draft"),
+  statusUpdatedBy: text("statusUpdatedBy"),
   isFeatured: boolean("is_featured").notNull().default(false),
 
+  completedAt: timestamp("completedAt"),
+  attendanceSummarySentAt: timestamp("attendance_summary_sent_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

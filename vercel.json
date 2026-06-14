@@ -1,0 +1,40 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/update-status",
+      "schedule": "*/30 * * * *"
+    },
+    {
+      "path": "/api/cron/event-reminders",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/pending-approvals",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/build-review-reminder",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/event-attendance-summary",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/inactive-members",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/build-popularity",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-expired-push-subscriptions",
+      "schedule": "0 3 * * 0"
+    },
+    {
+      "path": "/api/cron/orphan-file-cleanup",
+      "schedule": "0 3 * * 0"
+    }
+  ]
+}

@@ -8,7 +8,6 @@ import { sendPushNotificationToAllAdmins } from "@/lib/send-push-notification";
 export async function POST(req: NextRequest) {
   try {
     const evt = await verifyWebhook(req);
-
     if (evt.type !== "user.created") {
       return Response.json({ received: true });
     }

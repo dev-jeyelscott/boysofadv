@@ -2,7 +2,14 @@
 
 import Image from "next/image";
 import { useRef, useState, useTransition } from "react";
-import { Heart, Loader2, MessageCircle, Reply, Send, Trash2 } from "lucide-react";
+import {
+  Heart,
+  Loader2,
+  MessageCircle,
+  Reply,
+  Send,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -41,7 +48,9 @@ type BuildCommentsProps = {
 };
 
 function getAuthorName(author: BuildCommentThreadItem["author"]) {
-  const fullName = [author.firstName, author.lastName].filter(Boolean).join(" ");
+  const fullName = [author.firstName, author.lastName]
+    .filter(Boolean)
+    .join(" ");
 
   return author.codename || author.nickname || fullName || "Boys of ADV Rider";
 }
@@ -319,7 +328,9 @@ function CommentItem({
                   : "text-white/60 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <Heart className={`mr-1.5 size-4 ${isLiked ? "fill-current" : ""}`} />
+              <Heart
+                className={`mr-1.5 size-4 ${isLiked ? "fill-current" : ""}`}
+              />
               {likeCount}
             </Button>
 

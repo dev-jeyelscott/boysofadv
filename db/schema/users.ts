@@ -43,6 +43,8 @@ export const users = pgTable("users", {
 
   isFeatured: boolean("is_featured").notNull().default(false),
 
+  lastActiveAt: timestamp("last_active_at"),
+  inactiveDetectedAt: timestamp("inactive_detected_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

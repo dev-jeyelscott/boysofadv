@@ -1,4 +1,11 @@
-import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  pgEnum,
+  integer,
+} from "drizzle-orm/pg-core";
 
 import { users } from "./users";
 
@@ -35,6 +42,9 @@ export const builds = pgTable("builds", {
 
   coverImageUrl: text("cover_image_url"),
   coverImageKey: text("cover_image_key"),
+
+  popularityScore: integer("popularity_score").notNull().default(0),
+  popularityCalculatedAt: timestamp("popularity_calculated_at"),
 
   status: buildStatusEnum("status").notNull().default("draft"),
   isFeatured: boolean("is_featured").notNull().default(false),

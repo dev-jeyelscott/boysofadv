@@ -1,13 +1,6 @@
 "use server";
 
-import {
-  and,
-  desc,
-  eq,
-  ilike,
-  or,
-  sql,
-} from "drizzle-orm";
+import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/db/db";
@@ -18,6 +11,7 @@ import { getCurrentDbUser } from "@/lib/current-user";
 import { sendPushNotificationToUser } from "@/lib/send-push-notification";
 import { BUILD_STATUSES } from "@/lib/constants/build";
 import { USER_ROLES, USER_STATUSES } from "@/lib/constants/user";
+import { touchUserActivity } from "@/lib/auth/touch-user-activity";
 
 const LIMIT = 9;
 const COMMENT_BODY_MAX_LENGTH = 1000;
@@ -199,7 +193,7 @@ export async function getPublishedBuilds(offset = 0, search = "") {
         ? and(eq(builds.status, BUILD_STATUSES.PUBLISHED), searchCondition)
         : eq(builds.status, BUILD_STATUSES.PUBLISHED),
     )
-    .orderBy(desc(builds.isFeatured), desc(builds.createdAt))
+    .orderBy(desc(builds.popularityScore), desc(builds.publishedAt))
     .limit(LIMIT + 1)
     .offset(offset);
 
@@ -270,9 +264,7 @@ export async function getBuildComments(buildId: string) {
 
   const visibleRows = commentRows.filter((comment) => !comment.deletedAt);
 
-  const toThreadItem = (
-    comment: BuildCommentRow,
-  ): BuildCommentThreadItem => {
+  const toThreadItem = (comment: BuildCommentRow): BuildCommentThreadItem => {
     const isDeleted = Boolean(comment.deletedAt);
 
     return {
@@ -359,6 +351,8 @@ export async function createBuildComment(input: {
         message: authResult.message,
       };
     }
+
+    await touchUserActivity(authResult.user.id);
 
     const payload = createCommentSchema.parse(input);
 

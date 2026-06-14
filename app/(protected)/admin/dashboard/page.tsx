@@ -129,7 +129,7 @@ export default async function DashboardPage() {
             label="Total Members"
             value={totalMembers}
             helper={`${pendingMembers} pending approval`}
-            href="/admin/membership-approvals"
+            href="/admin/memberships"
             icon={<Users className="size-5" />}
           />
 

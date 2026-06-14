@@ -31,7 +31,7 @@ export default function AboutPage() {
           <div className="relative z-10 overflow-hidden rounded-4xl border border-white/10 bg-white/4 p-3">
             <div className="relative aspect-4/5 overflow-hidden rounded-3xl bg-white/5">
               <Image
-                src="/images/about/about-hero.jpg"
+                src="/images/about/about-hero.webp"
                 alt="Boys of ADV riders"
                 fill
                 quality={75}

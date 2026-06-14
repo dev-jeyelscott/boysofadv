@@ -11,20 +11,56 @@ import {
 } from "@/components/ui/table";
 
 import { EventActionsMenu } from "./event-actions-menu";
-import { EventRow } from "@/lib/constants/event";
+import { EventDisplayStatus, EventRow } from "@/lib/constants/event";
 
 type Props = {
   events: EventRow[];
 };
 
-function formatDate(value: Date | string) {
+function formatDate(value: Date | string | null) {
+  if (!value) return "No end date";
+
   return new Intl.DateTimeFormat("en-PH", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
 }
 
-function getStatusClass(status: string) {
+function getEventDisplayStatus(event: EventRow): EventDisplayStatus {
+  const now = new Date();
+  const startDate = new Date(event.startDate);
+  const endDate = event.endDate ? new Date(event.endDate) : startDate;
+
+  if (event.status === "draft") return "draft";
+  if (event.status === "cancelled") return "cancelled";
+  if (event.status === "completed") return "completed";
+
+  if (event.status === "published") {
+    if (startDate > now) return "upcoming";
+    if (startDate <= now && endDate >= now) return "ongoing";
+
+    return "completed";
+  }
+
+  return "draft";
+}
+
+function getStatusLabel(status: EventDisplayStatus) {
+  switch (status) {
+    case "draft":
+      return "Draft";
+    case "upcoming":
+      return "Upcoming";
+    case "ongoing":
+      return "Ongoing";
+    case "completed":
+      return "Completed";
+    case "cancelled":
+      return "Cancelled";
+  }
+}
+
+function getStatusClass(status: EventDisplayStatus) {
   switch (status) {
     case "upcoming":
       return "bg-red-600/20 text-red-300 border-red-500/20";
@@ -34,6 +70,7 @@ function getStatusClass(status: string) {
       return "bg-white/10 text-white/70 border-white/10";
     case "cancelled":
       return "bg-zinc-700/40 text-zinc-300 border-white/10";
+    case "draft":
     default:
       return "bg-yellow-600/20 text-yellow-300 border-yellow-500/20";
   }
@@ -49,31 +86,35 @@ export function EventsTable({ events }: Props) {
             No events found.
           </div>
         ) : (
-          events.map((event) => (
-            <div key={event.id} className="flex items-start gap-3 p-4">
-              <div className="min-w-0 flex-1">
-                <div className="mb-2 flex items-center gap-2">
-                  <Badge
-                    className={`${getStatusClass(event.status)} rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase`}
-                  >
-                    {event.status}
-                  </Badge>
+          events.map((event) => {
+            const displayStatus = getEventDisplayStatus(event);
+
+            return (
+              <div key={event.id} className="flex items-start gap-3 p-4">
+                <div className="min-w-0 flex-1">
+                  <div className="mb-2 flex items-center gap-2">
+                    <Badge
+                      className={`${getStatusClass(displayStatus)} rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase`}
+                    >
+                      {getStatusLabel(displayStatus)}
+                    </Badge>
+                  </div>
+
+                  <p className="line-clamp-2 text-sm font-black uppercase leading-snug text-white">
+                    {event.title}
+                  </p>
+
+                  <p className="mt-1 line-clamp-1 text-xs text-white/50">
+                    {event.location || "No location"}
+                  </p>
                 </div>
 
-                <p className="line-clamp-2 text-sm font-black uppercase leading-snug text-white">
-                  {event.title}
-                </p>
-
-                <p className="mt-1 line-clamp-1 text-xs text-white/50">
-                  {event.location || "No location"}
-                </p>
+                <div className="shrink-0">
+                  <EventActionsMenu event={event} />
+                </div>
               </div>
-
-              <div className="shrink-0">
-                <EventActionsMenu event={event} />
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
@@ -111,56 +152,60 @@ export function EventsTable({ events }: Props) {
                 </TableCell>
               </TableRow>
             ) : (
-              events.map((event) => (
-                <TableRow
-                  key={event.id}
-                  className="border-white/10 align-top hover:bg-white/3"
-                >
-                  <TableCell className="p-4">
-                    <div className="relative aspect-video w-24 overflow-hidden rounded-xl border border-white/10 bg-linear-to-br from-neutral-900 via-black to-red-950">
-                      {event.posterImageUrl ? (
-                        <Image
-                          src={event.posterImageUrl}
-                          alt={event.title}
-                          fill
-                          loading="lazy"
-                          quality={75}
-                          sizes="100px"
-                          className="object-cover"
-                        />
-                      ) : null}
-                    </div>
-                  </TableCell>
+              events.map((event) => {
+                const displayStatus = getEventDisplayStatus(event);
 
-                  <TableCell className="max-w-md p-4">
-                    <p className="font-black uppercase text-white">
-                      {event.title}
-                    </p>
-                    <p className="mt-1 text-sm text-white/50">
-                      {event.location || "No location"}
-                    </p>
-                    <p className="mt-2 line-clamp-2 text-sm text-white/70">
-                      {event.description || "No description"}
-                    </p>
-                  </TableCell>
+                return (
+                  <TableRow
+                    key={event.id}
+                    className="border-white/10 align-top hover:bg-white/3"
+                  >
+                    <TableCell className="p-4">
+                      <div className="relative aspect-video w-24 overflow-hidden rounded-xl border border-white/10 bg-linear-to-br from-neutral-900 via-black to-red-950">
+                        {event.posterImageUrl ? (
+                          <Image
+                            src={event.posterImageUrl}
+                            alt={event.title}
+                            fill
+                            loading="lazy"
+                            quality={75}
+                            sizes="100px"
+                            className="object-cover"
+                          />
+                        ) : null}
+                      </div>
+                    </TableCell>
 
-                  <TableCell className="p-4 text-sm text-white/60">
-                    {formatDate(event.startDate)}
-                  </TableCell>
+                    <TableCell className="max-w-md p-4">
+                      <p className="font-black uppercase text-white">
+                        {event.title}
+                      </p>
+                      <p className="mt-1 text-sm text-white/50">
+                        {event.location || "No location"}
+                      </p>
+                      <p className="mt-2 line-clamp-2 text-sm text-white/70">
+                        {event.description || "No description"}
+                      </p>
+                    </TableCell>
 
-                  <TableCell className="p-4">
-                    <Badge
-                      className={`${getStatusClass(event.status)} rounded-full border px-3 py-1 font-black uppercase`}
-                    >
-                      {event.status}
-                    </Badge>
-                  </TableCell>
+                    <TableCell className="p-4 text-sm text-white/60">
+                      {formatDate(event.startDate)}
+                    </TableCell>
 
-                  <TableCell className="p-4 text-center">
-                    <EventActionsMenu event={event} />
-                  </TableCell>
-                </TableRow>
-              ))
+                    <TableCell className="p-4">
+                      <Badge
+                        className={`${getStatusClass(displayStatus)} rounded-full border px-3 py-1 font-black uppercase`}
+                      >
+                        {getStatusLabel(displayStatus)}
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell className="p-4 text-center">
+                      <EventActionsMenu event={event} />
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

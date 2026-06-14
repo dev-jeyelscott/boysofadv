@@ -20,3 +20,10 @@ export const EVENT_STATUSES = [
   "completed",
   "cancelled",
 ] as const;
+
+export type EventDisplayStatus =
+  | "draft"
+  | "upcoming"
+  | "ongoing"
+  | "completed"
+  | "cancelled";

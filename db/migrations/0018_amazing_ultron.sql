@@ -1,0 +1,1 @@
+ALTER TABLE "events" ADD COLUMN "attendance_summary_sent_at" timestamp;
