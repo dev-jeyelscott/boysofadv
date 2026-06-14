@@ -12,6 +12,8 @@ import { ArrowLeft } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 import { buildLikes } from "@/db/schema";
 import { BuildSocialActions } from "@/components/builds/build-social-actions";
+import { BuildComments } from "@/components/builds/build-comments";
+import { getBuildComments } from "../actions";
 
 type Props = {
   params: Promise<{
@@ -120,6 +122,8 @@ export default async function BuildDetailsPage({ params }: Props) {
     .from(galleryImages)
     .where(eq(galleryImages.buildId, buildId))
     .orderBy(asc(galleryImages.createdAt));
+
+  const commentsData = await getBuildComments(buildId);
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -273,6 +277,13 @@ export default async function BuildDetailsPage({ params }: Props) {
           {buildImages.length > 0 ? (
             <BuildGallery images={buildImages} buildTitle={build.title} />
           ) : null}
+
+          <BuildComments
+            buildId={build.id}
+            comments={commentsData.comments}
+            totalCount={commentsData.totalCount}
+            currentUser={commentsData.currentUser}
+          />
         </div>
       </section>
     </main>
