@@ -10,7 +10,13 @@ import Link from "next/link";
 
 export default async function EventsPage() {
   const eventList = await db
-    .select()
+    .select({
+      id: events.id,
+      title: events.title,
+      location: events.location,
+      startsAt: events.startsAt,
+      posterImageUrl: events.posterImageUrl,
+    })
     .from(events)
     .orderBy(desc(events.startsAt));
 

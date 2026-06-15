@@ -1,4 +1,10 @@
-import { pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 import { users } from "./users";
 
 export const pushSubscriptions = pgTable(
@@ -20,7 +26,11 @@ export const pushSubscriptions = pgTable(
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => ({
-    endpointIdx: uniqueIndex("push_subscriptions_endpoint_idx").on(
+    userIdIdx: index("push_subscriptions_user_id_idx").on(table.userId),
+    createdAtIdx: index("push_subscriptions_created_at_idx").on(
+      table.createdAt,
+    ),
+    endpointIdx: uniqueIndex("push_subscriptions_endpoint_unique_idx").on(
       table.endpoint,
     ),
   }),

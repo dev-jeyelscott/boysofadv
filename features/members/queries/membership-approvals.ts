@@ -1,9 +1,15 @@
-import { and, desc, eq, ilike, ne, or, sql } from "drizzle-orm";
+import { and, desc, eq, ne, sql } from "drizzle-orm";
 
 import { db } from "@/db/db";
 import { users } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { USER_ROLES, USER_STATUSES } from "@/lib/constants/user";
+import {
+  hasSearchQuery,
+  normalizeSearchQuery,
+  searchRank,
+  searchVectorMatches,
+} from "@/lib/db/search";
 
 type GetMembershipApprovalsParams = {
   search?: string;
@@ -18,28 +24,32 @@ export async function getMembershipApprovals({
 }: GetMembershipApprovalsParams = {}) {
   await requireAdmin();
 
-  const trimmedSearch = search?.trim();
+  const query = hasSearchQuery(search)
+    ? normalizeSearchQuery(search ?? "")
+    : "";
+  const rank = query
+    ? searchRank(users.searchVector, "simple", query)
+    : undefined;
 
-  const members = await db.query.users.findMany({
-    where: and(
-      ne(users.role, USER_ROLES.SUPER_ADMIN),
-      eq(users.status, USER_STATUSES.FOR_APPROVAL),
+  const members = await db
+    .select()
+    .from(users)
+    .where(
+      and(
+        ne(users.role, USER_ROLES.SUPER_ADMIN),
+        eq(users.status, USER_STATUSES.FOR_APPROVAL),
 
-      trimmedSearch
-        ? or(
-            ilike(users.firstName, `%${trimmedSearch}%`),
-            ilike(users.lastName, `%${trimmedSearch}%`),
-            ilike(users.email, `%${trimmedSearch}%`),
-            ilike(users.nickname, `%${trimmedSearch}%`),
-            ilike(users.codename, `%${trimmedSearch}%`),
-          )
-        : undefined,
+        query
+          ? searchVectorMatches(users.searchVector, "simple", query)
+          : undefined,
 
-      chapter && chapter !== "all" ? eq(users.chapter, chapter) : undefined,
-      unit && unit !== "all" ? eq(users.unit, unit) : undefined,
-    ),
-    orderBy: desc(users.createdAt),
-  });
+        chapter && chapter !== "all" ? eq(users.chapter, chapter) : undefined,
+        unit && unit !== "all" ? eq(users.unit, unit) : undefined,
+      ),
+    )
+    .orderBy(
+      ...(rank ? [desc(rank), desc(users.createdAt)] : [desc(users.createdAt)]),
+    );
 
   return { members };
 }

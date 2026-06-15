@@ -1,6 +1,6 @@
 "use server";
 
-import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, desc, eq, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/db/db";
@@ -13,6 +13,12 @@ import { BUILD_STATUSES } from "@/lib/constants/build";
 import { USER_STATUSES } from "@/lib/constants/user";
 import { touchUserActivity } from "@/lib/auth/touch-user-activity";
 import { canDeleteBuildComment } from "@/lib/permissions/build-comment-permissions";
+import {
+  hasSearchQuery,
+  normalizeSearchQuery,
+  searchRank,
+  searchVectorMatches,
+} from "@/lib/db/search";
 
 const LIMIT = 9;
 const COMMENT_BODY_MAX_LENGTH = 1000;
@@ -113,36 +119,22 @@ function getActionErrorMessage(error: unknown, fallback: string) {
 }
 
 export async function getPublishedBuilds(offset = 0, search = "") {
-  const query = search.trim();
+  const query = hasSearchQuery(search) ? normalizeSearchQuery(search) : "";
+  const buildRank = query
+    ? searchRank(builds.searchVector, "english", query)
+    : undefined;
+  const ownerRank = query
+    ? searchRank(users.searchVector, "simple", query)
+    : undefined;
+  const combinedRank =
+    buildRank && ownerRank
+      ? sql<number>`(${buildRank} + coalesce(${ownerRank}, 0))`
+      : undefined;
 
   const searchCondition = query
     ? or(
-        // Build fields
-        ilike(builds.title, `%${query}%`),
-        ilike(builds.motorcycleModel, `%${query}%`),
-        ilike(builds.description, `%${query}%`),
-        ilike(builds.engineSetup, `%${query}%`),
-        ilike(builds.brakingSetup, `%${query}%`),
-        ilike(builds.suspensionSetup, `%${query}%`),
-        ilike(builds.cvtSetup, `%${query}%`),
-        ilike(builds.wheelSetup, `%${query}%`),
-        ilike(builds.accessories, `%${query}%`),
-
-        // Owner fields
-        ilike(users.firstName, `%${query}%`),
-        ilike(users.lastName, `%${query}%`),
-        ilike(users.nickname, `%${query}%`),
-        ilike(users.codename, `%${query}%`),
-
-        // Full name searches
-        ilike(
-          sql`concat(${users.firstName}, ' ', ${users.lastName})`,
-          `%${query}%`,
-        ),
-        ilike(
-          sql`concat(${users.lastName}, ' ', ${users.firstName})`,
-          `%${query}%`,
-        ),
+        searchVectorMatches(builds.searchVector, "english", query),
+        searchVectorMatches(users.searchVector, "simple", query),
       )
     : undefined;
 
@@ -176,7 +168,11 @@ export async function getPublishedBuilds(offset = 0, search = "") {
         ? and(eq(builds.status, BUILD_STATUSES.PUBLISHED), searchCondition)
         : eq(builds.status, BUILD_STATUSES.PUBLISHED),
     )
-    .orderBy(desc(builds.popularityScore), desc(builds.publishedAt))
+    .orderBy(
+      ...(combinedRank
+        ? [desc(combinedRank), desc(builds.createdAt)]
+        : [desc(builds.popularityScore), desc(builds.publishedAt)]),
+    )
     .limit(LIMIT + 1)
     .offset(offset);
 

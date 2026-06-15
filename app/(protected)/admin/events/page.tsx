@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, or } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 
 import { db } from "@/db/db";
 import { events } from "@/db/schema";
@@ -6,6 +6,12 @@ import { EventCreateDialog } from "@/components/admin/events/event-create-dialog
 import { EventsFilters } from "@/components/admin/events/events-filter";
 import { EventsTable } from "@/components/admin/events/events-table";
 import { isEventStatus } from "@/lib/constants/event";
+import {
+  hasSearchQuery,
+  normalizeSearchQuery,
+  searchRank,
+  searchVectorMatches,
+} from "@/lib/db/search";
 
 type Props = {
   searchParams: Promise<{
@@ -17,7 +23,10 @@ type Props = {
 export default async function EventsPage({ searchParams }: Props) {
   const params = await searchParams;
 
-  const q = params.q?.trim() || "";
+  const q = hasSearchQuery(params.q)
+    ? normalizeSearchQuery(params.q ?? "")
+    : "";
+  const rank = q ? searchRank(events.searchVector, "english", q) : undefined;
 
   const statusParam = params.status?.trim() || "all";
   const status = isEventStatus(statusParam) ? statusParam : "all";
@@ -41,17 +50,13 @@ export default async function EventsPage({ searchParams }: Props) {
     .from(events)
     .where(
       and(
-        q
-          ? or(
-              ilike(events.title, `%${q}%`),
-              ilike(events.location, `%${q}%`),
-              ilike(events.description, `%${q}%`),
-            )
-          : undefined,
+        q ? searchVectorMatches(events.searchVector, "english", q) : undefined,
         status !== "all" ? eq(events.status, status) : undefined,
       ),
     )
-    .orderBy(desc(events.startsAt));
+    .orderBy(
+      ...(rank ? [desc(rank), asc(events.startsAt)] : [desc(events.startsAt)]),
+    );
 
   return (
     <div className="space-y-6">

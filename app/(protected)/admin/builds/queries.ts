@@ -1,7 +1,13 @@
-import { and, desc, eq, ilike, or, lt, inArray } from "drizzle-orm";
+import { and, desc, eq, lt, inArray, or, sql } from "drizzle-orm";
 import { BUILD_STATUSES } from "@/lib/constants/build";
 import { db } from "@/db/db";
 import { builds, galleryImages, users } from "@/db/schema";
+import {
+  hasSearchQuery,
+  normalizeSearchQuery,
+  searchRank,
+  searchVectorMatches,
+} from "@/lib/db/search";
 
 type BuildStatus = (typeof BUILD_STATUSES)[keyof typeof BUILD_STATUSES];
 
@@ -30,15 +36,25 @@ export async function getAdminBuilds({
     conditions.push(lt(builds.createdAt, new Date(cursor)));
   }
 
-  if (search) {
+  const query = hasSearchQuery(search)
+    ? normalizeSearchQuery(search ?? "")
+    : "";
+  const buildRank = query
+    ? searchRank(builds.searchVector, "english", query)
+    : undefined;
+  const ownerRank = query
+    ? searchRank(users.searchVector, "simple", query)
+    : undefined;
+  const combinedRank =
+    buildRank && ownerRank
+      ? sql<number>`(${buildRank} + ${ownerRank})`
+      : undefined;
+
+  if (query) {
     conditions.push(
       or(
-        ilike(builds.title, `%${search}%`),
-        ilike(users.firstName, `%${search}%`),
-        ilike(users.lastName, `%${search}%`),
-        ilike(users.nickname, `%${search}%`),
-        ilike(users.codename, `%${search}%`),
-        ilike(users.email, `%${search}%`),
+        searchVectorMatches(builds.searchVector, "english", query),
+        searchVectorMatches(users.searchVector, "simple", query),
       ),
     );
   }
@@ -93,7 +109,11 @@ export async function getAdminBuilds({
     .from(builds)
     .innerJoin(users, eq(builds.userId, users.id))
     .where(conditions.length ? and(...conditions) : undefined)
-    .orderBy(desc(builds.createdAt))
+    .orderBy(
+      ...(combinedRank
+        ? [desc(combinedRank), desc(builds.createdAt)]
+        : [desc(builds.createdAt)]),
+    )
     .limit(limit + 1);
 
   const hasMore = rows.length > limit;

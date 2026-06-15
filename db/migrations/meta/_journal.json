@@ -141,6 +141,13 @@
       "when": 1781465978490,
       "tag": "0019_dashing_echo",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1781497423486,
+      "tag": "0020_lumpy_aaron_stack",
+      "breakpoints": true
     }
   ]
 }
