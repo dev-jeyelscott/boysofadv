@@ -28,7 +28,7 @@ export const builds = pgTable(
 
     userId: text("user_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "restrict" }),
 
     title: text("title").notNull(),
     slug: text("slug").notNull().unique(),
@@ -81,6 +81,7 @@ export const builds = pgTable(
   (table) => [
     index("builds_status_idx").on(table.status),
     index("builds_user_id_idx").on(table.userId),
+    index("builds_is_featured_idx").on(table.isFeatured),
     index("builds_created_at_idx").on(table.createdAt),
     index("builds_updated_at_idx").on(table.updatedAt),
     index("builds_status_created_at_idx").on(

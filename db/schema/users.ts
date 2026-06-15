@@ -91,6 +91,7 @@ export const users = pgTable(
   },
   (table) => [
     index("users_email_idx").on(table.email),
+    index("users_clerk_user_id_idx").on(table.clerkUserId),
     index("users_status_idx").on(table.status),
     index("users_role_idx").on(table.role),
     index("users_created_at_idx").on(table.createdAt),

@@ -23,7 +23,7 @@ export const eventAttendance = pgTable(
 
     userId: text("user_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "restrict" }),
 
     status: text("status").notNull().default("checked_in"),
 
@@ -57,6 +57,8 @@ export const eventAttendance = pgTable(
       table.eventId,
       table.userId,
     ),
+    index("event_attendance_event_id_idx").on(table.eventId),
+    index("event_attendance_user_id_idx").on(table.userId),
     index("event_attendance_event_checked_in_idx").on(
       table.eventId,
       table.checkedInAt.desc(),

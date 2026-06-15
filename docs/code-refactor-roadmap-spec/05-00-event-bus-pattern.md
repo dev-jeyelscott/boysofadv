@@ -1,6 +1,6 @@
-## Phase 5 — Event Bus Pattern Spec
+# Phase 5 — Event Bus Pattern Spec
 
-### Goal
+## Goal
 
 Decouple core application actions from side effects such as push notifications, audit logs, activity feeds, and future badges.
 
