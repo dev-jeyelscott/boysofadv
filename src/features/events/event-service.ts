@@ -4,13 +4,9 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/db";
 import { events } from "@/db/schema";
 import { EVENT_STATUSES } from "@/lib/constants/event";
-import {
-  AUDIT_ACTIONS,
-  AUDIT_ENTITY_TYPES,
-  createAuditLog,
-} from "@/src/features/audit/audit-service";
-import { NotificationService } from "@/src/features/notifications/notification-service";
 import { assertApprovedAdmin } from "@/src/features/shared/service-actor";
+import { eventBus } from "@/src/lib/events/event-bus";
+import { registerDomainEventHandlers } from "@/src/lib/events/handlers";
 import { ServiceError } from "@/src/lib/errors/service-error";
 import type {
   CancelEventInput,
@@ -141,10 +137,9 @@ export const EventService = {
       })
       .returning();
 
-    await createAuditLog({
+    registerDomainEventHandlers();
+    await eventBus.emit("event.created", {
       actorId: input.actor.id,
-      action: AUDIT_ACTIONS.EVENT_CREATED,
-      entityType: AUDIT_ENTITY_TYPES.EVENT,
       entityId: event.id,
       metadata: createEventAuditMetadata(event),
     });
@@ -217,19 +212,12 @@ export const EventService = {
 
     assertEventFound(event);
 
-    const notificationSummary = shouldNotify
-      ? await NotificationService.notifyEventUpdated({
-          eventId: event.id,
-          title: event.title,
-        })
-      : undefined;
-
-    await createAuditLog({
+    registerDomainEventHandlers();
+    await eventBus.emit("event.updated", {
       actorId: input.actor.id,
-      action: AUDIT_ACTIONS.EVENT_UPDATED,
-      entityType: AUDIT_ENTITY_TYPES.EVENT,
       entityId: event.id,
       metadata: {
+        title: event.title,
         before: eventAuditSnapshot(currentEvent),
         after: eventAuditSnapshot(event),
         notificationQueued: shouldNotify,
@@ -239,7 +227,6 @@ export const EventService = {
     return {
       success: true,
       event,
-      notificationSummary,
     };
   },
 
@@ -276,15 +263,19 @@ export const EventService = {
       );
     }
 
-    const notificationSummary = await NotificationService.notifyEventCreated({
-      eventId: event.id,
-      title: event.title,
+    registerDomainEventHandlers();
+    await eventBus.emit("event.created", {
+      actorId: input.actor.id,
+      entityId: event.id,
+      metadata: {
+        ...createEventAuditMetadata(event),
+        notificationQueued: true,
+      },
     });
 
     return {
       success: true,
       event,
-      notificationSummary,
     };
   },
 
@@ -330,22 +321,14 @@ export const EventService = {
       );
     }
 
-    const notificationSummary = shouldNotify
-      ? await NotificationService.notifyEventCancelled({
-          eventId: event.id,
-          title: event.title,
-        })
-      : undefined;
-
-    await createAuditLog({
+    registerDomainEventHandlers();
+    await eventBus.emit("event.cancelled", {
       actorId: input.actor.id,
-      action: AUDIT_ACTIONS.EVENT_CANCELLED,
-      entityType: AUDIT_ENTITY_TYPES.EVENT,
       entityId: event.id,
       metadata: {
         title: event.title,
         previousStatus: currentEvent.status,
-        status: event.status,
+        status: EVENT_STATUSES.CANCELLED,
         reason: payload.reason,
         cancelledAt: formatAuditDate(event.cancelledAt),
         notificationQueued: shouldNotify,
@@ -355,7 +338,6 @@ export const EventService = {
     return {
       success: true,
       event,
-      notificationSummary,
     };
   },
 

@@ -13,6 +13,8 @@ import {
   assertApprovedAdmin,
   assertSuperAdmin,
 } from "@/src/features/shared/service-actor";
+import { eventBus } from "@/src/lib/events/event-bus";
+import { registerDomainEventHandlers } from "@/src/lib/events/handlers";
 import { ServiceError } from "@/src/lib/errors/service-error";
 import type { MemberTransitionInput, RejectMemberInput } from "./member-types";
 import { memberIdSchema, optionalReasonSchema } from "./member-validation";
@@ -66,10 +68,9 @@ export const MemberService = {
       );
     }
 
-    await createAuditLog({
+    registerDomainEventHandlers();
+    await eventBus.emit("member.approved", {
       actorId: input.actor.id,
-      action: AUDIT_ACTIONS.MEMBER_APPROVED,
-      entityType: AUDIT_ENTITY_TYPES.MEMBER,
       entityId: member.id,
       metadata: {
         previousStatus: USER_STATUSES.FOR_APPROVAL,
@@ -79,19 +80,9 @@ export const MemberService = {
       },
     });
 
-    const notificationSummary = await NotificationService.notifyUser({
-      userId: member.id,
-      payload: {
-        title: "Membership Approved",
-        body: "Your membership application is approved.",
-        url: "/my-profile",
-      },
-    });
-
     return {
       success: true,
       member,
-      notificationSummary,
     };
   },
 

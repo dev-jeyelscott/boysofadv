@@ -10,6 +10,8 @@ import {
 } from "@/lib/attendance-token";
 import { calculateDistanceMeters } from "@/lib/geo";
 import { assertApprovedAdmin } from "@/src/features/shared/service-actor";
+import { eventBus } from "@/src/lib/events/event-bus";
+import { registerDomainEventHandlers } from "@/src/lib/events/handlers";
 import { ServiceError } from "@/src/lib/errors/service-error";
 import type {
   AttendanceCheckInInput,
@@ -175,6 +177,19 @@ export const AttendanceService = {
     if (!attendance) {
       throw new ServiceError("CONFLICT", "Member already checked in");
     }
+
+    registerDomainEventHandlers();
+    await eventBus.emit("attendance.checked_in", {
+      actorId: attendance.userId,
+      entityId: attendance.eventId,
+      metadata: {
+        eventId: attendance.eventId,
+        memberId: attendance.userId,
+        checkedInAt: attendance.checkedInAt,
+        gpsAccuracyMeters: attendance.gpsAccuracyMeters,
+        distanceMeters: attendance.distanceMeters,
+      },
+    });
 
     return {
       success: true,

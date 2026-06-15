@@ -3,13 +3,9 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/db";
 import { builds } from "@/db/schema";
 import { BUILD_STATUSES } from "@/lib/constants/build";
-import {
-  AUDIT_ACTIONS,
-  AUDIT_ENTITY_TYPES,
-  createAuditLog,
-} from "@/src/features/audit/audit-service";
-import { NotificationService } from "@/src/features/notifications/notification-service";
 import { assertApprovedAdmin } from "@/src/features/shared/service-actor";
+import { eventBus } from "@/src/lib/events/event-bus";
+import { registerDomainEventHandlers } from "@/src/lib/events/handlers";
 import { ServiceError } from "@/src/lib/errors/service-error";
 import type { BuildTransitionInput, RejectBuildInput } from "./build-types";
 import { buildIdSchema, rejectBuildSchema } from "./build-validation";
@@ -60,10 +56,9 @@ export const BuildService = {
       );
     }
 
-    await createAuditLog({
+    registerDomainEventHandlers();
+    await eventBus.emit("build.submitted", {
       actorId: input.actor.id,
-      action: AUDIT_ACTIONS.BUILD_SUBMITTED,
-      entityType: AUDIT_ENTITY_TYPES.BUILD,
       entityId: build.id,
       metadata: {
         ownerId: build.userId,
@@ -115,10 +110,9 @@ export const BuildService = {
       );
     }
 
-    await createAuditLog({
+    registerDomainEventHandlers();
+    await eventBus.emit("build.published", {
       actorId: input.actor.id,
-      action: AUDIT_ACTIONS.BUILD_PUBLISHED,
-      entityType: AUDIT_ENTITY_TYPES.BUILD,
       entityId: build.id,
       metadata: {
         previousStatus: BUILD_STATUSES.FOR_REVIEW,
@@ -131,15 +125,9 @@ export const BuildService = {
       },
     });
 
-    const notificationSummary = await NotificationService.notifyBuildPublished({
-      ownerId: build.userId,
-      slug: build.slug,
-    });
-
     return {
       success: true,
       build,
-      notificationSummary,
     };
   },
 
@@ -177,10 +165,9 @@ export const BuildService = {
       );
     }
 
-    await createAuditLog({
+    registerDomainEventHandlers();
+    await eventBus.emit("build.rejected", {
       actorId: input.actor.id,
-      action: AUDIT_ACTIONS.BUILD_REJECTED,
-      entityType: AUDIT_ENTITY_TYPES.BUILD,
       entityId: build.id,
       metadata: {
         previousStatus: BUILD_STATUSES.FOR_REVIEW,
@@ -193,14 +180,9 @@ export const BuildService = {
       },
     });
 
-    const notificationSummary = await NotificationService.notifyBuildRejected({
-      ownerId: build.userId,
-    });
-
     return {
       success: true,
       build,
-      notificationSummary,
     };
   },
 
