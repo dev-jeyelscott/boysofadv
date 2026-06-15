@@ -1,9 +1,10 @@
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 import { db } from "@/db/db";
 import { webPush, type PushPayload } from "@/lib/push";
 import { pushSubscriptions } from "@/db/schema/push-subscriptions";
 import { users } from "@/db/schema/users";
+import { USER_ROLES, USER_STATUSES } from "@/lib/constants/user";
 
 type PushSendResult = {
   total: number;
@@ -122,7 +123,7 @@ export async function sendPushNotificationToAllApprovedUsers(
     })
     .from(pushSubscriptions)
     .innerJoin(users, eq(pushSubscriptions.userId, users.id))
-    .where(eq(users.status, "approved"));
+    .where(eq(users.status, USER_STATUSES.APPROVED));
 
   const results = await Promise.all(
     subscriptions.map((subscription) =>
@@ -149,7 +150,7 @@ export async function sendPushNotificationToAllAdmins(payload: PushPayload) {
     })
     .from(pushSubscriptions)
     .innerJoin(users, eq(pushSubscriptions.userId, users.id))
-    .where(eq(users.role, "admin"));
+    .where(inArray(users.role, [USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]));
 
   const results = await Promise.all(
     subscriptions.map((subscription) =>

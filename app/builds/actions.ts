@@ -10,8 +10,9 @@ import { nanoid } from "nanoid";
 import { getCurrentDbUser } from "@/lib/current-user";
 import { sendPushNotificationToUser } from "@/lib/send-push-notification";
 import { BUILD_STATUSES } from "@/lib/constants/build";
-import { USER_ROLES, USER_STATUSES } from "@/lib/constants/user";
+import { USER_STATUSES } from "@/lib/constants/user";
 import { touchUserActivity } from "@/lib/auth/touch-user-activity";
+import { canDeleteBuildComment } from "@/lib/permissions/build-comment-permissions";
 
 const LIMIT = 9;
 const COMMENT_BODY_MAX_LENGTH = 1000;
@@ -76,24 +77,6 @@ export type BuildCommentThreadItem = {
   canLike: boolean;
   replies: BuildCommentThreadItem[];
 };
-
-function isAdminRole(role: string) {
-  return role === USER_ROLES.ADMIN || role === USER_ROLES.SUPER_ADMIN;
-}
-
-function canDeleteComment(
-  user: { id: string; role: string; status: string } | null,
-  comment: {
-    userId: string;
-    deletedAt: Date | null;
-  },
-) {
-  if (!user || user.status !== USER_STATUSES.APPROVED || comment.deletedAt) {
-    return false;
-  }
-
-  return comment.userId === user.id || isAdminRole(user.role);
-}
 
 async function getApprovedActionUser() {
   const user = await getCurrentDbUser();
@@ -286,7 +269,7 @@ export async function getBuildComments(buildId: string) {
       },
       likeCount: comment.likeCount,
       isLikedByMe: comment.isLikedByMe,
-      canDelete: canDeleteComment(currentUser ?? null, {
+      canDelete: canDeleteBuildComment(currentUser ?? null, {
         userId: comment.userId,
         deletedAt: comment.deletedAt,
       }),
@@ -583,7 +566,7 @@ export async function deleteBuildComment(commentId: string) {
     };
   }
 
-  if (!canDeleteComment(authResult.user, comment)) {
+  if (!canDeleteBuildComment(authResult.user, comment)) {
     return {
       ok: false,
       message: "You do not have permission to delete this comment.",

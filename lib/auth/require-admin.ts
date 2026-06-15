@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { USER_ROLES, USER_STATUSES } from "@/lib/constants/user";
-import { getCurrentDbUser } from "../current-user";
+import { getCurrentDbUser } from "@/lib/auth/current-user";
+import { canManageMembers } from "@/lib/permissions/member-permissions";
 
 export async function requireAdmin() {
   const user = await getCurrentDbUser();
@@ -10,10 +10,7 @@ export async function requireAdmin() {
     redirect("/sign-in");
   }
 
-  const isAdmin =
-    user.role === USER_ROLES.ADMIN || user.role === USER_ROLES.SUPER_ADMIN;
-
-  if (!isAdmin || user.status !== USER_STATUSES.APPROVED) {
+  if (!canManageMembers(user)) {
     redirect("/");
   }
 
