@@ -7,7 +7,6 @@ import {
   integer,
   index,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
 
 import { tsvector } from "./search-vector";
 import { users } from "./users";
@@ -62,19 +61,7 @@ export const builds = pgTable(
     }),
     rejectionReason: text("rejection_reason"),
 
-    searchVector: tsvector("search_vector").generatedAlwaysAs(
-      sql`
-        setweight(to_tsvector('english', coalesce("title", '')), 'A') ||
-        setweight(to_tsvector('english', coalesce("motorcycle_model", '')), 'A') ||
-        setweight(to_tsvector('english', coalesce("description", '')), 'B') ||
-        setweight(to_tsvector('english', coalesce("engine_setup", '')), 'B') ||
-        setweight(to_tsvector('english', coalesce("cvt_setup", '')), 'B') ||
-        setweight(to_tsvector('english', coalesce("suspension_setup", '')), 'C') ||
-        setweight(to_tsvector('english', coalesce("braking_setup", '')), 'C') ||
-        setweight(to_tsvector('english', coalesce("wheel_setup", '')), 'C') ||
-        setweight(to_tsvector('english', coalesce("accessories", '')), 'D')
-      `,
-    ),
+    searchVector: tsvector("search_vector"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },

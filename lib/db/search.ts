@@ -14,8 +14,8 @@ export function hasSearchQuery(query?: string | null) {
   return Boolean(query && normalizeSearchQuery(query).length >= 2);
 }
 
-export function toPlainTsQuery(config: SearchConfig, query: string) {
-  return sql`plainto_tsquery(${searchConfigSql(config)}, ${normalizeSearchQuery(
+export function toWebSearchTsQuery(config: SearchConfig, query: string) {
+  return sql`websearch_to_tsquery(${searchConfigSql(config)}, ${normalizeSearchQuery(
     query,
   )})`;
 }
@@ -25,7 +25,7 @@ export function searchVectorMatches(
   config: SearchConfig,
   query: string,
 ) {
-  return sql`${searchVector} @@ ${toPlainTsQuery(config, query)}`;
+  return sql`${searchVector} @@ ${toWebSearchTsQuery(config, query)}`;
 }
 
 export function searchRank(
@@ -33,5 +33,5 @@ export function searchRank(
   config: SearchConfig,
   query: string,
 ) {
-  return sql<number>`ts_rank(${searchVector}, ${toPlainTsQuery(config, query)})`;
+  return sql<number>`ts_rank(${searchVector}, ${toWebSearchTsQuery(config, query)})`;
 }

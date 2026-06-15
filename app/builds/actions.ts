@@ -1,10 +1,10 @@
 "use server";
 
-import { and, desc, eq, or, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/db/db";
-import { buildLikes, builds, users } from "@/db/schema";
+import { buildLikes, builds } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { nanoid } from "nanoid";
 import { getCurrentDbUser } from "@/lib/current-user";
@@ -13,12 +13,7 @@ import { BUILD_STATUSES } from "@/lib/constants/build";
 import { USER_STATUSES } from "@/lib/constants/user";
 import { touchUserActivity } from "@/lib/auth/touch-user-activity";
 import { canDeleteBuildComment } from "@/lib/permissions/build-comment-permissions";
-import {
-  hasSearchQuery,
-  normalizeSearchQuery,
-  searchRank,
-  searchVectorMatches,
-} from "@/lib/db/search";
+import { searchBuilds } from "@/lib/db/build-search";
 
 const LIMIT = 9;
 const COMMENT_BODY_MAX_LENGTH = 1000;
@@ -119,66 +114,16 @@ function getActionErrorMessage(error: unknown, fallback: string) {
 }
 
 export async function getPublishedBuilds(offset = 0, search = "") {
-  const query = hasSearchQuery(search) ? normalizeSearchQuery(search) : "";
-  const buildRank = query
-    ? searchRank(builds.searchVector, "english", query)
-    : undefined;
-  const ownerRank = query
-    ? searchRank(users.searchVector, "simple", query)
-    : undefined;
-  const combinedRank =
-    buildRank && ownerRank
-      ? sql<number>`(${buildRank} + coalesce(${ownerRank}, 0))`
-      : undefined;
-
-  const searchCondition = query
-    ? or(
-        searchVectorMatches(builds.searchVector, "english", query),
-        searchVectorMatches(users.searchVector, "simple", query),
-      )
-    : undefined;
-
-  const rows = await db
-    .select({
-      id: builds.id,
-      title: builds.title,
-      slug: builds.slug,
-      coverImageUrl: builds.coverImageUrl,
-      motorcycleModel: builds.motorcycleModel,
-      yearModel: builds.yearModel,
-      concept: builds.concept,
-      description: builds.description,
-      engineSetup: builds.engineSetup,
-      brakingSetup: builds.brakingSetup,
-      suspensionSetup: builds.suspensionSetup,
-      cvtSetup: builds.cvtSetup,
-      wheelSetup: builds.wheelSetup,
-      accessories: builds.accessories,
-      isFeatured: builds.isFeatured,
-      createdAt: builds.createdAt,
-      ownerFirstName: users.firstName,
-      ownerLastName: users.lastName,
-      ownerNickname: users.nickname,
-      ownerCodename: users.codename,
-    })
-    .from(builds)
-    .leftJoin(users, eq(builds.userId, users.id))
-    .where(
-      query
-        ? and(eq(builds.status, BUILD_STATUSES.PUBLISHED), searchCondition)
-        : eq(builds.status, BUILD_STATUSES.PUBLISHED),
-    )
-    .orderBy(
-      ...(combinedRank
-        ? [desc(combinedRank), desc(builds.createdAt)]
-        : [desc(builds.popularityScore), desc(builds.publishedAt)]),
-    )
-    .limit(LIMIT + 1)
-    .offset(offset);
+  const result = await searchBuilds({
+    query: search,
+    status: BUILD_STATUSES.PUBLISHED,
+    limit: LIMIT,
+    offset,
+  });
 
   return {
-    builds: rows.slice(0, LIMIT),
-    hasMore: rows.length > LIMIT,
+    builds: result.items,
+    hasMore: result.hasMore,
   };
 }
 

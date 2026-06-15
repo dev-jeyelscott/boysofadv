@@ -1,15 +1,8 @@
-import { and, desc, eq, lt, inArray, or, sql } from "drizzle-orm";
-import { BUILD_STATUSES } from "@/lib/constants/build";
+import { inArray } from "drizzle-orm";
+import { BUILD_STATUSES, type BuildStatus } from "@/lib/constants/build";
 import { db } from "@/db/db";
-import { builds, galleryImages, users } from "@/db/schema";
-import {
-  hasSearchQuery,
-  normalizeSearchQuery,
-  searchRank,
-  searchVectorMatches,
-} from "@/lib/db/search";
-
-type BuildStatus = (typeof BUILD_STATUSES)[keyof typeof BUILD_STATUSES];
+import { galleryImages } from "@/db/schema";
+import { searchBuilds } from "@/lib/db/build-search";
 
 type GetAdminBuildsInput = {
   cursor?: string;
@@ -30,94 +23,21 @@ export async function getAdminBuilds({
   isFeatured,
   limit = 12,
 }: GetAdminBuildsInput) {
-  const conditions = [];
+  const result = await searchBuilds({
+    query: search,
+    status:
+      status && Object.values(BUILD_STATUSES).includes(status)
+        ? status
+        : undefined,
+    limit,
+    offset: cursor ? Number(cursor) || 0 : 0,
+    model,
+    concept,
+    isFeatured:
+      isFeatured === "true" ? true : isFeatured === "false" ? false : null,
+  });
 
-  if (cursor) {
-    conditions.push(lt(builds.createdAt, new Date(cursor)));
-  }
-
-  const query = hasSearchQuery(search)
-    ? normalizeSearchQuery(search ?? "")
-    : "";
-  const buildRank = query
-    ? searchRank(builds.searchVector, "english", query)
-    : undefined;
-  const ownerRank = query
-    ? searchRank(users.searchVector, "simple", query)
-    : undefined;
-  const combinedRank =
-    buildRank && ownerRank
-      ? sql<number>`(${buildRank} + ${ownerRank})`
-      : undefined;
-
-  if (query) {
-    conditions.push(
-      or(
-        searchVectorMatches(builds.searchVector, "english", query),
-        searchVectorMatches(users.searchVector, "simple", query),
-      ),
-    );
-  }
-
-  if (model) {
-    conditions.push(eq(builds.motorcycleModel, model));
-  }
-
-  if (concept) {
-    conditions.push(eq(builds.concept, concept));
-  }
-
-  if (status && Object.values(BUILD_STATUSES).includes(status as BuildStatus)) {
-    conditions.push(eq(builds.status, status as BuildStatus));
-  }
-
-  if (isFeatured === "true") {
-    conditions.push(eq(builds.isFeatured, true));
-  }
-
-  if (isFeatured === "false") {
-    conditions.push(eq(builds.isFeatured, false));
-  }
-
-  const rows = await db
-    .select({
-      id: builds.id,
-      title: builds.title,
-      status: builds.status,
-      isFeatured: builds.isFeatured,
-      coverImageUrl: builds.coverImageUrl,
-      motorcycleModel: builds.motorcycleModel,
-      concept: builds.concept,
-      yearModel: builds.yearModel,
-      description: builds.description,
-      engineSetup: builds.engineSetup,
-      cvtSetup: builds.cvtSetup,
-      suspensionSetup: builds.suspensionSetup,
-      brakingSetup: builds.brakingSetup,
-      wheelSetup: builds.wheelSetup,
-      accessories: builds.accessories,
-      createdAt: builds.createdAt,
-      updatedAt: builds.updatedAt,
-
-      ownerId: users.id,
-      ownerEmail: users.email,
-      ownerFirstName: users.firstName,
-      ownerLastName: users.lastName,
-      ownerNickname: users.nickname,
-      ownerCodename: users.codename,
-    })
-    .from(builds)
-    .innerJoin(users, eq(builds.userId, users.id))
-    .where(conditions.length ? and(...conditions) : undefined)
-    .orderBy(
-      ...(combinedRank
-        ? [desc(combinedRank), desc(builds.createdAt)]
-        : [desc(builds.createdAt)]),
-    )
-    .limit(limit + 1);
-
-  const hasMore = rows.length > limit;
-  const items = rows.slice(0, limit);
+  const items = result.items;
 
   const buildIds = items.map((item) => item.id);
 
@@ -151,8 +71,8 @@ export async function getAdminBuilds({
 
   return {
     itemsWithGalleryImages,
-    nextCursor: hasMore
-      ? items[items.length - 1]?.createdAt.toISOString()
+    nextCursor: result.hasMore
+      ? String((cursor ? Number(cursor) || 0 : 0) + limit)
       : null,
   };
 }
