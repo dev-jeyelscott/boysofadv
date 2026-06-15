@@ -4,6 +4,11 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/db";
 import { events } from "@/db/schema";
 import { EVENT_STATUSES } from "@/lib/constants/event";
+import {
+  AUDIT_ACTIONS,
+  AUDIT_ENTITY_TYPES,
+  createAuditLog,
+} from "@/src/features/audit/audit-service";
 import { NotificationService } from "@/src/features/notifications/notification-service";
 import { assertApprovedAdmin } from "@/src/features/shared/service-actor";
 import { ServiceError } from "@/src/lib/errors/service-error";
@@ -73,6 +78,44 @@ function eventNotificationChanged(
   );
 }
 
+function formatAuditDate(value: Date | null) {
+  return value?.toISOString() ?? null;
+}
+
+function createEventAuditMetadata(event: {
+  title: string;
+  slug: string;
+  status: string;
+  startsAt: Date;
+  endsAt: Date | null;
+  location: string | null;
+}) {
+  return {
+    title: event.title,
+    slug: event.slug,
+    status: event.status,
+    startsAt: formatAuditDate(event.startsAt),
+    endsAt: formatAuditDate(event.endsAt),
+    location: event.location,
+  };
+}
+
+function eventAuditSnapshot(event: {
+  title: string;
+  status: string;
+  startsAt: Date;
+  endsAt: Date | null;
+  location: string | null;
+}) {
+  return {
+    title: event.title,
+    status: event.status,
+    startsAt: formatAuditDate(event.startsAt),
+    endsAt: formatAuditDate(event.endsAt),
+    location: event.location,
+  };
+}
+
 export const EventService = {
   async create(input: CreateEventInput) {
     assertApprovedAdmin(input.actor);
@@ -97,6 +140,14 @@ export const EventService = {
         posterImageKey: payload.posterImageKey || null,
       })
       .returning();
+
+    await createAuditLog({
+      actorId: input.actor.id,
+      action: AUDIT_ACTIONS.EVENT_CREATED,
+      entityType: AUDIT_ENTITY_TYPES.EVENT,
+      entityId: event.id,
+      metadata: createEventAuditMetadata(event),
+    });
 
     return {
       success: true,
@@ -172,6 +223,18 @@ export const EventService = {
           title: event.title,
         })
       : undefined;
+
+    await createAuditLog({
+      actorId: input.actor.id,
+      action: AUDIT_ACTIONS.EVENT_UPDATED,
+      entityType: AUDIT_ENTITY_TYPES.EVENT,
+      entityId: event.id,
+      metadata: {
+        before: eventAuditSnapshot(currentEvent),
+        after: eventAuditSnapshot(event),
+        notificationQueued: shouldNotify,
+      },
+    });
 
     return {
       success: true,
@@ -273,6 +336,21 @@ export const EventService = {
           title: event.title,
         })
       : undefined;
+
+    await createAuditLog({
+      actorId: input.actor.id,
+      action: AUDIT_ACTIONS.EVENT_CANCELLED,
+      entityType: AUDIT_ENTITY_TYPES.EVENT,
+      entityId: event.id,
+      metadata: {
+        title: event.title,
+        previousStatus: currentEvent.status,
+        status: event.status,
+        reason: payload.reason,
+        cancelledAt: formatAuditDate(event.cancelledAt),
+        notificationQueued: shouldNotify,
+      },
+    });
 
     return {
       success: true,

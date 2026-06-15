@@ -3,6 +3,11 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/db/db";
 import { users } from "@/db/schema";
 import { USER_ROLES, USER_STATUSES } from "@/lib/constants/user";
+import {
+  AUDIT_ACTIONS,
+  AUDIT_ENTITY_TYPES,
+  createAuditLog,
+} from "@/src/features/audit/audit-service";
 import { NotificationService } from "@/src/features/notifications/notification-service";
 import {
   assertApprovedAdmin,
@@ -61,6 +66,19 @@ export const MemberService = {
       );
     }
 
+    await createAuditLog({
+      actorId: input.actor.id,
+      action: AUDIT_ACTIONS.MEMBER_APPROVED,
+      entityType: AUDIT_ENTITY_TYPES.MEMBER,
+      entityId: member.id,
+      metadata: {
+        previousStatus: USER_STATUSES.FOR_APPROVAL,
+        newStatus: USER_STATUSES.APPROVED,
+        approvedBy: input.actor.id,
+        approvedAt: now,
+      },
+    });
+
     const notificationSummary = await NotificationService.notifyUser({
       userId: member.id,
       payload: {
@@ -112,6 +130,20 @@ export const MemberService = {
       );
     }
 
+    await createAuditLog({
+      actorId: input.actor.id,
+      action: AUDIT_ACTIONS.MEMBER_REJECTED,
+      entityType: AUDIT_ENTITY_TYPES.MEMBER,
+      entityId: member.id,
+      metadata: {
+        previousStatus: USER_STATUSES.FOR_APPROVAL,
+        newStatus: USER_STATUSES.REJECTED,
+        rejectedBy: input.actor.id,
+        rejectedAt: now,
+        reason: reason ?? null,
+      },
+    });
+
     const notificationSummary = await NotificationService.notifyUser({
       userId: member.id,
       payload: {
@@ -161,6 +193,19 @@ export const MemberService = {
         "Only approved members can be suspended.",
       );
     }
+
+    await createAuditLog({
+      actorId: input.actor.id,
+      action: AUDIT_ACTIONS.MEMBER_SUSPENDED,
+      entityType: AUDIT_ENTITY_TYPES.MEMBER,
+      entityId: member.id,
+      metadata: {
+        previousStatus: USER_STATUSES.APPROVED,
+        newStatus: USER_STATUSES.SUSPENDED,
+        suspendedBy: input.actor.id,
+        suspendedAt: now,
+      },
+    });
 
     return {
       success: true,

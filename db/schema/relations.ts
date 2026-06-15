@@ -5,6 +5,7 @@ import { buildComments } from "./build-comments";
 import { buildCommentLikes } from "./build-comment-likes";
 import { eventAttendance } from "./event-attendance";
 import { events } from "./events";
+import { auditLogs } from "./audit-logs";
 
 export const usersRelations = relations(users, ({ many, one }) => ({
   build: one(builds, {
@@ -21,6 +22,7 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   deletedBuildCommentLikes: many(buildCommentLikes, {
     relationName: "buildCommentLikeDeletedBy",
   }),
+  auditLogs: many(auditLogs, { relationName: "auditLogActor" }),
 }));
 
 export const buildsRelations = relations(builds, ({ many, one }) => ({
@@ -93,3 +95,11 @@ export const eventAttendanceRelations = relations(
     }),
   }),
 );
+
+export const auditLogsRelations = relations(auditLogs, ({ one }) => ({
+  actor: one(users, {
+    fields: [auditLogs.actorId],
+    references: [users.id],
+    relationName: "auditLogActor",
+  }),
+}));

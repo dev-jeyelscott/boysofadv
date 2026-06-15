@@ -155,6 +155,13 @@
       "when": 1781500282677,
       "tag": "0021_messy_titanium_man",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1781515638804,
+      "tag": "0022_fast_micromax",
+      "breakpoints": true
     }
   ]
 }

@@ -6,8 +6,8 @@ import { z } from "zod";
 
 import { db } from "@/db/db";
 import { partners } from "@/db/schema";
-import { UTApi } from "uploadthing/server";
-import { eq } from "drizzle-orm";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { PartnerService } from "@/src/features/partners/partner-service";
 
 const PARTNER_STATUSES = ["draft", "active", "inactive"] as const;
 
@@ -64,46 +64,36 @@ export async function createPartner(formData: FormData) {
   revalidatePath("/admin/partners");
 }
 
-const utapi = new UTApi();
+function getString(formData: FormData, key: string) {
+  const value = formData.get(key);
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function getOptionalString(formData: FormData, key: string) {
+  const value = getString(formData, key);
+  return value || null;
+}
+
+function getPartnerUpdateData(formData: FormData) {
+  return {
+    name: getString(formData, "name"),
+    category: getOptionalString(formData, "category"),
+    websiteUrl: getOptionalString(formData, "websiteUrl"),
+    description: getOptionalString(formData, "description"),
+    status: getString(formData, "status") || "inactive",
+    logoUrl: getOptionalString(formData, "logoUrl"),
+    logoKey: getOptionalString(formData, "logoKey"),
+  };
+}
 
 export async function updatePartner(id: string, formData: FormData) {
-  const existingPartner = await db.query.partners.findFirst({
-    where: eq(partners.id, id),
+  const actor = await requireAdmin();
+
+  await PartnerService.update({
+    partnerId: id,
+    actor,
+    data: getPartnerUpdateData(formData),
   });
-
-  if (!existingPartner) {
-    throw new Error("Partner not found.");
-  }
-
-  const logoUrl = String(formData.get("logoUrl") || "");
-  const logoKey = String(formData.get("logoKey") || "");
-
-  const finalLogoUrl = logoUrl || existingPartner.logoUrl;
-  const finalLogoKey = logoKey || existingPartner.logoKey;
-
-  await db
-    .update(partners)
-    .set({
-      name: String(formData.get("name") || ""),
-      category: String(formData.get("category") || "") || null,
-      websiteUrl: String(formData.get("websiteUrl") || "") || null,
-      description: String(formData.get("description") || "") || null,
-      status: String(formData.get("status") || "inactive") as
-        | "active"
-        | "inactive",
-      logoUrl: finalLogoUrl,
-      logoKey: finalLogoKey,
-      updatedAt: new Date(),
-    })
-    .where(eq(partners.id, id));
-
-  if (
-    logoKey &&
-    existingPartner.logoKey &&
-    logoKey !== existingPartner.logoKey
-  ) {
-    await utapi.deleteFiles(existingPartner.logoKey);
-  }
 
   revalidatePath("/admin/partners");
 }

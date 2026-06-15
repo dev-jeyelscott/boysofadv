@@ -3,9 +3,14 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/db";
 import { builds } from "@/db/schema";
 import { BUILD_STATUSES } from "@/lib/constants/build";
-import { ServiceError } from "@/src/lib/errors/service-error";
-import { assertApprovedAdmin } from "@/src/features/shared/service-actor";
+import {
+  AUDIT_ACTIONS,
+  AUDIT_ENTITY_TYPES,
+  createAuditLog,
+} from "@/src/features/audit/audit-service";
 import { NotificationService } from "@/src/features/notifications/notification-service";
+import { assertApprovedAdmin } from "@/src/features/shared/service-actor";
+import { ServiceError } from "@/src/lib/errors/service-error";
 import type { BuildTransitionInput, RejectBuildInput } from "./build-types";
 import { buildIdSchema, rejectBuildSchema } from "./build-validation";
 
@@ -22,6 +27,12 @@ export const BuildService = {
     buildIdSchema.parse(input.buildId);
 
     const now = new Date();
+    const existingBuild = await db.query.builds.findFirst({
+      where: eq(builds.id, input.buildId),
+    });
+
+    const currentBuild = assertBuildFound(existingBuild);
+
     const [build] = await db
       .update(builds)
       .set({
@@ -43,16 +54,26 @@ export const BuildService = {
       .returning();
 
     if (!build) {
-      const existing = await db.query.builds.findFirst({
-        where: eq(builds.id, input.buildId),
-      });
-
-      assertBuildFound(existing);
       throw new ServiceError(
         "INVALID_STATE",
         "Only draft, rejected, or unpublished builds can be submitted.",
       );
     }
+
+    await createAuditLog({
+      actorId: input.actor.id,
+      action: AUDIT_ACTIONS.BUILD_SUBMITTED,
+      entityType: AUDIT_ENTITY_TYPES.BUILD,
+      entityId: build.id,
+      metadata: {
+        ownerId: build.userId,
+        slug: build.slug,
+        previousStatus: currentBuild.status,
+        newStatus: BUILD_STATUSES.FOR_REVIEW,
+        submittedBy: input.actor.id,
+        submittedAt: now,
+      },
+    });
 
     return {
       success: true,
@@ -93,6 +114,22 @@ export const BuildService = {
         "Only builds for review can be published.",
       );
     }
+
+    await createAuditLog({
+      actorId: input.actor.id,
+      action: AUDIT_ACTIONS.BUILD_PUBLISHED,
+      entityType: AUDIT_ENTITY_TYPES.BUILD,
+      entityId: build.id,
+      metadata: {
+        previousStatus: BUILD_STATUSES.FOR_REVIEW,
+        newStatus: BUILD_STATUSES.PUBLISHED,
+        ownerId: build.userId,
+        slug: build.slug,
+        reviewedBy: input.actor.id,
+        reviewedAt: now,
+        publishedAt: now,
+      },
+    });
 
     const notificationSummary = await NotificationService.notifyBuildPublished({
       ownerId: build.userId,
@@ -139,6 +176,22 @@ export const BuildService = {
         "Only builds for review can be rejected.",
       );
     }
+
+    await createAuditLog({
+      actorId: input.actor.id,
+      action: AUDIT_ACTIONS.BUILD_REJECTED,
+      entityType: AUDIT_ENTITY_TYPES.BUILD,
+      entityId: build.id,
+      metadata: {
+        previousStatus: BUILD_STATUSES.FOR_REVIEW,
+        newStatus: BUILD_STATUSES.REJECTED,
+        ownerId: build.userId,
+        slug: build.slug,
+        reviewedBy: input.actor.id,
+        reviewedAt: now,
+        reason: payload.reason,
+      },
+    });
 
     const notificationSummary = await NotificationService.notifyBuildRejected({
       ownerId: build.userId,
