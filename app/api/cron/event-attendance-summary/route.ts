@@ -21,14 +21,14 @@ export async function GET(request: Request) {
     .select({
       id: events.id,
       title: events.title,
-      startDate: events.startDate,
-      endDate: events.endDate,
+      startsAt: events.startsAt,
+      endsAt: events.endsAt,
     })
     .from(events)
     .where(
       and(
         eq(events.status, "published"),
-        lt(events.endDate, now),
+        lt(events.endsAt, now),
         isNull(events.attendanceSummarySentAt),
       ),
     );

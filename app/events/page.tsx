@@ -12,7 +12,7 @@ export default async function EventsPage() {
   const eventList = await db
     .select()
     .from(events)
-    .orderBy(desc(events.startDate));
+    .orderBy(desc(events.startsAt));
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -73,7 +73,7 @@ export default async function EventsPage() {
                       </h2>
 
                       <div className="mt-4 grid gap-3 text-sm text-white/60">
-                        {event.startDate ? (
+                        {event.startsAt ? (
                           <div className="flex items-start gap-3">
                             <CalendarDays className="mt-0.5 size-4 shrink-0 text-red-500" />
                             <span>
@@ -81,7 +81,7 @@ export default async function EventsPage() {
                                 month: "long",
                                 day: "numeric",
                                 year: "numeric",
-                              }).format(new Date(event.startDate))}
+                              }).format(new Date(event.startsAt))}
                             </span>
                           </div>
                         ) : null}

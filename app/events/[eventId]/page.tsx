@@ -5,10 +5,11 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, MapPin } from "lucide-react";
 import { eq } from "drizzle-orm";
 
+import { EventStatusBadge } from "@/components/events/event-status-badge";
 import { SiteHeader } from "@/components/site/site-header";
-import { Badge } from "@/components/ui/badge";
 import { db } from "@/db/db";
 import { events } from "@/db/schema";
+import { getEventDisplayStatus } from "@/lib/events/display-status";
 
 type Props = {
   params: Promise<{
@@ -23,34 +24,6 @@ function formatDate(date?: Date | string | null) {
     dateStyle: "full",
     timeStyle: "short",
   }).format(new Date(date));
-}
-
-function getStatus(event: {
-  startDate: Date | string | null;
-  endDate: Date | string | null;
-}) {
-  const now = new Date();
-  const start = event.startDate ? new Date(event.startDate) : null;
-  const end = event.endDate ? new Date(event.endDate) : null;
-
-  if (!start) return "Draft";
-  if (start > now) return "Upcoming";
-  if (end && end < now) return "Completed";
-
-  return "Ongoing";
-}
-
-function getStatusClasses(status: string) {
-  switch (status) {
-    case "Upcoming":
-      return "border-blue-500/30 bg-blue-500/10 text-blue-400";
-    case "Ongoing":
-      return "border-green-500/30 bg-green-500/10 text-green-400";
-    case "Completed":
-      return "border-white/20 bg-white/10 text-white";
-    default:
-      return "border-red-500/30 bg-red-500/10 text-red-400";
-  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -109,7 +82,7 @@ export default async function EventDetailsPage({ params }: Props) {
     notFound();
   }
 
-  const status = getStatus(event);
+  const status = getEventDisplayStatus(event, "schedule");
 
   return (
     <>
@@ -150,13 +123,11 @@ export default async function EventDetailsPage({ params }: Props) {
 
               {/* Details */}
               <div className="p-4 sm:p-6 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:p-8">
-                <Badge
-                  className={`mb-4 border text-[10px] font-black uppercase tracking-widest ${getStatusClasses(
-                    status,
-                  )}`}
-                >
-                  {status}
-                </Badge>
+                <EventStatusBadge
+                  status={status}
+                  variant="public"
+                  className="mb-4 border text-[10px] font-black uppercase tracking-widest"
+                />
 
                 <h1 className="text-2xl font-black uppercase leading-tight tracking-tight sm:text-4xl lg:text-5xl">
                   {event.title}
@@ -172,12 +143,12 @@ export default async function EventDetailsPage({ params }: Props) {
                       </p>
 
                       <p className="mt-1 text-sm leading-6 text-white/80">
-                        {formatDate(event.startDate)}
+                        {formatDate(event.startsAt)}
                       </p>
 
-                      {event.endDate && (
+                      {event.endsAt && (
                         <p className="mt-1 text-sm leading-6 text-white/50">
-                          Until {formatDate(event.endDate)}
+                          Until {formatDate(event.endsAt)}
                         </p>
                       )}
                     </div>

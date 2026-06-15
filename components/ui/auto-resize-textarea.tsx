@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 
 type AutoResizeTextareaProps = {
   label: string;
@@ -17,6 +17,7 @@ export function AutoResizeTextarea({
   defaultValue,
   required,
 }: AutoResizeTextareaProps) {
+  const textareaId = useId();
   const ref = useRef<HTMLTextAreaElement>(null);
 
   const resize = () => {
@@ -32,11 +33,15 @@ export function AutoResizeTextarea({
 
   return (
     <div>
-      <label className="text-xs font-black uppercase tracking-widest text-white/50">
+      <label
+        htmlFor={textareaId}
+        className="text-xs font-black uppercase tracking-widest text-white/50"
+      >
         {label}
       </label>
 
       <textarea
+        id={textareaId}
         ref={ref}
         name={name}
         required={required}

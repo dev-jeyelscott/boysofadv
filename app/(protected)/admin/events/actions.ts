@@ -6,14 +6,8 @@ import { randomUUID } from "crypto";
 
 import { db } from "@/db/db";
 import { events } from "@/db/schema";
-import { EVENT_STATUSES } from "@/lib/constants/event";
+import { type EventStatus, isEventStatus } from "@/lib/constants/event";
 import { sendPushNotificationToAllApprovedUsers } from "@/lib/send-push-notification";
-
-type EventStatus = (typeof EVENT_STATUSES)[number];
-
-function isEventStatus(value: string): value is EventStatus {
-  return EVENT_STATUSES.includes(value as EventStatus);
-}
 
 function getString(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -90,8 +84,8 @@ export async function createEventAction(
     const latitude = getString(formData, "latitude");
     const longitude = getString(formData, "longitude");
     const geoRadiusMeters = getString(formData, "geoRadiusMeters");
-    const startDate = getString(formData, "startDate");
-    const endDate = getString(formData, "endDate");
+    const startsAt = getString(formData, "startsAt");
+    const endsAt = getString(formData, "endsAt");
     const statusValue = getString(formData, "status");
     const posterImageUrl = getString(formData, "posterImageUrl");
     const posterImageKey = getString(formData, "posterImageKey");
@@ -100,7 +94,7 @@ export async function createEventAction(
       ? statusValue
       : "draft";
 
-    if (!title || !startDate) {
+    if (!title || !startsAt) {
       throw new Error("Missing required event fields.");
     }
 
@@ -119,8 +113,8 @@ export async function createEventAction(
       latitude: latitudeValue,
       longitude: longitudeValue,
       geoRadiusMeters: geoRadiusMetersValue,
-      startDate: new Date(startDate),
-      endDate: endDate ? new Date(endDate) : null,
+      startsAt: new Date(startsAt),
+      endsAt: endsAt ? new Date(endsAt) : null,
       status,
       posterImageUrl: posterImageUrl || null,
       posterImageKey: posterImageKey || null,
@@ -158,8 +152,8 @@ export async function updateEventAction(
     const latitude = getString(formData, "latitude");
     const longitude = getString(formData, "longitude");
     const geoRadiusMeters = getString(formData, "geoRadiusMeters");
-    const startDate = getString(formData, "startDate");
-    const endDate = getString(formData, "endDate");
+    const startsAt = getString(formData, "startsAt");
+    const endsAt = getString(formData, "endsAt");
     const statusValue = getString(formData, "status");
     const posterImageUrl = getString(formData, "posterImageUrl");
     const posterImageKey = getString(formData, "posterImageKey");
@@ -168,7 +162,7 @@ export async function updateEventAction(
       ? statusValue
       : "draft";
 
-    if (!id || !title || !startDate) {
+    if (!id || !title || !startsAt) {
       throw new Error("Missing required event fields.");
     }
 
@@ -197,8 +191,8 @@ export async function updateEventAction(
         latitude: latitudeValue,
         longitude: longitudeValue,
         geoRadiusMeters: geoRadiusMetersValue,
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : null,
+        startsAt: new Date(startsAt),
+        endsAt: endsAt ? new Date(endsAt) : null,
         status,
         posterImageUrl: posterImageUrl || null,
         posterImageKey: posterImageKey || null,

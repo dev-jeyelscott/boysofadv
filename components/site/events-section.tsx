@@ -17,7 +17,7 @@ function formatEventDate(date: Date | string | null) {
 export async function EventsSection() {
   const recentEvents = await db.query.events.findMany({
     where: or(eq(events.status, "published"), eq(events.status, "completed")),
-    orderBy: [desc(events.startDate)],
+    orderBy: [desc(events.startsAt)],
     limit: 3,
   });
 
@@ -72,7 +72,7 @@ export async function EventsSection() {
                 </span>
 
                 <span className="text-sm font-semibold text-white">
-                  {formatEventDate(event.startDate)}
+                  {formatEventDate(event.startsAt)}
                 </span>
               </div>
             </Link>

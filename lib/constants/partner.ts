@@ -6,7 +6,7 @@ export type PartnerRow = {
   logoUrl: string | null;
   logoKey: string | null;
   isOfficial: boolean;
-  status: "draft" | "active" | "inactive" | "featured";
+  status: "draft" | "active" | "inactive";
   websiteUrl: string | null;
   facebookUrl: string | null;
   createdAt: Date | string;

@@ -24,8 +24,8 @@ export const events = pgTable("events", {
   description: text("description"),
   location: text("location"),
 
-  startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("end_date"),
+  startsAt: timestamp("start_date").notNull(),
+  endsAt: timestamp("end_date"),
 
   latitude: numeric("latitude", {
     precision: 10,

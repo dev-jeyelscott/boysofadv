@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { toast } from "sonner";
 
-import { AutoResizeTextarea } from "@/components/member/auto-resize-textarea";
+import { AutoResizeTextarea } from "@/components/ui/auto-resize-textarea";
 import { updateProfile } from "../actions";
 
 type ProfileFormProps = {

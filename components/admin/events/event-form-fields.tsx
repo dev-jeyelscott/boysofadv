@@ -1,4 +1,4 @@
-import { AutoResizeTextarea } from "@/components/member/auto-resize-textarea";
+import { AutoResizeTextarea } from "@/components/ui/auto-resize-textarea";
 import { EventPosterUploader } from "./event-poster-uploader";
 import {
   Select,
@@ -18,8 +18,8 @@ type EventFormValue = {
   longitude?: string | number | null;
   geoRadiusMeters?: number | null;
 
-  startDate?: Date | string;
-  endDate?: Date | string | null;
+  startsAt?: Date | string;
+  endsAt?: Date | string | null;
   status?: string;
   posterImageUrl?: string | null;
   posterImageKey?: string | null;
@@ -118,8 +118,8 @@ export function EventFormFields({ event }: Props) {
           </label>
           <input
             type="datetime-local"
-            name="startDate"
-            defaultValue={toDateTimeLocal(event?.startDate)}
+            name="startsAt"
+            defaultValue={toDateTimeLocal(event?.startsAt)}
             required
             className="mt-2 h-11 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-sm text-white outline-none focus:border-red-500"
           />
@@ -131,8 +131,8 @@ export function EventFormFields({ event }: Props) {
           </label>
           <input
             type="datetime-local"
-            name="endDate"
-            defaultValue={toDateTimeLocal(event?.endDate)}
+            name="endsAt"
+            defaultValue={toDateTimeLocal(event?.endsAt)}
             className="mt-2 h-11 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-sm text-white outline-none focus:border-red-500"
           />
         </div>

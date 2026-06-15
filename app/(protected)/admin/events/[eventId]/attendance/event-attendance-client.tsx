@@ -12,8 +12,8 @@ type EventData = {
   id: string;
   title: string;
   location: string | null;
-  startDate: Date | string | null;
-  endDate: Date | string | null;
+  startsAt: Date | string | null;
+  endsAt: Date | string | null;
   status: string;
   posterImageUrl: string | null;
 };
@@ -147,8 +147,8 @@ export function EventAttendanceClient({ event, attendance }: Props) {
             <Info
               label="Start"
               value={
-                event.startDate
-                  ? new Date(event.startDate).toLocaleString()
+                event.startsAt
+                  ? new Date(event.startsAt).toLocaleString()
                   : "—"
               }
             />
@@ -156,7 +156,7 @@ export function EventAttendanceClient({ event, attendance }: Props) {
             <Info
               label="End"
               value={
-                event.endDate ? new Date(event.endDate).toLocaleString() : "—"
+                event.endsAt ? new Date(event.endsAt).toLocaleString() : "—"
               }
             />
           </div>

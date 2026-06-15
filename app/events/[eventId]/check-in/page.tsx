@@ -35,8 +35,8 @@ export default async function MemberCheckInPage({
       id: events.id,
       title: events.title,
       location: events.location,
-      startDate: events.startDate,
-      endDate: events.endDate,
+      startsAt: events.startsAt,
+      endsAt: events.endsAt,
       status: events.status,
     })
     .from(events)
@@ -58,7 +58,7 @@ export default async function MemberCheckInPage({
 
   const now = new Date();
 
-  if (event.startDate && now < event.startDate) {
+  if (event.startsAt && now < event.startsAt) {
     return (
       <main className="min-h-screen bg-black px-4 py-10 text-white">
         <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-white/5 p-6">
@@ -69,7 +69,7 @@ export default async function MemberCheckInPage({
     );
   }
 
-  if (event.endDate && now > event.endDate) {
+  if (event.endsAt && now > event.endsAt) {
     return (
       <main className="min-h-screen bg-black px-4 py-10 text-white">
         <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-white/5 p-6">

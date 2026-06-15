@@ -20,8 +20,8 @@ export default async function EventAttendancePage({ params }: Props) {
       id: events.id,
       title: events.title,
       location: events.location,
-      startDate: events.startDate,
-      endDate: events.endDate,
+      startsAt: events.startsAt,
+      endsAt: events.endsAt,
       status: events.status,
       posterImageUrl: events.posterImageUrl,
     })

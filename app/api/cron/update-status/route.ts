@@ -20,7 +20,7 @@ export async function GET(request: Request) {
       statusUpdatedBy: "system",
       updatedAt: now,
     })
-    .where(and(eq(events.status, "published"), lt(events.endDate, now)))
+    .where(and(eq(events.status, "published"), lt(events.endsAt, now)))
     .returning({
       id: events.id,
       title: events.title,

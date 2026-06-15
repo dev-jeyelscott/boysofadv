@@ -86,14 +86,14 @@ export async function GET(request: Request) {
           id: events.id,
           title: events.title,
           slug: events.slug,
-          startDate: events.startDate,
+          startsAt: events.startsAt,
         })
         .from(events)
         .where(
           and(
             eq(events.status, "published"),
-            gte(events.startDate, windowStart),
-            lte(events.startDate, windowEnd),
+            gte(events.startsAt, windowStart),
+            lte(events.startsAt, windowEnd),
           ),
         );
 

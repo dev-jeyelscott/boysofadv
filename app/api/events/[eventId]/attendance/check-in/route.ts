@@ -72,8 +72,8 @@ export async function POST(request: Request, { params }: Props) {
       id: events.id,
       title: events.title,
       status: events.status,
-      startDate: events.startDate,
-      endDate: events.endDate,
+      startsAt: events.startsAt,
+      endsAt: events.endsAt,
       latitude: events.latitude,
       longitude: events.longitude,
       geoRadiusMeters: events.geoRadiusMeters,
@@ -95,7 +95,7 @@ export async function POST(request: Request, { params }: Props) {
     );
   }
 
-  if (!event.startDate || !event.endDate) {
+  if (!event.startsAt || !event.endsAt) {
     return NextResponse.json(
       {
         message: "Event schedule is not configured.",
@@ -106,7 +106,7 @@ export async function POST(request: Request, { params }: Props) {
 
   const now = new Date();
 
-  const attendanceOpen = now >= event.startDate && now <= event.endDate;
+  const attendanceOpen = now >= event.startsAt && now <= event.endsAt;
 
   if (!attendanceOpen) {
     return NextResponse.json(

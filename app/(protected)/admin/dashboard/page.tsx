@@ -56,7 +56,7 @@ export default async function DashboardPage() {
 
     getCount(
       events,
-      and(eq(events.status, "published"), gte(events.startDate, today)),
+      and(eq(events.status, "published"), gte(events.startsAt, today)),
     ),
 
     db
@@ -109,12 +109,12 @@ export default async function DashboardPage() {
         id: events.id,
         title: events.title,
         location: events.location,
-        startDate: events.startDate,
+        startsAt: events.startsAt,
         createdAt: events.createdAt,
       })
       .from(events)
-      .where(and(eq(events.status, "published"), gte(events.startDate, today)))
-      .orderBy(events.startDate)
+      .where(and(eq(events.status, "published"), gte(events.startsAt, today)))
+      .orderBy(events.startsAt)
       .limit(5),
   ]);
 
@@ -233,7 +233,7 @@ export default async function DashboardPage() {
               <ListItem
                 key={event.id}
                 title={event.title}
-                meta={[formatDate(event.startDate), event.location]
+                meta={[formatDate(event.startsAt), event.location]
                   .filter(Boolean)
                   .join(" • ")}
                 badge="Upcoming"
