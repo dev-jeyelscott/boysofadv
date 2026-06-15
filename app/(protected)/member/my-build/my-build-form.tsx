@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateMyBuild } from "../actions";
-import { AutoResizeTextarea } from "@/components/member/auto-resize-textarea";
+import { AutoResizeTextarea } from "@/components/ui/auto-resize-textarea";
 import { BuildCoverUploader } from "@/components/member/build-cover-uploader";
 import { BuildFeaturedSwitch } from "@/components/member/build-featured-switch";
 import { BuildGalleryUploader } from "@/components/member/build-gallery-uploader";

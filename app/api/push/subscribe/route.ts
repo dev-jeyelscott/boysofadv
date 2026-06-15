@@ -1,55 +1,30 @@
 import { NextResponse } from "next/server";
 
-import { db } from "@/db/db";
-import { getCurrentDbUser } from "@/lib/current-user";
-import { pushSubscriptions } from "@/db/schema/push-subscriptions";
-
-type PushSubscriptionBody = {
-  endpoint: string;
-  keys: {
-    p256dh: string;
-    auth: string;
-  };
-};
+import { requireApiApprovedUser } from "@/lib/auth/require-api-approved-user";
+import { NotificationService } from "@/src/features/notifications/notification-service";
+import { pushSubscriptionSchema } from "@/src/features/notifications/notification-validation";
+import { handleServiceError } from "@/src/lib/errors/handle-service-error";
 
 export async function POST(request: Request) {
-  const user = await getCurrentDbUser();
+  try {
+    const authResult = await requireApiApprovedUser();
 
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
+    if (!authResult.ok) {
+      return NextResponse.json(
+        { message: authResult.message },
+        { status: authResult.status },
+      );
+    }
 
-  const subscription = (await request.json()) as PushSubscriptionBody;
+    const subscription = pushSubscriptionSchema.parse(await request.json());
 
-  if (
-    !subscription.endpoint ||
-    !subscription.keys?.p256dh ||
-    !subscription.keys?.auth
-  ) {
-    return NextResponse.json(
-      { message: "Invalid push subscription." },
-      { status: 400 },
-    );
-  }
-
-  await db
-    .insert(pushSubscriptions)
-    .values({
-      userId: user.id,
-      endpoint: subscription.endpoint,
-      p256dh: subscription.keys.p256dh,
-      auth: subscription.keys.auth,
-      updatedAt: new Date(),
-    })
-    .onConflictDoUpdate({
-      target: pushSubscriptions.endpoint,
-      set: {
-        userId: user.id,
-        p256dh: subscription.keys.p256dh,
-        auth: subscription.keys.auth,
-        updatedAt: new Date(),
-      },
+    await NotificationService.registerSubscription({
+      userId: authResult.user.id,
+      subscription,
     });
 
-  return NextResponse.json({ message: "Push notification enabled." });
+    return NextResponse.json({ message: "Push notification enabled." });
+  } catch (error) {
+    return handleServiceError(error);
+  }
 }

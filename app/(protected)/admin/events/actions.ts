@@ -1,78 +1,45 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
-import { randomUUID } from "crypto";
 
-import { db } from "@/db/db";
-import { events } from "@/db/schema";
-import { EVENT_STATUSES } from "@/lib/constants/event";
-import { sendPushNotificationToAllApprovedUsers } from "@/lib/send-push-notification";
-
-type EventStatus = (typeof EVENT_STATUSES)[number];
-
-function isEventStatus(value: string): value is EventStatus {
-  return EVENT_STATUSES.includes(value as EventStatus);
-}
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { type EventStatus, isEventStatus } from "@/lib/constants/event";
+import { EventService } from "@/src/features/events/event-service";
+import { getServiceActionErrorMessage } from "@/src/lib/errors/handle-service-error";
 
 function getString(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
 }
 
-function createSlug(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
+function getOptionalString(formData: FormData, key: string) {
+  const value = getString(formData, key);
+  return value || null;
 }
 
-function getEventNotificationPayload(params: {
-  eventId: string;
-  title: string;
-  status: EventStatus;
-  action: "created" | "updated";
-}) {
-  const { eventId, title, status, action } = params;
-
-  if (status === "draft") return null;
-
-  if (status === "published") {
-    return {
-      title: action === "created" ? "New Event Published" : "Event Published",
-      body: title,
-      url: `/events/${eventId}`,
-    };
-  }
-
-  if (status === "cancelled") {
-    return {
-      title: "Event Cancelled",
-      body: title,
-      url: `/events/${eventId}`,
-    };
-  }
+function getEventFormData(formData: FormData) {
+  const startsAt = getString(formData, "startsAt");
+  const endsAt = getString(formData, "endsAt");
+  const geoRadiusMeters = getString(formData, "geoRadiusMeters");
 
   return {
-    title: "Event Status Updated",
-    body: `${title} is now ${status}.`,
-    url: `/events/${eventId}`,
+    title: getString(formData, "title"),
+    description: getString(formData, "description"),
+    location: getString(formData, "location"),
+    latitude: getOptionalString(formData, "latitude"),
+    longitude: getOptionalString(formData, "longitude"),
+    geoRadiusMeters: geoRadiusMeters ? Number(geoRadiusMeters) : 80,
+    startsAt: new Date(startsAt),
+    endsAt: new Date(endsAt),
+    posterImageUrl: getOptionalString(formData, "posterImageUrl"),
+    posterImageKey: getOptionalString(formData, "posterImageKey"),
   };
 }
 
-async function sendEventStatusPushNotification(params: {
-  eventId: string;
-  title: string;
-  status: EventStatus;
-  action: "created" | "updated";
-}) {
-  const payload = getEventNotificationPayload(params);
+function getRequestedStatus(formData: FormData): EventStatus {
+  const statusValue = getString(formData, "status");
 
-  if (!payload) return;
-
-  await sendPushNotificationToAllApprovedUsers(payload);
+  return isEventStatus(statusValue) ? statusValue : "draft";
 }
 
 export type EventActionState = {
@@ -84,65 +51,42 @@ export async function createEventAction(
   formData: FormData,
 ): Promise<EventActionState> {
   try {
-    const title = getString(formData, "title");
-    const description = getString(formData, "description");
-    const location = getString(formData, "location");
-    const latitude = getString(formData, "latitude");
-    const longitude = getString(formData, "longitude");
-    const geoRadiusMeters = getString(formData, "geoRadiusMeters");
-    const startDate = getString(formData, "startDate");
-    const endDate = getString(formData, "endDate");
-    const statusValue = getString(formData, "status");
-    const posterImageUrl = getString(formData, "posterImageUrl");
-    const posterImageKey = getString(formData, "posterImageKey");
+    const actor = await requireAdmin();
+    const requestedStatus = getRequestedStatus(formData);
 
-    const status: EventStatus = isEventStatus(statusValue)
-      ? statusValue
-      : "draft";
-
-    if (!title || !startDate) {
-      throw new Error("Missing required event fields.");
+    if (requestedStatus === "cancelled" || requestedStatus === "completed") {
+      return {
+        success: false,
+        message: "Create the event before cancelling or completing it.",
+      };
     }
 
-    const id = randomUUID();
-
-    const latitudeValue = latitude || null;
-    const longitudeValue = longitude || null;
-    const geoRadiusMetersValue = geoRadiusMeters ? Number(geoRadiusMeters) : 80;
-
-    await db.insert(events).values({
-      id,
-      slug: `${createSlug(title)}-${id.slice(0, 8)}`,
-      title,
-      description: description || null,
-      location: location || null,
-      latitude: latitudeValue,
-      longitude: longitudeValue,
-      geoRadiusMeters: geoRadiusMetersValue,
-      startDate: new Date(startDate),
-      endDate: endDate ? new Date(endDate) : null,
-      status,
-      posterImageUrl: posterImageUrl || null,
-      posterImageKey: posterImageKey || null,
+    const result = await EventService.create({
+      actor,
+      data: getEventFormData(formData),
     });
 
-    await sendEventStatusPushNotification({
-      eventId: id,
-      title,
-      status,
-      action: "created",
-    });
+    if (requestedStatus === "published") {
+      await EventService.publish({
+        eventId: result.event.id,
+        actor,
+      });
+    }
 
     revalidatePath("/admin/events");
+    revalidatePath("/events");
 
     return {
       success: true,
       message: "Event successfully created.",
     };
-  } catch {
+  } catch (error) {
     return {
       success: false,
-      message: "Failed to create event. Please try again.",
+      message: getServiceActionErrorMessage(
+        error,
+        "Failed to create event. Please try again.",
+      ),
     };
   }
 }
@@ -151,86 +95,61 @@ export async function updateEventAction(
   formData: FormData,
 ): Promise<EventActionState> {
   try {
+    const actor = await requireAdmin();
     const id = getString(formData, "id");
-    const title = getString(formData, "title");
-    const description = getString(formData, "description");
-    const location = getString(formData, "location");
-    const latitude = getString(formData, "latitude");
-    const longitude = getString(formData, "longitude");
-    const geoRadiusMeters = getString(formData, "geoRadiusMeters");
-    const startDate = getString(formData, "startDate");
-    const endDate = getString(formData, "endDate");
-    const statusValue = getString(formData, "status");
-    const posterImageUrl = getString(formData, "posterImageUrl");
-    const posterImageKey = getString(formData, "posterImageKey");
+    const requestedStatus = getRequestedStatus(formData);
 
-    const status: EventStatus = isEventStatus(statusValue)
-      ? statusValue
-      : "draft";
+    const result = await EventService.update({
+      eventId: id,
+      actor,
+      data: getEventFormData(formData),
+    });
 
-    if (!id || !title || !startDate) {
-      throw new Error("Missing required event fields.");
+    if (requestedStatus === "published" && result.event.status === "draft") {
+      await EventService.publish({ eventId: id, actor });
     }
 
-    const [currentEvent] = await db
-      .select({
-        status: events.status,
-      })
-      .from(events)
-      .where(eq(events.id, id))
-      .limit(1);
-
-    if (!currentEvent) {
-      throw new Error("Event not found.");
-    }
-
-    const latitudeValue = latitude || null;
-    const longitudeValue = longitude || null;
-    const geoRadiusMetersValue = geoRadiusMeters ? Number(geoRadiusMeters) : 80;
-
-    await db
-      .update(events)
-      .set({
-        title,
-        description: description || null,
-        location: location || null,
-        latitude: latitudeValue,
-        longitude: longitudeValue,
-        geoRadiusMeters: geoRadiusMetersValue,
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : null,
-        status,
-        posterImageUrl: posterImageUrl || null,
-        posterImageKey: posterImageKey || null,
-        updatedAt: new Date(),
-      })
-      .where(eq(events.id, id));
-
-    if (currentEvent.status !== status) {
-      await sendEventStatusPushNotification({
+    if (requestedStatus === "cancelled") {
+      await EventService.cancel({
         eventId: id,
-        title,
-        status,
-        action: "updated",
+        actor,
+        reason: "Cancelled by admin.",
       });
     }
 
+    if (requestedStatus === "completed") {
+      await EventService.complete({ eventId: id, actor });
+    }
+
     revalidatePath("/admin/events");
+    revalidatePath(`/admin/events/${id}`);
+    revalidatePath("/events");
 
     return {
       success: true,
       message: "Event successfully updated.",
     };
-  } catch {
+  } catch (error) {
     return {
       success: false,
-      message: "Failed to update event. Please try again.",
+      message: getServiceActionErrorMessage(
+        error,
+        "Failed to update event. Please try again.",
+      ),
     };
   }
 }
 
 export async function deleteEventAction(id: string) {
-  await db.delete(events).where(eq(events.id, id));
+  const actor = await requireAdmin();
+
+  await EventService.cancel({
+    eventId: id,
+    actor,
+    reason: "Cancelled by admin.",
+  });
 
   revalidatePath("/admin/events");
+  revalidatePath(`/admin/events/${id}`);
+  revalidatePath("/events");
 }

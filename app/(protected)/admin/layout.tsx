@@ -1,10 +1,13 @@
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { requireAdmin } from "@/lib/auth/require-admin";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await requireAdmin();
+
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="flex flex-col md:flex-row">

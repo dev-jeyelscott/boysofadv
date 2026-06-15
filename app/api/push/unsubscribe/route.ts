@@ -1,31 +1,29 @@
 import { NextResponse } from "next/server";
-import { and, eq } from "drizzle-orm";
 
-import { db } from "@/db/db";
-import { getCurrentDbUser } from "@/lib/current-user";
-import { pushSubscriptions } from "@/db/schema/push-subscriptions";
+import { requireApiApprovedUser } from "@/lib/auth/require-api-approved-user";
+import { NotificationService } from "@/src/features/notifications/notification-service";
+import { handleServiceError } from "@/src/lib/errors/handle-service-error";
 
 export async function POST(request: Request) {
-  const user = await getCurrentDbUser();
+  try {
+    const authResult = await requireApiApprovedUser();
 
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    if (!authResult.ok) {
+      return NextResponse.json(
+        { message: authResult.message },
+        { status: authResult.status },
+      );
+    }
+
+    const body = (await request.json()) as { endpoint?: string };
+
+    await NotificationService.unregisterSubscription({
+      userId: authResult.user.id,
+      endpoint: body.endpoint ?? "",
+    });
+
+    return NextResponse.json({ message: "Push notification disabled." });
+  } catch (error) {
+    return handleServiceError(error);
   }
-
-  const body = (await request.json()) as { endpoint?: string };
-
-  if (!body.endpoint) {
-    return NextResponse.json({ message: "Missing endpoint." }, { status: 400 });
-  }
-
-  await db
-    .delete(pushSubscriptions)
-    .where(
-      and(
-        eq(pushSubscriptions.endpoint, body.endpoint),
-        eq(pushSubscriptions.userId, user.id),
-      ),
-    );
-
-  return NextResponse.json({ message: "Push notification disablded." });
 }

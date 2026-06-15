@@ -9,8 +9,8 @@ type EventData = {
   id: string;
   title: string;
   location: string | null;
-  startDate: Date | string | null;
-  endDate: Date | string | null;
+  startsAt: Date | string | null;
+  endsAt: Date | string | null;
   status: string;
 };
 
@@ -117,7 +117,7 @@ export function MemberCheckInClient({ event, token }: Props) {
           <Info
             label="Start"
             value={
-              event.startDate ? new Date(event.startDate).toLocaleString() : "—"
+              event.startsAt ? new Date(event.startsAt).toLocaleString() : "—"
             }
           />
         </div>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { Badge } from "@/components/ui/badge";
+import { EventStatusBadge } from "@/components/events/event-status-badge";
 import {
   Table,
   TableBody,
@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/table";
 
 import { EventActionsMenu } from "./event-actions-menu";
-import { EventDisplayStatus, EventRow } from "@/lib/constants/event";
+import { EventRow } from "@/lib/constants/event";
+import { getEventDisplayStatus } from "@/lib/events/display-status";
 
 type Props = {
   events: EventRow[];
@@ -24,56 +25,6 @@ function formatDate(value: Date | string | null) {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
-}
-
-function getEventDisplayStatus(event: EventRow): EventDisplayStatus {
-  const now = new Date();
-  const startDate = new Date(event.startDate);
-  const endDate = event.endDate ? new Date(event.endDate) : startDate;
-
-  if (event.status === "draft") return "draft";
-  if (event.status === "cancelled") return "cancelled";
-  if (event.status === "completed") return "completed";
-
-  if (event.status === "published") {
-    if (startDate > now) return "upcoming";
-    if (startDate <= now && endDate >= now) return "ongoing";
-
-    return "completed";
-  }
-
-  return "draft";
-}
-
-function getStatusLabel(status: EventDisplayStatus) {
-  switch (status) {
-    case "draft":
-      return "Draft";
-    case "upcoming":
-      return "Upcoming";
-    case "ongoing":
-      return "Ongoing";
-    case "completed":
-      return "Completed";
-    case "cancelled":
-      return "Cancelled";
-  }
-}
-
-function getStatusClass(status: EventDisplayStatus) {
-  switch (status) {
-    case "upcoming":
-      return "bg-red-600/20 text-red-300 border-red-500/20";
-    case "ongoing":
-      return "bg-emerald-600/20 text-emerald-300 border-emerald-500/20";
-    case "completed":
-      return "bg-white/10 text-white/70 border-white/10";
-    case "cancelled":
-      return "bg-zinc-700/40 text-zinc-300 border-white/10";
-    case "draft":
-    default:
-      return "bg-yellow-600/20 text-yellow-300 border-yellow-500/20";
-  }
 }
 
 export function EventsTable({ events }: Props) {
@@ -93,11 +44,10 @@ export function EventsTable({ events }: Props) {
               <div key={event.id} className="flex items-start gap-3 p-4">
                 <div className="min-w-0 flex-1">
                   <div className="mb-2 flex items-center gap-2">
-                    <Badge
-                      className={`${getStatusClass(displayStatus)} rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase`}
-                    >
-                      {getStatusLabel(displayStatus)}
-                    </Badge>
+                    <EventStatusBadge
+                      status={displayStatus}
+                      className="rounded-full border px-2.5 py-0.5 text-[10px] font-black uppercase"
+                    />
                   </div>
 
                   <p className="line-clamp-2 text-sm font-black uppercase leading-snug text-white">
@@ -189,15 +139,14 @@ export function EventsTable({ events }: Props) {
                     </TableCell>
 
                     <TableCell className="p-4 text-sm text-white/60">
-                      {formatDate(event.startDate)}
+                      {formatDate(event.startsAt)}
                     </TableCell>
 
                     <TableCell className="p-4">
-                      <Badge
-                        className={`${getStatusClass(displayStatus)} rounded-full border px-3 py-1 font-black uppercase`}
-                      >
-                        {getStatusLabel(displayStatus)}
-                      </Badge>
+                      <EventStatusBadge
+                        status={displayStatus}
+                        className="rounded-full border px-3 py-1 font-black uppercase"
+                      />
                     </TableCell>
 
                     <TableCell className="p-4 text-center">

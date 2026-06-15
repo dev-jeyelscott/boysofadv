@@ -1,4 +1,10 @@
-import { pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 import { builds } from "./builds";
 import { users } from "./users";
 
@@ -19,5 +25,6 @@ export const buildLikes = pgTable(
       table.userId,
       table.buildId,
     ),
+    buildIdIdx: index("build_likes_build_id_idx").on(table.buildId),
   }),
 );

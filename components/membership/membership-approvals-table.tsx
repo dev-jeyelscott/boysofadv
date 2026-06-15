@@ -15,7 +15,7 @@ import {
 import {
   approveMember,
   rejectMember,
-} from "@/app/(protected)/admin/memberships/actions";
+} from "@/features/members/actions/membership-approvals";
 
 type MembershipApprovalRow = {
   id: string;

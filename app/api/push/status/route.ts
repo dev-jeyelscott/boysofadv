@@ -1,55 +1,46 @@
 import { NextResponse } from "next/server";
-import { and, eq } from "drizzle-orm";
 
-import { db } from "@/db/db";
-import { getCurrentDbUser } from "@/lib/current-user";
-import { pushSubscriptions } from "@/db/schema/push-subscriptions";
+import { requireApiApprovedUser } from "@/lib/auth/require-api-approved-user";
+import { NotificationService } from "@/src/features/notifications/notification-service";
+import { handleServiceError } from "@/src/lib/errors/handle-service-error";
 
 export async function GET() {
-  const user = await getCurrentDbUser();
+  try {
+    const authResult = await requireApiApprovedUser();
 
-  if (!user) {
-    return NextResponse.json({ enabled: false }, { status: 401 });
+    if (!authResult.ok) {
+      return NextResponse.json({ enabled: false }, { status: authResult.status });
+    }
+
+    const status = await NotificationService.getSubscriptionStatus({
+      userId: authResult.user.id,
+    });
+
+    return NextResponse.json(status);
+  } catch (error) {
+    return handleServiceError(error);
   }
-
-  const subscriptions = await db
-    .select({ id: pushSubscriptions.id })
-    .from(pushSubscriptions)
-    .where(eq(pushSubscriptions.userId, user.id))
-    .limit(1);
-
-  return NextResponse.json({
-    enabled: subscriptions.length > 0,
-  });
 }
 
 export async function POST(request: Request) {
-  const user = await getCurrentDbUser();
+  try {
+    const authResult = await requireApiApprovedUser();
 
-  if (!user) {
-    return NextResponse.json({ enabled: false }, { status: 401 });
+    if (!authResult.ok) {
+      return NextResponse.json({ enabled: false }, { status: authResult.status });
+    }
+
+    const body = (await request.json().catch(() => ({}))) as {
+      endpoint?: string;
+    };
+
+    const status = await NotificationService.getSubscriptionStatus({
+      userId: authResult.user.id,
+      endpoint: body.endpoint,
+    });
+
+    return NextResponse.json(status);
+  } catch (error) {
+    return handleServiceError(error);
   }
-
-  const body = (await request.json().catch(() => ({}))) as {
-    endpoint?: string;
-  };
-
-  if (!body.endpoint) {
-    return NextResponse.json({ enabled: false }, { status: 400 });
-  }
-
-  const subscriptions = await db
-    .select({ id: pushSubscriptions.id })
-    .from(pushSubscriptions)
-    .where(
-      and(
-        eq(pushSubscriptions.userId, user.id),
-        eq(pushSubscriptions.endpoint, body.endpoint),
-      ),
-    )
-    .limit(1);
-
-  return NextResponse.json({
-    enabled: subscriptions.length > 0,
-  });
 }

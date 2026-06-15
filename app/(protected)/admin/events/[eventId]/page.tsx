@@ -133,7 +133,7 @@ export default async function AdminEventViewPage({ params }: Props) {
                   Start Date
                 </p>
                 <p className="mt-1 font-semibold text-white">
-                  {formatDate(event.startDate)}
+                  {formatDate(event.startsAt)}
                 </p>
               </div>
             </div>

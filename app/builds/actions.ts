@@ -1,17 +1,19 @@
 "use server";
 
-import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/db/db";
-import { buildLikes, builds, users } from "@/db/schema";
+import { buildLikes, builds } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { nanoid } from "nanoid";
 import { getCurrentDbUser } from "@/lib/current-user";
 import { sendPushNotificationToUser } from "@/lib/send-push-notification";
 import { BUILD_STATUSES } from "@/lib/constants/build";
-import { USER_ROLES, USER_STATUSES } from "@/lib/constants/user";
+import { USER_STATUSES } from "@/lib/constants/user";
 import { touchUserActivity } from "@/lib/auth/touch-user-activity";
+import { canDeleteBuildComment } from "@/lib/permissions/build-comment-permissions";
+import { searchBuilds } from "@/lib/db/build-search";
 
 const LIMIT = 9;
 const COMMENT_BODY_MAX_LENGTH = 1000;
@@ -77,24 +79,6 @@ export type BuildCommentThreadItem = {
   replies: BuildCommentThreadItem[];
 };
 
-function isAdminRole(role: string) {
-  return role === USER_ROLES.ADMIN || role === USER_ROLES.SUPER_ADMIN;
-}
-
-function canDeleteComment(
-  user: { id: string; role: string; status: string } | null,
-  comment: {
-    userId: string;
-    deletedAt: Date | null;
-  },
-) {
-  if (!user || user.status !== USER_STATUSES.APPROVED || comment.deletedAt) {
-    return false;
-  }
-
-  return comment.userId === user.id || isAdminRole(user.role);
-}
-
 async function getApprovedActionUser() {
   const user = await getCurrentDbUser();
 
@@ -130,76 +114,16 @@ function getActionErrorMessage(error: unknown, fallback: string) {
 }
 
 export async function getPublishedBuilds(offset = 0, search = "") {
-  const query = search.trim();
-
-  const searchCondition = query
-    ? or(
-        // Build fields
-        ilike(builds.title, `%${query}%`),
-        ilike(builds.motorcycleModel, `%${query}%`),
-        ilike(builds.description, `%${query}%`),
-        ilike(builds.engineSetup, `%${query}%`),
-        ilike(builds.brakingSetup, `%${query}%`),
-        ilike(builds.suspensionSetup, `%${query}%`),
-        ilike(builds.cvtSetup, `%${query}%`),
-        ilike(builds.wheelSetup, `%${query}%`),
-        ilike(builds.accessories, `%${query}%`),
-
-        // Owner fields
-        ilike(users.firstName, `%${query}%`),
-        ilike(users.lastName, `%${query}%`),
-        ilike(users.nickname, `%${query}%`),
-        ilike(users.codename, `%${query}%`),
-
-        // Full name searches
-        ilike(
-          sql`concat(${users.firstName}, ' ', ${users.lastName})`,
-          `%${query}%`,
-        ),
-        ilike(
-          sql`concat(${users.lastName}, ' ', ${users.firstName})`,
-          `%${query}%`,
-        ),
-      )
-    : undefined;
-
-  const rows = await db
-    .select({
-      id: builds.id,
-      title: builds.title,
-      slug: builds.slug,
-      coverImageUrl: builds.coverImageUrl,
-      motorcycleModel: builds.motorcycleModel,
-      yearModel: builds.yearModel,
-      concept: builds.concept,
-      description: builds.description,
-      engineSetup: builds.engineSetup,
-      brakingSetup: builds.brakingSetup,
-      suspensionSetup: builds.suspensionSetup,
-      cvtSetup: builds.cvtSetup,
-      wheelSetup: builds.wheelSetup,
-      accessories: builds.accessories,
-      isFeatured: builds.isFeatured,
-      createdAt: builds.createdAt,
-      ownerFirstName: users.firstName,
-      ownerLastName: users.lastName,
-      ownerNickname: users.nickname,
-      ownerCodename: users.codename,
-    })
-    .from(builds)
-    .leftJoin(users, eq(builds.userId, users.id))
-    .where(
-      query
-        ? and(eq(builds.status, BUILD_STATUSES.PUBLISHED), searchCondition)
-        : eq(builds.status, BUILD_STATUSES.PUBLISHED),
-    )
-    .orderBy(desc(builds.popularityScore), desc(builds.publishedAt))
-    .limit(LIMIT + 1)
-    .offset(offset);
+  const result = await searchBuilds({
+    query: search,
+    status: BUILD_STATUSES.PUBLISHED,
+    limit: LIMIT,
+    offset,
+  });
 
   return {
-    builds: rows.slice(0, LIMIT),
-    hasMore: rows.length > LIMIT,
+    builds: result.items,
+    hasMore: result.hasMore,
   };
 }
 
@@ -286,7 +210,7 @@ export async function getBuildComments(buildId: string) {
       },
       likeCount: comment.likeCount,
       isLikedByMe: comment.isLikedByMe,
-      canDelete: canDeleteComment(currentUser ?? null, {
+      canDelete: canDeleteBuildComment(currentUser ?? null, {
         userId: comment.userId,
         deletedAt: comment.deletedAt,
       }),
@@ -583,7 +507,7 @@ export async function deleteBuildComment(commentId: string) {
     };
   }
 
-  if (!canDeleteComment(authResult.user, comment)) {
+  if (!canDeleteBuildComment(authResult.user, comment)) {
     return {
       ok: false,
       message: "You do not have permission to delete this comment.",

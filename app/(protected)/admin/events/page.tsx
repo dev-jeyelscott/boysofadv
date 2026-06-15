@@ -1,11 +1,17 @@
-import { and, desc, eq, ilike, or } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 
 import { db } from "@/db/db";
 import { events } from "@/db/schema";
 import { EventCreateDialog } from "@/components/admin/events/event-create-dialog";
 import { EventsFilters } from "@/components/admin/events/events-filter";
 import { EventsTable } from "@/components/admin/events/events-table";
-import { EVENT_STATUSES } from "@/lib/constants/event";
+import { isEventStatus } from "@/lib/constants/event";
+import {
+  hasSearchQuery,
+  normalizeSearchQuery,
+  searchRank,
+  searchVectorMatches,
+} from "@/lib/db/search";
 
 type Props = {
   searchParams: Promise<{
@@ -14,16 +20,13 @@ type Props = {
   }>;
 };
 
-type EventStatus = (typeof EVENT_STATUSES)[number];
-
-function isEventStatus(value: string): value is EventStatus {
-  return EVENT_STATUSES.includes(value as EventStatus);
-}
-
 export default async function EventsPage({ searchParams }: Props) {
   const params = await searchParams;
 
-  const q = params.q?.trim() || "";
+  const q = hasSearchQuery(params.q)
+    ? normalizeSearchQuery(params.q ?? "")
+    : "";
+  const rank = q ? searchRank(events.searchVector, "english", q) : undefined;
 
   const statusParam = params.status?.trim() || "all";
   const status = isEventStatus(statusParam) ? statusParam : "all";
@@ -37,8 +40,8 @@ export default async function EventsPage({ searchParams }: Props) {
       latitude: events.latitude,
       longitude: events.longitude,
       geoRadiusMeters: events.geoRadiusMeters,
-      startDate: events.startDate,
-      endDate: events.endDate,
+      startsAt: events.startsAt,
+      endsAt: events.endsAt,
       status: events.status,
       posterImageUrl: events.posterImageUrl,
       posterImageKey: events.posterImageKey,
@@ -47,17 +50,13 @@ export default async function EventsPage({ searchParams }: Props) {
     .from(events)
     .where(
       and(
-        q
-          ? or(
-              ilike(events.title, `%${q}%`),
-              ilike(events.location, `%${q}%`),
-              ilike(events.description, `%${q}%`),
-            )
-          : undefined,
+        q ? searchVectorMatches(events.searchVector, "english", q) : undefined,
         status !== "all" ? eq(events.status, status) : undefined,
       ),
     )
-    .orderBy(desc(events.startDate));
+    .orderBy(
+      ...(rank ? [desc(rank), asc(events.startsAt)] : [desc(events.startsAt)]),
+    );
 
   return (
     <div className="space-y-6">

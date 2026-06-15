@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { USER_STATUSES } from "@/lib/constants/user";
-import { getCurrentDbUser } from "../current-user";
+import { getCurrentDbUser } from "@/lib/auth/current-user";
+import { isApprovedUser } from "@/lib/permissions/member-permissions";
 
 export async function requireApprovedUser() {
   const user = await getCurrentDbUser();
@@ -10,7 +10,7 @@ export async function requireApprovedUser() {
     redirect("/sign-in");
   }
 
-  if (user.status !== USER_STATUSES.APPROVED) {
+  if (!isApprovedUser(user)) {
     redirect("/pending-approval");
   }
 

@@ -9,6 +9,8 @@ import { db } from "@/db/db";
 import { builds, users, galleryImages } from "@/db/schema";
 import { getCurrentUser } from "@/lib/get-current-user";
 import { BUILD_STATUSES } from "@/lib/constants/build";
+import { USER_STATUSES } from "@/lib/constants/user";
+import { BuildService } from "@/src/features/builds/build-service";
 
 const utapi = new UTApi();
 
@@ -67,14 +69,7 @@ type BuildStatus = (typeof BUILD_STATUSES)[keyof typeof BUILD_STATUSES];
 function parseBuildStatus(value: FormDataEntryValue | null): BuildStatus {
   const status = String(value || BUILD_STATUSES.DRAFT);
 
-  if (
-    status === BUILD_STATUSES.DRAFT ||
-    status === BUILD_STATUSES.FOR_REVIEW ||
-    status === BUILD_STATUSES.PUBLISHED ||
-    status === BUILD_STATUSES.UNPUBLISHED ||
-    status === BUILD_STATUSES.ARCHIVED ||
-    status === BUILD_STATUSES.REJECTED
-  ) {
+  if (status === BUILD_STATUSES.DRAFT || status === BUILD_STATUSES.FOR_REVIEW) {
     return status;
   }
 
@@ -92,9 +87,29 @@ export async function updateMyBuild(formData: FormData) {
       };
     }
 
+    if (user.status !== USER_STATUSES.APPROVED) {
+      return {
+        success: false,
+        message: "Your account must be approved before updating your build.",
+      };
+    }
+
     const existingBuild = await db.query.builds.findFirst({
       where: eq(builds.userId, user.id),
     });
+
+    if (
+      existingBuild &&
+      existingBuild.status !== BUILD_STATUSES.DRAFT &&
+      existingBuild.status !== BUILD_STATUSES.REJECTED &&
+      existingBuild.status !== BUILD_STATUSES.UNPUBLISHED &&
+      existingBuild.status !== BUILD_STATUSES.FOR_REVIEW
+    ) {
+      return {
+        success: false,
+        message: "Published or archived builds cannot be edited here.",
+      };
+    }
 
     const title = String(formData.get("title") || "").trim();
 
@@ -112,8 +127,13 @@ export async function updateMyBuild(formData: FormData) {
       ? incomingCoverImageKey
       : existingBuild?.coverImageKey || "";
 
-    const isFeatured = formData.get("isFeatured") === "true";
     const status = parseBuildStatus(formData.get("status"));
+    const isSubmittingForReview = status === BUILD_STATUSES.FOR_REVIEW;
+    const persistedStatus =
+      existingBuild?.status === BUILD_STATUSES.REJECTED ||
+      existingBuild?.status === BUILD_STATUSES.UNPUBLISHED
+        ? existingBuild.status
+        : BUILD_STATUSES.DRAFT;
 
     const payload = {
       title,
@@ -132,8 +152,8 @@ export async function updateMyBuild(formData: FormData) {
       accessories: String(formData.get("accessories") || ""),
       coverImageUrl,
       coverImageKey,
-      status,
-      isFeatured,
+      status: persistedStatus,
+      isFeatured: existingBuild?.isFeatured ?? false,
       updatedAt: new Date(),
     };
 
@@ -159,6 +179,13 @@ export async function updateMyBuild(formData: FormData) {
         id: buildId,
         userId: user.id,
         ...payload,
+      });
+    }
+
+    if (isSubmittingForReview && buildId) {
+      await BuildService.submitForReview({
+        buildId,
+        actor: user,
       });
     }
 

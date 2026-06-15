@@ -1,68 +1,29 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
 
-import { db } from "@/db/db";
-import { builds } from "@/db/schema";
-import { BUILD_STATUSES } from "@/lib/constants/build";
-import { sendPushNotificationToUser } from "@/lib/send-push-notification";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { BuildService } from "@/src/features/builds/build-service";
 
 export async function publishBuild(buildId: string) {
-  const build = await db.query.builds.findFirst({
-    where: eq(builds.id, buildId),
-  });
+  const actor = await requireAdmin();
 
-  if (!build) {
-    throw new Error("Build not found.");
-  }
-
-  if (build.status !== BUILD_STATUSES.FOR_REVIEW) {
-    throw new Error("Only builds for approval can be published.");
-  }
-
-  await db
-    .update(builds)
-    .set({
-      status: BUILD_STATUSES.PUBLISHED,
-      updatedAt: new Date(),
-    })
-    .where(eq(builds.id, buildId));
-
-  await sendPushNotificationToUser(build.userId, {
-    title: "Build Published",
-    body: "Your build has been published.",
-    url: `/builds/${build.slug}`,
+  await BuildService.publish({
+    buildId,
+    actor,
   });
 
   revalidatePath("/admin/builds");
+  revalidatePath("/builds");
 }
 
 export async function rejectBuild(buildId: string) {
-  const build = await db.query.builds.findFirst({
-    where: eq(builds.id, buildId),
-  });
+  const actor = await requireAdmin();
 
-  if (!build) {
-    throw new Error("Build not found.");
-  }
-
-  if (build.status !== BUILD_STATUSES.FOR_REVIEW) {
-    throw new Error("Only builds for approval can be rejected.");
-  }
-
-  await db
-    .update(builds)
-    .set({
-      status: BUILD_STATUSES.REJECTED,
-      updatedAt: new Date(),
-    })
-    .where(eq(builds.id, buildId));
-
-  await sendPushNotificationToUser(build.userId, {
-    title: "Build Rejected",
-    body: "Your build is not approved to publish. Please check the contents of your build and resubmit application.",
-    url: "/member/my-build",
+  await BuildService.reject({
+    buildId,
+    actor,
+    reason: "Rejected by admin.",
   });
 
   revalidatePath("/admin/builds");

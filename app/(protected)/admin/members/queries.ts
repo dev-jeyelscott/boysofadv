@@ -1,7 +1,13 @@
-import { and, asc, desc, eq, ilike, ne, or, lt, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ne, or, lt, sql } from "drizzle-orm";
 
 import { db } from "@/db/db";
 import { users } from "@/db/schema";
+import {
+  hasSearchQuery,
+  normalizeSearchQuery,
+  searchRank,
+  searchVectorMatches,
+} from "@/lib/db/search";
 
 export type GetMembersParams = {
   search?: string;
@@ -25,16 +31,15 @@ export async function getMembers({
     or(eq(users.status, "approved"), eq(users.status, "suspended"))!,
   ];
 
-  if (search) {
-    conditions.push(
-      or(
-        ilike(users.firstName, `%${search}%`),
-        ilike(users.lastName, `%${search}%`),
-        ilike(users.email, `%${search}%`),
-        ilike(users.nickname, `%${search}%`),
-        ilike(users.codename, `%${search}%`),
-      )!,
-    );
+  const query = hasSearchQuery(search)
+    ? normalizeSearchQuery(search ?? "")
+    : "";
+  const rank = query
+    ? searchRank(users.searchVector, "simple", query)
+    : undefined;
+
+  if (query) {
+    conditions.push(searchVectorMatches(users.searchVector, "simple", query));
   }
 
   if (status === "approved" || status === "suspended") {
@@ -53,25 +58,27 @@ export async function getMembers({
     conditions.push(lt(users.createdAt, new Date(cursor)));
   }
 
-  const rows = await db.query.users.findMany({
-    where: and(...conditions),
-    orderBy: desc(users.createdAt),
-    limit: limit + 1,
-    columns: {
-      id: true,
-      email: true,
-      firstName: true,
-      lastName: true,
-      nickname: true,
-      codename: true,
-      chapter: true,
-      unit: true,
-      status: true,
-      role: true,
-      bio: true,
-      createdAt: true,
-    },
-  });
+  const rows = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      nickname: users.nickname,
+      codename: users.codename,
+      chapter: users.chapter,
+      unit: users.unit,
+      status: users.status,
+      role: users.role,
+      bio: users.bio,
+      createdAt: users.createdAt,
+    })
+    .from(users)
+    .where(and(...conditions))
+    .orderBy(
+      ...(rank ? [desc(rank), desc(users.createdAt)] : [desc(users.createdAt)]),
+    )
+    .limit(limit + 1);
 
   const members = rows
     .filter(

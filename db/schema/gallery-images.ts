@@ -1,4 +1,11 @@
-import { pgTable, text, timestamp, integer, pgEnum } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgTable,
+  text,
+  timestamp,
+  integer,
+  pgEnum,
+} from "drizzle-orm/pg-core";
 
 import { builds } from "./builds";
 import { users } from "./users";
@@ -9,26 +16,35 @@ export const galleryImageTypeEnum = pgEnum("gallery_image_type", [
   "general",
 ]);
 
-export const galleryImages = pgTable("gallery_images", {
-  id: text("id").primaryKey(),
+export const galleryImages = pgTable(
+  "gallery_images",
+  {
+    id: text("id").primaryKey(),
 
-  userId: text("user_id").references(() => users.id, {
-    onDelete: "cascade",
-  }),
-
-  buildId: text("build_id")
-    .notNull()
-    .references(() => builds.id, {
+    userId: text("user_id").references(() => users.id, {
       onDelete: "cascade",
     }),
 
-  type: galleryImageTypeEnum("type").notNull().default("general"),
+    buildId: text("build_id")
+      .notNull()
+      .references(() => builds.id, {
+        onDelete: "cascade",
+      }),
 
-  imageUrl: text("image_url").notNull(),
-  altText: text("alt_text"),
-  caption: text("caption"),
+    type: galleryImageTypeEnum("type").notNull().default("general"),
 
-  displayOrder: integer("display_order").notNull().default(0),
+    imageUrl: text("image_url").notNull(),
+    altText: text("alt_text"),
+    caption: text("caption"),
 
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
+    displayOrder: integer("display_order").notNull().default(0),
+
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("gallery_images_build_order_idx").on(
+      table.buildId,
+      table.displayOrder,
+    ),
+  ],
+);

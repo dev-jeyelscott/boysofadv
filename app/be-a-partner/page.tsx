@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { submitPartnerInquiry } from "./actions";
 import { SiteHeader } from "@/components/site/site-header";
-import { AutoResizeTextarea } from "@/components/member/auto-resize-textarea";
+import { AutoResizeTextarea } from "@/components/ui/auto-resize-textarea";
 
 export default async function BeAPartnerPage({
   searchParams,
