@@ -6,6 +6,7 @@ import {
   boolean,
   pgEnum,
   index,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 
 import { tsvector } from "./search-vector";
@@ -55,6 +56,23 @@ export const users = pgTable(
 
     isFeatured: boolean("is_featured").notNull().default(false),
 
+    approvedAt: timestamp("approved_at"),
+    approvedBy: text("approved_by_user_id").references(
+      (): AnyPgColumn => users.id,
+      { onDelete: "set null" },
+    ),
+    rejectedAt: timestamp("rejected_at"),
+    rejectedBy: text("rejected_by_user_id").references(
+      (): AnyPgColumn => users.id,
+      { onDelete: "set null" },
+    ),
+    rejectionReason: text("rejection_reason"),
+    suspendedAt: timestamp("suspended_at"),
+    suspendedBy: text("suspended_by_user_id").references(
+      (): AnyPgColumn => users.id,
+      { onDelete: "set null" },
+    ),
+
     lastActiveAt: timestamp("last_active_at"),
     inactiveDetectedAt: timestamp("inactive_detected_at"),
     searchVector: tsvector("search_vector").generatedAlwaysAs(
@@ -81,6 +99,9 @@ export const users = pgTable(
       table.createdAt.desc(),
     ),
     index("users_role_status_idx").on(table.role, table.status),
+    index("users_approved_by_idx").on(table.approvedBy),
+    index("users_rejected_by_idx").on(table.rejectedBy),
+    index("users_suspended_by_idx").on(table.suspendedBy),
     index("users_search_vector_idx").using("gin", table.searchVector),
   ],
 );

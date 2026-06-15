@@ -11,6 +11,7 @@ import {
 import { sql } from "drizzle-orm";
 
 import { tsvector } from "./search-vector";
+import { users } from "./users";
 
 export const eventStatusEnum = pgEnum("event_status", [
   "draft",
@@ -52,6 +53,12 @@ export const events = pgTable(
     statusUpdatedBy: text("statusUpdatedBy"),
     isFeatured: boolean("is_featured").notNull().default(false),
 
+    publishedAt: timestamp("published_at"),
+    cancelledAt: timestamp("cancelled_at"),
+    cancelledBy: text("cancelled_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    cancellationReason: text("cancellation_reason"),
     completedAt: timestamp("completedAt"),
     attendanceSummarySentAt: timestamp("attendance_summary_sent_at"),
     searchVector: tsvector("search_vector").generatedAlwaysAs(
@@ -71,6 +78,7 @@ export const events = pgTable(
     index("events_created_at_idx").on(table.createdAt),
     index("events_status_start_date_idx").on(table.status, table.startsAt),
     index("events_status_end_date_idx").on(table.status, table.endsAt),
+    index("events_cancelled_by_idx").on(table.cancelledBy),
     index("events_search_vector_idx").using("gin", table.searchVector),
   ],
 );

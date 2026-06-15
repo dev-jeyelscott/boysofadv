@@ -45,19 +45,26 @@ export function verifyAttendanceToken(token: string, eventId: string) {
   }
 
   const expectedSignature = sign(encodedPayload);
+  const signatureBuffer = Buffer.from(signature);
+  const expectedSignatureBuffer = Buffer.from(expectedSignature);
 
-  if (
-    !crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature),
-    )
-  ) {
+  if (signatureBuffer.length !== expectedSignatureBuffer.length) {
     return null;
   }
 
-  const payload = JSON.parse(
-    Buffer.from(encodedPayload, "base64url").toString(),
-  ) as AttendanceTokenPayload;
+  if (!crypto.timingSafeEqual(signatureBuffer, expectedSignatureBuffer)) {
+    return null;
+  }
+
+  let payload: AttendanceTokenPayload;
+
+  try {
+    payload = JSON.parse(
+      Buffer.from(encodedPayload, "base64url").toString(),
+    ) as AttendanceTokenPayload;
+  } catch {
+    return null;
+  }
 
   if (payload.eventId !== eventId) {
     return null;

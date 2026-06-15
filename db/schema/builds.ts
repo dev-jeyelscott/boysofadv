@@ -54,7 +54,13 @@ export const builds = pgTable(
     status: buildStatusEnum("status").notNull().default("draft"),
     isFeatured: boolean("is_featured").notNull().default(false),
 
+    submittedAt: timestamp("submitted_at"),
     publishedAt: timestamp("published_at"),
+    reviewedAt: timestamp("reviewed_at"),
+    reviewedBy: text("reviewed_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    rejectionReason: text("rejection_reason"),
 
     searchVector: tsvector("search_vector").generatedAlwaysAs(
       sql`
@@ -82,6 +88,16 @@ export const builds = pgTable(
       table.createdAt.desc(),
     ),
     index("builds_user_id_status_idx").on(table.userId, table.status),
+    index("builds_review_queue_idx").on(
+      table.status,
+      table.submittedAt.desc(),
+    ),
+    index("builds_public_listing_idx").on(
+      table.status,
+      table.popularityScore.desc(),
+      table.publishedAt.desc(),
+    ),
+    index("builds_reviewed_by_idx").on(table.reviewedBy),
     index("builds_search_vector_idx").using("gin", table.searchVector),
   ],
 );
