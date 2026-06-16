@@ -19,13 +19,13 @@ const REQUIRED_ENVIRONMENT_VARIABLES = [
   "NEXT_PUBLIC_APP_URL",
   "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
   "VAPID_PRIVATE_KEY",
-  "VAPID_EMAIL",
+  "VAPID_SUBJECT",
 ] as const;
 
 const PUSH_ENVIRONMENT_VARIABLES = [
   "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
   "VAPID_PRIVATE_KEY",
-  "VAPID_EMAIL",
+  "VAPID_SUBJECT",
 ] as const;
 
 function getMissingVariables(variables: readonly string[]) {
