@@ -76,10 +76,7 @@ export const builds = pgTable(
       table.createdAt.desc(),
     ),
     index("builds_user_id_status_idx").on(table.userId, table.status),
-    index("builds_review_queue_idx").on(
-      table.status,
-      table.submittedAt.desc(),
-    ),
+    index("builds_review_queue_idx").on(table.status, table.submittedAt.desc()),
     index("builds_public_listing_idx").on(
       table.status,
       table.popularityScore.desc(),

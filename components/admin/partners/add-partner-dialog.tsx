@@ -25,6 +25,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { createPartner } from "@/app/(protected)/admin/partners/actions";
 import { PartnerLogoUploader } from "./partner-logo-uploader";
+import { toast } from "sonner";
 
 export function AddPartnerDialog() {
   const [logoUrl, setLogoUrl] = useState("");
@@ -33,11 +34,18 @@ export function AddPartnerDialog() {
 
   async function action(formData: FormData) {
     formData.set("logoUrl", logoUrl);
+    formData.set("logoKey", logoKey);
 
-    await createPartner(formData);
+    try {
+      await createPartner(formData);
 
-    setLogoUrl("");
-    setOpen(false);
+      toast.success("Partner created.");
+      setLogoUrl("");
+      setLogoKey("");
+      setOpen(false);
+    } catch {
+      toast.error("Failed to create partner.");
+    }
   }
 
   return (
@@ -68,7 +76,12 @@ export function AddPartnerDialog() {
           <div className="grid gap-5 md:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="name">Partner Name</Label>
-              <Input id="name" name="name" placeholder="JVT Performance" />
+              <Input
+                id="name"
+                name="name"
+                placeholder="JVT Performance"
+                required
+              />
             </div>
 
             <div className="grid gap-2">
@@ -136,7 +149,7 @@ export function AddPartnerDialog() {
                 </div>
               ) : null}
 
-              <input type="hidden" value={logoKey} />
+              <input type="hidden" name="logoKey" value={logoKey} />
 
               <div className="md:col-span-2">
                 <PartnerLogoUploader

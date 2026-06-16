@@ -5,18 +5,12 @@ const MEMBER_STATUS_TRANSITIONS: Record<UserStatus, readonly UserStatus[]> = {
     USER_STATUSES.APPROVED,
     USER_STATUSES.REJECTED,
   ],
-  [USER_STATUSES.APPROVED]: [
-    USER_STATUSES.SUSPENDED,
-    USER_STATUSES.ARCHIVED,
-  ],
+  [USER_STATUSES.APPROVED]: [USER_STATUSES.SUSPENDED, USER_STATUSES.ARCHIVED],
   [USER_STATUSES.SUSPENDED]: [USER_STATUSES.APPROVED, USER_STATUSES.ARCHIVED],
   [USER_STATUSES.REJECTED]: [USER_STATUSES.ARCHIVED],
   [USER_STATUSES.ARCHIVED]: [],
 };
 
-export function canTransitionMemberStatus(
-  from: UserStatus,
-  to: UserStatus,
-) {
+export function canTransitionMemberStatus(from: UserStatus, to: UserStatus) {
   return MEMBER_STATUS_TRANSITIONS[from].includes(to);
 }

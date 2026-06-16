@@ -15,6 +15,7 @@ import { EventFormFields } from "./event-form-fields";
 import { updateEventAction } from "@/app/(protected)/admin/events/actions";
 import { EventRow } from "@/lib/constants/event";
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 
 type Props = {
   event: EventRow;
@@ -33,7 +34,10 @@ export default function EventEditDialog({ event }: Props) {
       const result = await updateEventAction(formData);
 
       if (result.success) {
+        toast.success(result.message);
         setOpen(false);
+      } else {
+        toast.error(result.message);
       }
     });
   }

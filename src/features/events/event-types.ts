@@ -4,7 +4,7 @@ export type EventDataInput = {
   title: string;
   description: string;
   startsAt: Date;
-  endsAt: Date;
+  endsAt?: Date | null;
   location: string;
   latitude?: string | null;
   longitude?: string | null;

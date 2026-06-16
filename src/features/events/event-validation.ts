@@ -10,7 +10,7 @@ export const eventDataSchema = z.object({
   title: z.string().trim().min(1, "Event title is required."),
   description: z.string().trim().min(1, "Event description is required."),
   startsAt: validDateSchema,
-  endsAt: validDateSchema,
+  endsAt: validDateSchema.optional().nullable(),
   location: z.string().trim().min(1, "Event location is required."),
   latitude: z.string().trim().optional().nullable(),
   longitude: z.string().trim().optional().nullable(),

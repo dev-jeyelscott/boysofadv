@@ -14,6 +14,7 @@ import {
 import { EventFormFields } from "./event-form-fields";
 import { createEventAction } from "@/app/(protected)/admin/events/actions";
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 
 export function EventCreateDialog() {
   const [open, setOpen] = useState(false);
@@ -28,7 +29,10 @@ export function EventCreateDialog() {
       const result = await createEventAction(formData);
 
       if (result.success) {
+        toast.success(result.message);
         setOpen(false);
+      } else {
+        toast.error(result.message);
       }
     });
   }

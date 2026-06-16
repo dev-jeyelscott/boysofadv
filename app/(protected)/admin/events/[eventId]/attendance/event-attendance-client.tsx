@@ -147,9 +147,7 @@ export function EventAttendanceClient({ event, attendance }: Props) {
             <Info
               label="Start"
               value={
-                event.startsAt
-                  ? new Date(event.startsAt).toLocaleString()
-                  : "—"
+                event.startsAt ? new Date(event.startsAt).toLocaleString() : "—"
               }
             />
 

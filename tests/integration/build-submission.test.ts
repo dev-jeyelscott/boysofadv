@@ -28,7 +28,9 @@ run("build submission integration", () => {
     expect(result.build.status).toBe(BUILD_STATUSES.FOR_REVIEW);
     await expect(
       BuildService.submitForReview({ actor: owner, buildId: build.id }),
-    ).rejects.toThrow("Only draft, rejected, or unpublished builds can be submitted.");
+    ).rejects.toThrow(
+      "Only draft, rejected, or unpublished builds can be submitted.",
+    );
   });
 
   it("rejects suspended owner submission", async () => {

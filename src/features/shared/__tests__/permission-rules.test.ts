@@ -24,7 +24,9 @@ const approvedMember = {
 describe("permission helpers", () => {
   it("allows only approved admins to approve members", () => {
     expect(canManageMembers(approvedAdmin)).toBe(true);
-    expect(canManageMembers({ ...approvedAdmin, status: USER_STATUSES.SUSPENDED })).toBe(false);
+    expect(
+      canManageMembers({ ...approvedAdmin, status: USER_STATUSES.SUSPENDED }),
+    ).toBe(false);
     expect(canManageMembers(approvedMember)).toBe(false);
     expect(canManageMembers(null)).toBe(false);
   });

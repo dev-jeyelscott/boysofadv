@@ -6,8 +6,10 @@ export type PartnerUpdateData = {
   name: string;
   category?: string | null;
   websiteUrl?: string | null;
+  facebookUrl?: string | null;
   description?: string | null;
   status?: string | null;
+  isOfficial?: boolean;
   logoUrl?: string | null;
   logoKey?: string | null;
 };
@@ -22,8 +24,10 @@ export type PartnerAuditSnapshot = {
   name: string;
   category: string | null;
   websiteUrl: string | null;
+  facebookUrl: string | null;
   description: string | null;
   status: PartnerStatus;
+  isOfficial: boolean;
   logoUrl: string | null;
   logoKey: string | null;
 };

@@ -9,7 +9,10 @@ export async function GET() {
     const authResult = await requireApiApprovedUser();
 
     if (!authResult.ok) {
-      return NextResponse.json({ enabled: false }, { status: authResult.status });
+      return NextResponse.json(
+        { enabled: false },
+        { status: authResult.status },
+      );
     }
 
     const status = await NotificationService.getSubscriptionStatus({
@@ -27,7 +30,10 @@ export async function POST(request: Request) {
     const authResult = await requireApiApprovedUser();
 
     if (!authResult.ok) {
-      return NextResponse.json({ enabled: false }, { status: authResult.status });
+      return NextResponse.json(
+        { enabled: false },
+        { status: authResult.status },
+      );
     }
 
     const body = (await request.json().catch(() => ({}))) as {

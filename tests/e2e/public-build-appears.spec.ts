@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-test("published public build appears in listing and detail", async ({ page }) => {
+test("published public build appears in listing and detail", async ({
+  page,
+}) => {
   await page.goto("/builds");
 
   await expect(

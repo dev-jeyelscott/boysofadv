@@ -38,10 +38,7 @@ export function handleServiceError(error: unknown) {
   );
 }
 
-export function getServiceActionErrorMessage(
-  error: unknown,
-  fallback: string,
-) {
+export function getServiceActionErrorMessage(error: unknown, fallback: string) {
   if (error instanceof ServiceError) {
     return error.message;
   }

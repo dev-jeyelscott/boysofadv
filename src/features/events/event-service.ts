@@ -42,7 +42,7 @@ function assertEventFound<T>(event: T | undefined) {
 function validateEventData(data: EventDataInput, allowPastStart = false) {
   const payload = eventDataSchema.parse(data);
 
-  if (payload.startsAt >= payload.endsAt) {
+  if (payload.endsAt && payload.startsAt >= payload.endsAt) {
     throw new ServiceError(
       "VALIDATION_ERROR",
       "Event start time must be before end time.",
@@ -69,7 +69,7 @@ function eventNotificationChanged(
 ) {
   return (
     before.startsAt.getTime() !== after.startsAt.getTime() ||
-    before.endsAt?.getTime() !== after.endsAt.getTime() ||
+    (before.endsAt?.getTime() ?? null) !== (after.endsAt?.getTime() ?? null) ||
     before.location !== after.location
   );
 }

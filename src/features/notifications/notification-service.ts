@@ -45,7 +45,11 @@ function isExpiredPushSubscription(error: unknown) {
 }
 
 function redactEndpoint(endpoint: string) {
-  return crypto.createHash("sha256").update(endpoint).digest("hex").slice(0, 12);
+  return crypto
+    .createHash("sha256")
+    .update(endpoint)
+    .digest("hex")
+    .slice(0, 12);
 }
 
 async function removePushSubscription(endpoint: string) {
@@ -109,7 +113,9 @@ function summarizePushResults(
   results: Array<{ sent: boolean; removed: boolean }>,
 ): NotificationDeliverySummary {
   const sent = results.filter((result) => result.sent).length;
-  const removedSubscriptions = results.filter((result) => result.removed).length;
+  const removedSubscriptions = results.filter(
+    (result) => result.removed,
+  ).length;
 
   return {
     attempted: results.length,

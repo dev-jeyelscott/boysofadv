@@ -1,13 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowLeft,
-  CalendarDays,
-  ListChecks,
-  MapPin,
-  Pencil,
-} from "lucide-react";
+import { ArrowLeft, CalendarDays, ListChecks, MapPin } from "lucide-react";
 import { eq } from "drizzle-orm";
 
 import { Badge } from "@/components/ui/badge";
@@ -83,15 +77,6 @@ export default async function AdminEventViewPage({ params }: Props) {
             <Link href={`/admin/events/${event.id}/attendance`}>
               <ListChecks className="mr-2 size-4" />
               Attendance
-            </Link>
-          </Button>
-          <Button
-            asChild
-            className="w-fit rounded-full bg-red-600 px-4 font-black uppercase text-white hover:bg-red-500"
-          >
-            <Link href={`/admin/events/${event.id}/edit`}>
-              <Pencil className="mr-1 size-4" />
-              Edit Event
             </Link>
           </Button>
         </div>

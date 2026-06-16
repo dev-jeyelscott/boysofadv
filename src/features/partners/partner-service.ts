@@ -11,10 +11,7 @@ import {
 import { assertApprovedAdmin } from "@/src/features/shared/service-actor";
 import { ServiceError } from "@/src/lib/errors/service-error";
 import type { PartnerAuditSnapshot, UpdatePartnerInput } from "./partner-types";
-import {
-  partnerIdSchema,
-  partnerUpdateDataSchema,
-} from "./partner-validation";
+import { partnerIdSchema, partnerUpdateDataSchema } from "./partner-validation";
 
 const utapi = new UTApi();
 
@@ -22,8 +19,10 @@ const AUDITED_PARTNER_FIELDS = [
   "name",
   "category",
   "websiteUrl",
+  "facebookUrl",
   "description",
   "status",
+  "isOfficial",
   "logoUrl",
   "logoKey",
 ] as const satisfies readonly (keyof PartnerAuditSnapshot)[];
@@ -41,8 +40,10 @@ function toAuditSnapshot(partner: PartnerAuditSnapshot): PartnerAuditSnapshot {
     name: partner.name,
     category: partner.category,
     websiteUrl: partner.websiteUrl,
+    facebookUrl: partner.facebookUrl,
     description: partner.description,
     status: partner.status,
+    isOfficial: partner.isOfficial,
     logoUrl: partner.logoUrl,
     logoKey: partner.logoKey,
   };
@@ -52,7 +53,9 @@ function getChangedFields(
   before: PartnerAuditSnapshot,
   after: PartnerAuditSnapshot,
 ) {
-  return AUDITED_PARTNER_FIELDS.filter((field) => before[field] !== after[field]);
+  return AUDITED_PARTNER_FIELDS.filter(
+    (field) => before[field] !== after[field],
+  );
 }
 
 export const PartnerService = {
@@ -67,8 +70,14 @@ export const PartnerService = {
 
     const existing = assertPartnerFound(existingPartner);
     const before = toAuditSnapshot(existing);
-    const finalLogoUrl = payload.logoUrl || existing.logoUrl;
-    const finalLogoKey = payload.logoKey || existing.logoKey;
+    const finalLogoUrl =
+      payload.logoUrl === undefined
+        ? existing.logoUrl
+        : payload.logoUrl || null;
+    const finalLogoKey =
+      payload.logoKey === undefined
+        ? existing.logoKey
+        : payload.logoKey || null;
 
     const [partner] = await db
       .update(partners)
@@ -76,8 +85,10 @@ export const PartnerService = {
         name: payload.name,
         category: payload.category || null,
         websiteUrl: payload.websiteUrl || null,
+        facebookUrl: payload.facebookUrl || null,
         description: payload.description || null,
         status: payload.status,
+        isOfficial: payload.isOfficial ?? existing.isOfficial,
         logoUrl: finalLogoUrl,
         logoKey: finalLogoKey,
         updatedAt: new Date(),
@@ -87,11 +98,7 @@ export const PartnerService = {
 
     const updatedPartner = assertPartnerFound(partner);
 
-    if (
-      payload.logoKey &&
-      existing.logoKey &&
-      payload.logoKey !== existing.logoKey
-    ) {
+    if (existing.logoKey && finalLogoKey !== existing.logoKey) {
       await utapi.deleteFiles(existing.logoKey);
     }
 

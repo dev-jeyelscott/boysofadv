@@ -295,16 +295,12 @@
         "users_clerk_user_id_unique": {
           "name": "users_clerk_user_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "clerk_user_id"
-          ]
+          "columns": ["clerk_user_id"]
         },
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -412,9 +408,7 @@
         "partners_slug_unique": {
           "name": "partners_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -704,12 +698,8 @@
           "name": "builds_user_id_users_id_fk",
           "tableFrom": "builds",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -719,9 +709,7 @@
         "builds_slug_unique": {
           "name": "builds_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -797,12 +785,8 @@
           "name": "gallery_images_user_id_users_id_fk",
           "tableFrom": "gallery_images",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -810,12 +794,8 @@
           "name": "gallery_images_build_id_builds_id_fk",
           "tableFrom": "gallery_images",
           "tableTo": "builds",
-          "columnsFrom": [
-            "build_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["build_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1086,9 +1066,7 @@
         "events_slug_unique": {
           "name": "events_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -1407,12 +1385,8 @@
           "name": "event_attendance_event_id_events_id_fk",
           "tableFrom": "event_attendance",
           "tableTo": "events",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1420,12 +1394,8 @@
           "name": "event_attendance_user_id_users_id_fk",
           "tableFrom": "event_attendance",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1494,12 +1464,8 @@
           "name": "build_likes_build_id_builds_id_fk",
           "tableFrom": "build_likes",
           "tableTo": "builds",
-          "columnsFrom": [
-            "build_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["build_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1507,12 +1473,8 @@
           "name": "build_likes_user_id_users_id_fk",
           "tableFrom": "build_likes",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1682,12 +1644,8 @@
           "name": "build_comments_build_id_builds_id_fk",
           "tableFrom": "build_comments",
           "tableTo": "builds",
-          "columnsFrom": [
-            "build_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["build_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1695,12 +1653,8 @@
           "name": "build_comments_user_id_users_id_fk",
           "tableFrom": "build_comments",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1708,12 +1662,8 @@
           "name": "build_comments_parent_id_build_comments_id_fk",
           "tableFrom": "build_comments",
           "tableTo": "build_comments",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1721,12 +1671,8 @@
           "name": "build_comments_deleted_by_user_id_users_id_fk",
           "tableFrom": "build_comments",
           "tableTo": "users",
-          "columnsFrom": [
-            "deleted_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["deleted_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1825,12 +1771,8 @@
           "name": "build_comment_likes_comment_id_build_comments_id_fk",
           "tableFrom": "build_comment_likes",
           "tableTo": "build_comments",
-          "columnsFrom": [
-            "comment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["comment_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1838,12 +1780,8 @@
           "name": "build_comment_likes_user_id_users_id_fk",
           "tableFrom": "build_comment_likes",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1955,12 +1893,8 @@
           "name": "push_subscriptions_user_id_users_id_fk",
           "tableFrom": "push_subscriptions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2036,12 +1970,8 @@
           "name": "event_reminders_event_id_events_id_fk",
           "tableFrom": "event_reminders",
           "tableTo": "events",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2057,11 +1987,7 @@
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": [
-        "super_admin",
-        "member",
-        "admin"
-      ]
+      "values": ["super_admin", "member", "admin"]
     },
     "public.user_status": {
       "name": "user_status",
@@ -2077,11 +2003,7 @@
     "public.partner_status": {
       "name": "partner_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "active",
-        "inactive"
-      ]
+      "values": ["draft", "active", "inactive"]
     },
     "public.build_status": {
       "name": "build_status",
@@ -2098,50 +2020,27 @@
     "public.gallery_image_type": {
       "name": "gallery_image_type",
       "schema": "public",
-      "values": [
-        "build",
-        "event",
-        "general"
-      ]
+      "values": ["build", "event", "general"]
     },
     "public.event_status": {
       "name": "event_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "published",
-        "completed",
-        "cancelled"
-      ]
+      "values": ["draft", "published", "completed", "cancelled"]
     },
     "public.join_request_status": {
       "name": "join_request_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "approved",
-        "rejected"
-      ]
+      "values": ["pending", "approved", "rejected"]
     },
     "public.partner_inquiry_status": {
       "name": "partner_inquiry_status",
       "schema": "public",
-      "values": [
-        "new",
-        "contacted",
-        "approved",
-        "rejected"
-      ]
+      "values": ["new", "contacted", "approved", "rejected"]
     },
     "public.contact_message_status": {
       "name": "contact_message_status",
       "schema": "public",
-      "values": [
-        "new",
-        "read",
-        "replied",
-        "archived"
-      ]
+      "values": ["new", "read", "replied", "archived"]
     }
   },
   "schemas": {},

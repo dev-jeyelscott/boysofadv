@@ -16,7 +16,10 @@ const BUILD_STATUS_TRANSITIONS: Record<BuildStatus, readonly BuildStatus[]> = {
     BUILD_STATUSES.FOR_REVIEW,
     BUILD_STATUSES.ARCHIVED,
   ],
-  [BUILD_STATUSES.REJECTED]: [BUILD_STATUSES.FOR_REVIEW, BUILD_STATUSES.ARCHIVED],
+  [BUILD_STATUSES.REJECTED]: [
+    BUILD_STATUSES.FOR_REVIEW,
+    BUILD_STATUSES.ARCHIVED,
+  ],
   [BUILD_STATUSES.ARCHIVED]: [],
 };
 
@@ -33,10 +36,7 @@ export type PublishableBuildOwner = {
   status: string;
 } | null;
 
-export function canTransitionBuildStatus(
-  from: BuildStatus,
-  to: BuildStatus,
-) {
+export function canTransitionBuildStatus(from: BuildStatus, to: BuildStatus) {
   return BUILD_STATUS_TRANSITIONS[from].includes(to);
 }
 
