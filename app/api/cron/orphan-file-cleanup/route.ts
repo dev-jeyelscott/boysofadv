@@ -3,6 +3,8 @@ import { UTApi } from "uploadthing/server";
 
 import { db } from "@/db/db";
 import { builds, events, galleryImages, partners } from "@/db/schema";
+import { monitorCronRun } from "@/lib/cron/cron-monitor";
+import { captureError } from "@/lib/observability/error-monitor";
 
 export const runtime = "nodejs";
 
@@ -84,63 +86,91 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const referencedKeys = await getReferencedFileKeys();
+  try {
+    const result = await monitorCronRun({
+      cronName: "orphan-file-cleanup",
+      handler: async () => {
+        const referencedKeys = await getReferencedFileKeys();
 
-  const orphanKeys: string[] = [];
-  const skippedRecentKeys: string[] = [];
+        const orphanKeys: string[] = [];
+        const skippedRecentKeys: string[] = [];
 
-  const limit = 500;
-  let offset = 0;
+        const limit = 500;
+        let offset = 0;
 
-  while (true) {
-    const result = await utapi.listFiles({
-      limit,
-      offset,
+        while (true) {
+          const listResult = await utapi.listFiles({
+            limit,
+            offset,
+          });
+
+          if (!listResult.files.length) break;
+
+          for (const file of listResult.files) {
+            if (file.status !== "Uploaded") continue;
+
+            if (referencedKeys.has(file.key)) continue;
+
+            if (!isPastGracePeriod(file.uploadedAt)) {
+              skippedRecentKeys.push(file.key);
+              continue;
+            }
+
+            orphanKeys.push(file.key);
+          }
+
+          if (!listResult.hasMore) break;
+
+          offset += limit;
+        }
+
+        const deletedKeys: string[] = [];
+        const failedKeys: string[] = [];
+
+        for (let i = 0; i < orphanKeys.length; i += 50) {
+          const batch = orphanKeys.slice(i, i + 50);
+
+          try {
+            await utapi.deleteFiles(batch);
+            deletedKeys.push(...batch);
+          } catch {
+            failedKeys.push(...batch);
+          }
+        }
+
+        const response = {
+          gracePeriodDays: ORPHAN_FILE_GRACE_PERIOD_DAYS,
+          scannedReferencedFiles: referencedKeys.size,
+          orphanFilesFound: orphanKeys.length,
+          skippedRecentFiles: skippedRecentKeys.length,
+          deleted: deletedKeys.length,
+          failed: failedKeys.length,
+          deletedKeys,
+          failedKeys,
+          skippedRecentKeys,
+        };
+
+        return {
+          processedCount: orphanKeys.length,
+          metadata: {
+            scannedReferencedFiles: referencedKeys.size,
+            orphanFilesFound: orphanKeys.length,
+            skippedRecentFiles: skippedRecentKeys.length,
+            deleted: deletedKeys.length,
+            failed: failedKeys.length,
+          },
+          response,
+        };
+      },
     });
 
-    if (!result.files.length) break;
+    return NextResponse.json(result.response);
+  } catch (error) {
+    captureError(error, { source: "cron", cronName: "orphan-file-cleanup" });
 
-    for (const file of result.files) {
-      if (file.status !== "Uploaded") continue;
-
-      if (referencedKeys.has(file.key)) continue;
-
-      if (!isPastGracePeriod(file.uploadedAt)) {
-        skippedRecentKeys.push(file.key);
-        continue;
-      }
-
-      orphanKeys.push(file.key);
-    }
-
-    if (!result.hasMore) break;
-
-    offset += limit;
+    return NextResponse.json(
+      { error: "Failed to cleanup orphan files" },
+      { status: 500 },
+    );
   }
-
-  const deletedKeys: string[] = [];
-  const failedKeys: string[] = [];
-
-  for (let i = 0; i < orphanKeys.length; i += 50) {
-    const batch = orphanKeys.slice(i, i + 50);
-
-    try {
-      await utapi.deleteFiles(batch);
-      deletedKeys.push(...batch);
-    } catch {
-      failedKeys.push(...batch);
-    }
-  }
-
-  return NextResponse.json({
-    gracePeriodDays: ORPHAN_FILE_GRACE_PERIOD_DAYS,
-    scannedReferencedFiles: referencedKeys.size,
-    orphanFilesFound: orphanKeys.length,
-    skippedRecentFiles: skippedRecentKeys.length,
-    deleted: deletedKeys.length,
-    failed: failedKeys.length,
-    deletedKeys,
-    failedKeys,
-    skippedRecentKeys,
-  });
 }

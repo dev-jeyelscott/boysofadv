@@ -1,10 +1,14 @@
-import { db } from "@/db/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 async function seedSuperAdmin() {
-  const clerkUserId = "user_3EoiPW6rIXnyyoDi2J30dZhF2J1";
+  const { db } = await import("../db");
+
+  const clerkUserId = "user_3EtObqbaG9housVrla0eK0gPIfM";
 
   const existingUser = await db.query.users.findFirst({
     where: eq(users.clerkUserId, clerkUserId),

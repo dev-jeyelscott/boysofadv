@@ -1,9 +1,11 @@
 import { BUILD_STATUSES } from "@/lib/constants/build";
+import { USER_STATUSES } from "@/lib/constants/user";
 import { isAdminRole } from "./member-permissions";
 
 type UserInput = {
   id: string;
   role: string;
+  status?: string;
 };
 
 type BuildInput = {
@@ -35,6 +37,7 @@ export function canEditBuild(user: UserInput | null, build: BuildInput) {
   return Boolean(
     user &&
       user.id === build.userId &&
+      user.status === USER_STATUSES.APPROVED &&
       isOwnerEditableBuildStatus(build.status),
   );
 }

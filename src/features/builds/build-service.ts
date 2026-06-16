@@ -1,12 +1,14 @@
 import { and, eq, inArray } from "drizzle-orm";
 
 import { db } from "@/db/db";
-import { builds } from "@/db/schema";
+import { builds, users } from "@/db/schema";
 import { BUILD_STATUSES } from "@/lib/constants/build";
+import { USER_STATUSES } from "@/lib/constants/user";
 import { assertApprovedAdmin } from "@/src/features/shared/service-actor";
 import { eventBus } from "@/src/lib/events/event-bus";
 import { registerDomainEventHandlers } from "@/src/lib/events/handlers";
 import { ServiceError } from "@/src/lib/errors/service-error";
+import { getBuildPublishBlockers } from "./build-rules";
 import type { BuildTransitionInput, RejectBuildInput } from "./build-types";
 import { buildIdSchema, rejectBuildSchema } from "./build-validation";
 
@@ -28,6 +30,17 @@ export const BuildService = {
     });
 
     const currentBuild = assertBuildFound(existingBuild);
+
+    if (currentBuild.userId !== input.actor.id) {
+      throw new ServiceError("FORBIDDEN", "Only the build owner can submit.");
+    }
+
+    if (input.actor.status !== USER_STATUSES.APPROVED) {
+      throw new ServiceError(
+        "FORBIDDEN",
+        "Only approved members can submit builds.",
+      );
+    }
 
     const [build] = await db
       .update(builds)
@@ -80,6 +93,44 @@ export const BuildService = {
     assertApprovedAdmin(input.actor);
     buildIdSchema.parse(input.buildId);
 
+    const [currentBuild] = await db
+      .select({
+        id: builds.id,
+        status: builds.status,
+        userId: builds.userId,
+        title: builds.title,
+        motorcycleModel: builds.motorcycleModel,
+        coverImageUrl: builds.coverImageUrl,
+        ownerId: users.id,
+        ownerStatus: users.status,
+      })
+      .from(builds)
+      .leftJoin(users, eq(builds.userId, users.id))
+      .where(eq(builds.id, input.buildId))
+      .limit(1);
+
+    assertBuildFound(currentBuild);
+
+    const blockers = getBuildPublishBlockers(
+      {
+        status: currentBuild.status,
+        userId: currentBuild.userId,
+        title: currentBuild.title,
+        motorcycleModel: currentBuild.motorcycleModel,
+        coverImageUrl: currentBuild.coverImageUrl,
+      },
+      currentBuild.ownerId && currentBuild.ownerStatus
+        ? {
+            id: currentBuild.ownerId,
+            status: currentBuild.ownerStatus,
+          }
+        : null,
+    );
+
+    if (blockers.length > 0) {
+      throw new ServiceError("INVALID_STATE", blockers[0]);
+    }
+
     const now = new Date();
     const [build] = await db
       .update(builds)
@@ -99,11 +150,6 @@ export const BuildService = {
       .returning();
 
     if (!build) {
-      const existing = await db.query.builds.findFirst({
-        where: eq(builds.id, input.buildId),
-      });
-
-      assertBuildFound(existing);
       throw new ServiceError(
         "INVALID_STATE",
         "Only builds for review can be published.",

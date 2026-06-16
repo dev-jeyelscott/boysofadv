@@ -10,7 +10,7 @@ export function HeroSection() {
           src="/images/hero-bg.webp"
           alt="Boys of ADV"
           fill
-          quality={65}
+          quality={70}
           priority
           fetchPriority="high"
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1440px"

@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
 import { and, eq, gte, lte } from "drizzle-orm";
+import { NextResponse } from "next/server";
 
-import { events, eventReminders } from "@/db/schema";
 import { db } from "@/db/db";
+import { events, eventReminders } from "@/db/schema";
+import { monitorCronRun } from "@/lib/cron/cron-monitor";
+import { captureError } from "@/lib/observability/error-monitor";
 import { sendPushNotificationToAllApprovedUsers } from "@/lib/send-push-notification";
 
 export const runtime = "nodejs";
@@ -73,71 +75,86 @@ export async function GET(request: Request) {
       );
     }
 
-    let sentCount = 0;
-    let skippedCount = 0;
+    const result = await monitorCronRun({
+      cronName: "event-reminders",
+      handler: async () => {
+        let sentCount = 0;
+        let skippedCount = 0;
 
-    for (const reminder of reminders) {
-      const { windowStart, windowEnd } = getReminderWindow(
-        reminder.hoursBeforeEvent,
-      );
+        for (const reminder of reminders) {
+          const { windowStart, windowEnd } = getReminderWindow(
+            reminder.hoursBeforeEvent,
+          );
 
-      const dueEvents = await db
-        .select({
-          id: events.id,
-          title: events.title,
-          slug: events.slug,
-          startsAt: events.startsAt,
-        })
-        .from(events)
-        .where(
-          and(
-            eq(events.status, "published"),
-            gte(events.startsAt, windowStart),
-            lte(events.startsAt, windowEnd),
-          ),
-        );
+          const dueEvents = await db
+            .select({
+              id: events.id,
+              title: events.title,
+              slug: events.slug,
+              startsAt: events.startsAt,
+            })
+            .from(events)
+            .where(
+              and(
+                eq(events.status, "published"),
+                gte(events.startsAt, windowStart),
+                lte(events.startsAt, windowEnd),
+              ),
+            );
 
-      for (const event of dueEvents) {
-        const existingReminder = await db
-          .select({
-            id: eventReminders.id,
-          })
-          .from(eventReminders)
-          .where(
-            and(
-              eq(eventReminders.eventId, event.id),
-              eq(eventReminders.reminderType, reminder.type),
-            ),
-          )
-          .limit(1);
+          for (const event of dueEvents) {
+            const existingReminder = await db
+              .select({
+                id: eventReminders.id,
+              })
+              .from(eventReminders)
+              .where(
+                and(
+                  eq(eventReminders.eventId, event.id),
+                  eq(eventReminders.reminderType, reminder.type),
+                ),
+              )
+              .limit(1);
 
-        if (existingReminder.length > 0) {
-          skippedCount++;
-          continue;
+            if (existingReminder.length > 0) {
+              skippedCount++;
+              continue;
+            }
+
+            await sendPushNotificationToAllApprovedUsers({
+              title: "Upcoming Event Reminder",
+              body: `${event.title} ${reminder.message}`,
+              url: `/events/${event.slug}`,
+            });
+
+            await db.insert(eventReminders).values({
+              eventId: event.id,
+              reminderType: reminder.type,
+            });
+
+            sentCount++;
+          }
         }
 
-        await sendPushNotificationToAllApprovedUsers({
-          title: "Upcoming Event Reminder",
-          body: `${event.title} ${reminder.message}`,
-          url: `/events/${event.slug}`,
-        });
-
-        await db.insert(eventReminders).values({
-          eventId: event.id,
-          reminderType: reminder.type,
-        });
-
-        sentCount++;
-      }
-    }
+        return {
+          processedCount: sentCount + skippedCount,
+          metadata: {
+            sentCount,
+            skippedCount,
+          },
+          sentCount,
+          skippedCount,
+        };
+      },
+    });
 
     return NextResponse.json({
       success: true,
-      sentCount,
-      skippedCount,
+      sentCount: result.sentCount,
+      skippedCount: result.skippedCount,
     });
   } catch (error) {
-    console.error("[CRON_EVENT_REMINDERS_ERROR]", error);
+    captureError(error, { source: "cron", cronName: "event-reminders" });
 
     return NextResponse.json(
       {
