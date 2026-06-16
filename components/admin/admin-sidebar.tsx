@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
 import {
+  Activity,
   BadgeCheck,
   Bike,
   CalendarDays,
@@ -52,6 +53,11 @@ const navItems = [
     label: "Events",
     href: "/admin/events",
     icon: CalendarDays,
+  },
+  {
+    label: "Observability",
+    href: "/admin/observability",
+    icon: Activity,
   },
 ];
 

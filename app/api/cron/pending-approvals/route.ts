@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
 import { count, eq, inArray } from "drizzle-orm";
+import { NextResponse } from "next/server";
 
-import { builds, partnerInquiries, users } from "@/db/schema";
 import { db } from "@/db/db";
+import { builds, partnerInquiries, users } from "@/db/schema";
+import { monitorCronRun } from "@/lib/cron/cron-monitor";
+import { captureError } from "@/lib/observability/error-monitor";
 import { sendPushNotificationToAllAdmins } from "@/lib/send-push-notification";
 
 export const dynamic = "force-dynamic";
@@ -22,67 +24,100 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const [pendingMembersResult, pendingBuildsResult, pendingPartnersResult] =
-      await Promise.all([
-        db
-          .select({ value: count() })
-          .from(users)
-          .where(eq(users.status, "for_approval")),
+    const result = await monitorCronRun({
+      cronName: "pending-approvals",
+      handler: async () => {
+        const [
+          pendingMembersResult,
+          pendingBuildsResult,
+          pendingPartnersResult,
+        ] = await Promise.all([
+          db
+            .select({ value: count() })
+            .from(users)
+            .where(eq(users.status, "for_approval")),
 
-        db
-          .select({ value: count() })
-          .from(builds)
-          .where(inArray(builds.status, ["for_review"])),
+          db
+            .select({ value: count() })
+            .from(builds)
+            .where(inArray(builds.status, ["for_review"])),
 
-        db
-          .select({ value: count() })
-          .from(partnerInquiries)
-          .where(eq(partnerInquiries.status, "new")),
-      ]);
+          db
+            .select({ value: count() })
+            .from(partnerInquiries)
+            .where(eq(partnerInquiries.status, "new")),
+        ]);
 
-    const pendingMembers = pendingMembersResult[0]?.value ?? 0;
-    const pendingBuilds = pendingBuildsResult[0]?.value ?? 0;
-    const pendingPartners = pendingPartnersResult[0]?.value ?? 0;
+        const pendingMembers = pendingMembersResult[0]?.value ?? 0;
+        const pendingBuilds = pendingBuildsResult[0]?.value ?? 0;
+        const pendingPartners = pendingPartnersResult[0]?.value ?? 0;
+        const total = pendingMembers + pendingBuilds + pendingPartners;
 
-    const total = pendingMembers + pendingBuilds + pendingPartners;
+        if (total === 0) {
+          return {
+            processedCount: 0,
+            metadata: {
+              sent: false,
+              reason: "No pending approval items",
+            },
+            sent: false,
+            reason: "No pending approval items",
+            total,
+            pendingMembers,
+            pendingBuilds,
+            pendingPartners,
+          };
+        }
 
-    if (total === 0) {
-      return NextResponse.json({
-        success: true,
-        sent: false,
-        reason: "No pending approval items",
-      });
-    }
+        await sendPushNotificationToAllAdmins({
+          title: "Pending approvals need review",
+          body: [
+            `${total} item${total === 1 ? "" : "s"} waiting for admin action.`,
+            pendingMembers
+              ? `${pendingMembers} member${pendingMembers === 1 ? "" : "s"}`
+              : null,
+            pendingBuilds
+              ? `${pendingBuilds} build${pendingBuilds === 1 ? "" : "s"}`
+              : null,
+            pendingPartners
+              ? `${pendingPartners} partner inquir${
+                  pendingPartners === 1 ? "y" : "ies"
+                }`
+              : null,
+          ]
+            .filter(Boolean)
+            .join(" - "),
+          url: "/admin",
+        });
 
-    await sendPushNotificationToAllAdmins({
-      title: "Pending approvals need review",
-      body: [
-        `${total} item${total === 1 ? "" : "s"} waiting for admin action.`,
-        pendingMembers
-          ? `${pendingMembers} member${pendingMembers === 1 ? "" : "s"}`
-          : null,
-        pendingBuilds
-          ? `${pendingBuilds} build${pendingBuilds === 1 ? "" : "s"}`
-          : null,
-        pendingPartners
-          ? `${pendingPartners} partner inquir${pendingPartners === 1 ? "y" : "ies"}`
-          : null,
-      ]
-        .filter(Boolean)
-        .join(" · "),
-      url: "/admin",
+        return {
+          processedCount: total,
+          metadata: {
+            sent: true,
+            pendingMembers,
+            pendingBuilds,
+            pendingPartners,
+          },
+          sent: true,
+          total,
+          pendingMembers,
+          pendingBuilds,
+          pendingPartners,
+        };
+      },
     });
 
     return NextResponse.json({
       success: true,
-      sent: true,
-      total,
-      pendingMembers,
-      pendingBuilds,
-      pendingPartners,
+      sent: result.sent,
+      reason: result.reason,
+      total: result.total,
+      pendingMembers: result.pendingMembers,
+      pendingBuilds: result.pendingBuilds,
+      pendingPartners: result.pendingPartners,
     });
   } catch (error) {
-    console.error("[PENDING_APPROVAL_DIGEST_CRON_ERROR]", error);
+    captureError(error, { source: "cron", cronName: "pending-approvals" });
 
     return NextResponse.json(
       {

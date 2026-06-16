@@ -34,7 +34,6 @@ export function CustomUserButton() {
     user.username ||
     user.primaryEmailAddress?.emailAddress ||
     "Member";
-
   const canAccessAdmin =
     dbUser?.role === "super_admin" || dbUser?.role === "admin";
 

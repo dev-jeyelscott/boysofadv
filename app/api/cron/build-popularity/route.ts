@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
 import { eq, sql } from "drizzle-orm";
+import { NextResponse } from "next/server";
 
 import { db } from "@/db/db";
-import { builds, buildLikes, buildComments } from "@/db/schema";
+import { buildComments, buildLikes, builds } from "@/db/schema";
+import { monitorCronRun } from "@/lib/cron/cron-monitor";
+import { captureError } from "@/lib/observability/error-monitor";
 
 export const runtime = "nodejs";
 
@@ -29,54 +31,67 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const publishedBuilds = await db
-      .select({
-        id: builds.id,
-        publishedAt: builds.publishedAt,
-        isFeatured: builds.isFeatured,
+    const result = await monitorCronRun({
+      cronName: "build-popularity",
+      handler: async () => {
+        const publishedBuilds = await db
+          .select({
+            id: builds.id,
+            publishedAt: builds.publishedAt,
+            isFeatured: builds.isFeatured,
 
-        likesCount: sql<number>`count(distinct ${buildLikes.id})::int`,
-        commentsCount: sql<number>`count(distinct ${buildComments.id})::int`,
-      })
-      .from(builds)
-      .leftJoin(buildLikes, eq(buildLikes.buildId, builds.id))
-      .leftJoin(buildComments, eq(buildComments.buildId, builds.id))
-      .where(eq(builds.status, "published"))
-      .groupBy(builds.id);
+            likesCount: sql<number>`count(distinct ${buildLikes.id})::int`,
+            commentsCount: sql<number>`count(distinct ${buildComments.id})::int`,
+          })
+          .from(builds)
+          .leftJoin(buildLikes, eq(buildLikes.buildId, builds.id))
+          .leftJoin(buildComments, eq(buildComments.buildId, builds.id))
+          .where(eq(builds.status, "published"))
+          .groupBy(builds.id);
 
-    const results = [];
+        const results = [];
 
-    for (const build of publishedBuilds) {
-      const likeScore = build.likesCount * 10;
-      const commentScore = build.commentsCount * 6;
-      const featuredScore = build.isFeatured ? 50 : 0;
-      const recencyScore = calculateRecencyBoost(build.publishedAt);
+        for (const build of publishedBuilds) {
+          const likeScore = build.likesCount * 10;
+          const commentScore = build.commentsCount * 6;
+          const featuredScore = build.isFeatured ? 50 : 0;
+          const recencyScore = calculateRecencyBoost(build.publishedAt);
 
-      const popularityScore =
-        likeScore + commentScore + featuredScore + recencyScore;
+          const popularityScore =
+            likeScore + commentScore + featuredScore + recencyScore;
 
-      await db
-        .update(builds)
-        .set({
-          popularityScore,
-          popularityCalculatedAt: new Date(),
-        })
-        .where(eq(builds.id, build.id));
+          await db
+            .update(builds)
+            .set({
+              popularityScore,
+              popularityCalculatedAt: new Date(),
+            })
+            .where(eq(builds.id, build.id));
 
-      results.push({
-        buildId: build.id,
-        likes: build.likesCount,
-        comments: build.commentsCount,
-        popularityScore,
-      });
-    }
+          results.push({
+            buildId: build.id,
+            likes: build.likesCount,
+            comments: build.commentsCount,
+            popularityScore,
+          });
+        }
+
+        return {
+          processedCount: results.length,
+          metadata: {
+            buildIds: results.map((row) => row.buildId),
+          },
+          results,
+        };
+      },
+    });
 
     return NextResponse.json({
-      processed: results.length,
-      results,
+      processed: result.results.length,
+      results: result.results,
     });
   } catch (error) {
-    console.error("[BUILD_POPULARITY_CRON_ERROR]", error);
+    captureError(error, { source: "cron", cronName: "build-popularity" });
 
     return NextResponse.json(
       { error: "Failed to calculate build popularity" },
