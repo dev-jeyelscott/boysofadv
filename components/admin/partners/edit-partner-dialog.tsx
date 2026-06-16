@@ -24,6 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { updatePartner } from "@/app/(protected)/admin/partners/actions";
 import { PartnerRow } from "@/lib/constants/partner";
 import { PartnerLogoUploader } from "./partner-logo-uploader";
+import { toast } from "sonner";
 
 type Props = {
   partner: PartnerRow | null;
@@ -42,9 +43,14 @@ export function EditPartnerDialog({ partner, onClose }: Props) {
     formData.set("logoUrl", logoUrl);
     formData.set("logoKey", logoKey);
 
-    await updatePartner(currentPartner.id, formData);
+    try {
+      await updatePartner(currentPartner.id, formData);
 
-    onClose();
+      toast.success("Partner updated.");
+      onClose();
+    } catch {
+      toast.error("Failed to update partner.");
+    }
   }
 
   return (
@@ -70,6 +76,7 @@ export function EditPartnerDialog({ partner, onClose }: Props) {
                 name="name"
                 defaultValue={partner.name}
                 placeholder="JVT Performance"
+                required
               />
             </div>
 

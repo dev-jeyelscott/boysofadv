@@ -97,11 +97,7 @@ export async function searchBuilds({
     .where(conditions.length ? and(...conditions) : undefined)
     .orderBy(
       ...(rank
-        ? [
-            desc(rank),
-            desc(builds.isFeatured),
-            desc(builds.createdAt),
-          ]
+        ? [desc(rank), desc(builds.isFeatured), desc(builds.createdAt)]
         : status === BUILD_STATUSES.PUBLISHED
           ? [desc(builds.popularityScore), desc(builds.publishedAt)]
           : [desc(builds.createdAt)]),

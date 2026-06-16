@@ -28,17 +28,15 @@ function isOwnerEditableBuildStatus(
 }
 
 export function canManageBuild(user: UserInput | null, build: BuildInput) {
-  return Boolean(
-    user && (isAdminRole(user.role) || user.id === build.userId),
-  );
+  return Boolean(user && (isAdminRole(user.role) || user.id === build.userId));
 }
 
 export function canEditBuild(user: UserInput | null, build: BuildInput) {
   return Boolean(
     user &&
-      user.id === build.userId &&
-      user.status === USER_STATUSES.APPROVED &&
-      isOwnerEditableBuildStatus(build.status),
+    user.id === build.userId &&
+    user.status === USER_STATUSES.APPROVED &&
+    isOwnerEditableBuildStatus(build.status),
   );
 }
 

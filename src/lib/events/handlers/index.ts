@@ -21,7 +21,9 @@ export function registerDomainEventHandlers() {
   }
 
   for (const eventName of DOMAIN_EVENTS) {
-    eventBus.register(eventName, (payload) => auditLogHandler(eventName, payload));
+    eventBus.register(eventName, (payload) =>
+      auditLogHandler(eventName, payload),
+    );
     eventBus.register(eventName, (payload) =>
       pushNotificationHandler(eventName, payload),
     );

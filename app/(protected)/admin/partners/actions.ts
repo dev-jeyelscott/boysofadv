@@ -15,6 +15,7 @@ const createPartnerSchema = z.object({
   name: z.string().min(1, "Partner name is required"),
   category: z.string().optional(),
   logoUrl: z.string().optional(),
+  logoKey: z.string().optional(),
   websiteUrl: z.string().optional(),
   facebookUrl: z.string().optional(),
   description: z.string().optional(),
@@ -31,10 +32,13 @@ function generateSlug(value: string) {
 }
 
 export async function createPartner(formData: FormData) {
+  await requireAdmin();
+
   const rawData = {
     name: String(formData.get("name") || ""),
     category: String(formData.get("category") || ""),
     logoUrl: String(formData.get("logoUrl") || ""),
+    logoKey: String(formData.get("logoKey") || ""),
     websiteUrl: String(formData.get("websiteUrl") || ""),
     facebookUrl: String(formData.get("facebookUrl") || ""),
     description: String(formData.get("description") || ""),
@@ -53,6 +57,7 @@ export async function createPartner(formData: FormData) {
     slug,
     category: validated.category || null,
     logoUrl: validated.logoUrl || null,
+    logoKey: validated.logoKey || null,
     websiteUrl: validated.websiteUrl || null,
     facebookUrl: validated.facebookUrl || null,
     description: validated.description || null,
@@ -79,8 +84,10 @@ function getPartnerUpdateData(formData: FormData) {
     name: getString(formData, "name"),
     category: getOptionalString(formData, "category"),
     websiteUrl: getOptionalString(formData, "websiteUrl"),
+    facebookUrl: getOptionalString(formData, "facebookUrl"),
     description: getOptionalString(formData, "description"),
     status: getString(formData, "status") || "inactive",
+    isOfficial: formData.get("isOfficial") === "on",
     logoUrl: getOptionalString(formData, "logoUrl"),
     logoKey: getOptionalString(formData, "logoKey"),
   };

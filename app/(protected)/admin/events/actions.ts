@@ -17,9 +17,17 @@ function getOptionalString(formData: FormData, key: string) {
   return value || null;
 }
 
+function getRequiredDate(formData: FormData, key: string) {
+  const value = getString(formData, key);
+  return value ? new Date(value) : new Date(Number.NaN);
+}
+
+function getOptionalDate(formData: FormData, key: string) {
+  const value = getString(formData, key);
+  return value ? new Date(value) : null;
+}
+
 function getEventFormData(formData: FormData) {
-  const startsAt = getString(formData, "startsAt");
-  const endsAt = getString(formData, "endsAt");
   const geoRadiusMeters = getString(formData, "geoRadiusMeters");
 
   return {
@@ -29,8 +37,8 @@ function getEventFormData(formData: FormData) {
     latitude: getOptionalString(formData, "latitude"),
     longitude: getOptionalString(formData, "longitude"),
     geoRadiusMeters: geoRadiusMeters ? Number(geoRadiusMeters) : 80,
-    startsAt: new Date(startsAt),
-    endsAt: new Date(endsAt),
+    startsAt: getRequiredDate(formData, "startsAt"),
+    endsAt: getOptionalDate(formData, "endsAt"),
     posterImageUrl: getOptionalString(formData, "posterImageUrl"),
     posterImageKey: getOptionalString(formData, "posterImageKey"),
   };
@@ -140,16 +148,31 @@ export async function updateEventAction(
   }
 }
 
-export async function deleteEventAction(id: string) {
-  const actor = await requireAdmin();
+export async function deleteEventAction(id: string): Promise<EventActionState> {
+  try {
+    const actor = await requireAdmin();
 
-  await EventService.cancel({
-    eventId: id,
-    actor,
-    reason: "Cancelled by admin.",
-  });
+    await EventService.cancel({
+      eventId: id,
+      actor,
+      reason: "Cancelled by admin.",
+    });
 
-  revalidatePath("/admin/events");
-  revalidatePath(`/admin/events/${id}`);
-  revalidatePath("/events");
+    revalidatePath("/admin/events");
+    revalidatePath(`/admin/events/${id}`);
+    revalidatePath("/events");
+
+    return {
+      success: true,
+      message: "Event successfully cancelled.",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: getServiceActionErrorMessage(
+        error,
+        "Failed to cancel event. Please try again.",
+      ),
+    };
+  }
 }

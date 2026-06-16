@@ -14,6 +14,7 @@ import { deleteEventAction } from "@/app/(protected)/admin/events/actions";
 import { EventRow } from "@/lib/constants/event";
 import EventEditDialog from "./event-edit-dialog";
 import Link from "next/link";
+import { toast } from "sonner";
 
 type Props = {
   event: EventRow;
@@ -26,7 +27,13 @@ export function EventActionsMenu({ event }: Props) {
     if (!confirm("Delete this event?")) return;
 
     startTransition(async () => {
-      await deleteEventAction(event.id);
+      const result = await deleteEventAction(event.id);
+
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
     });
   }
 
