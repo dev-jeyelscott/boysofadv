@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { type EventStatus, isEventStatus } from "@/lib/constants/event";
 import { EventService } from "@/src/features/events/event-service";
+import { revalidateEventCaches } from "@/src/lib/cache/revalidate";
 import { getServiceActionErrorMessage } from "@/src/lib/errors/handle-service-error";
 
 function getString(formData: FormData, key: string) {
@@ -83,6 +84,7 @@ export async function createEventAction(
 
     revalidatePath("/admin/events");
     revalidatePath("/events");
+    revalidateEventCaches();
 
     return {
       success: true,
@@ -132,6 +134,7 @@ export async function updateEventAction(
     revalidatePath("/admin/events");
     revalidatePath(`/admin/events/${id}`);
     revalidatePath("/events");
+    revalidateEventCaches();
 
     return {
       success: true,
@@ -161,6 +164,7 @@ export async function deleteEventAction(id: string): Promise<EventActionState> {
     revalidatePath("/admin/events");
     revalidatePath(`/admin/events/${id}`);
     revalidatePath("/events");
+    revalidateEventCaches();
 
     return {
       success: true,

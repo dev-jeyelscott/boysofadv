@@ -1,9 +1,6 @@
 import type { ReactNode } from "react";
-import type { SQL } from "drizzle-orm";
-import type { PgTable } from "drizzle-orm/pg-core";
 
 import Link from "next/link";
-import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
 import {
   ArrowRight,
   Bike,
@@ -16,15 +13,10 @@ import {
 import AdminPageShell from "@/components/admin/admin-page-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { db } from "@/db/db";
-import { builds, events, partners, users } from "@/db/schema";
-import { BUILD_STATUSES } from "@/lib/constants/build";
-import { USER_STATUSES } from "@/lib/constants/user";
+import { getAdminDashboardData } from "@/src/features/dashboard/queries";
 
 export default async function DashboardPage() {
-  const today = new Date();
-
-  const [
+  const {
     totalMembers,
     pendingMembers,
     approvedMembers,
@@ -40,83 +32,7 @@ export default async function DashboardPage() {
     recentBuilds,
     recentPartners,
     recentEvents,
-  ] = await Promise.all([
-    getCount(users),
-    getCount(users, eq(users.status, USER_STATUSES.FOR_APPROVAL)),
-    getCount(users, eq(users.status, USER_STATUSES.APPROVED)),
-    getCount(users, eq(users.status, USER_STATUSES.SUSPENDED)),
-
-    getCount(builds),
-    getCount(builds, eq(builds.status, BUILD_STATUSES.FOR_REVIEW)),
-    getCount(builds, ne(builds.status, BUILD_STATUSES.DRAFT)),
-    getCount(builds, eq(builds.isFeatured, true)),
-
-    getCount(partners),
-    getCount(partners, eq(partners.isOfficial, true)),
-
-    getCount(
-      events,
-      and(eq(events.status, "published"), gte(events.startsAt, today)),
-    ),
-
-    db
-      .select({
-        id: users.id,
-        firstName: users.firstName,
-        lastName: users.lastName,
-        nickname: users.nickname,
-        codename: users.codename,
-        email: users.email,
-        unit: users.unit,
-        status: users.status,
-        createdAt: users.createdAt,
-      })
-      .from(users)
-      .orderBy(desc(users.createdAt))
-      .limit(5),
-
-    db
-      .select({
-        id: builds.id,
-        title: builds.title,
-        motorcycleModel: builds.motorcycleModel,
-        status: builds.status,
-        isFeatured: builds.isFeatured,
-        createdAt: builds.createdAt,
-        ownerFirstName: users.firstName,
-        ownerLastName: users.lastName,
-        ownerNickname: users.nickname,
-        ownerEmail: users.email,
-      })
-      .from(builds)
-      .leftJoin(users, eq(builds.userId, users.id))
-      .orderBy(desc(builds.createdAt))
-      .limit(5),
-
-    db
-      .select({
-        id: partners.id,
-        name: partners.name,
-        isOfficial: partners.isOfficial,
-        createdAt: partners.createdAt,
-      })
-      .from(partners)
-      .orderBy(desc(partners.createdAt))
-      .limit(5),
-
-    db
-      .select({
-        id: events.id,
-        title: events.title,
-        location: events.location,
-        startsAt: events.startsAt,
-        createdAt: events.createdAt,
-      })
-      .from(events)
-      .where(and(eq(events.status, "published"), gte(events.startsAt, today)))
-      .orderBy(events.startsAt)
-      .limit(5),
-  ]);
+  } = await getAdminDashboardData();
 
   return (
     <AdminPageShell
@@ -245,19 +161,6 @@ export default async function DashboardPage() {
       </div>
     </AdminPageShell>
   );
-}
-
-async function getCount(table: PgTable, where?: SQL) {
-  const query = db
-    .select({
-      value: sql<number>`count(*)::int`,
-    })
-    .from(table)
-    .$dynamic();
-
-  const [result] = where ? await query.where(where) : await query;
-
-  return result?.value ?? 0;
 }
 
 function StatCard({

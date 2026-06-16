@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { MemberService } from "@/src/features/members/member-service";
+import { revalidateMemberCaches } from "@/src/lib/cache/revalidate";
 
 export async function approveMember(userId: string) {
   const actor = await requireAdmin();
@@ -15,6 +16,7 @@ export async function approveMember(userId: string) {
 
   revalidatePath("/admin/members");
   revalidatePath("/admin/memberships");
+  revalidateMemberCaches();
 }
 
 export async function rejectMember(userId: string) {
@@ -27,4 +29,5 @@ export async function rejectMember(userId: string) {
 
   revalidatePath("/admin/members");
   revalidatePath("/admin/memberships");
+  revalidateMemberCaches();
 }

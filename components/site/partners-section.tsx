@@ -1,15 +1,10 @@
-import { desc, eq } from "drizzle-orm";
 import Image from "next/image";
 import Link from "next/link";
 
-import { db } from "@/db/db";
-import { partners } from "@/db/schema";
+import { getActivePublicPartners } from "@/src/features/partners/queries";
 
 export async function PartnersSection() {
-  const activePartners = await db.query.partners.findMany({
-    where: eq(partners.status, "active"),
-    orderBy: [desc(partners.createdAt)],
-  });
+  const activePartners = await getActivePublicPartners(12);
 
   if (activePartners.length === 0) {
     return null;
@@ -44,9 +39,10 @@ export async function PartnersSection() {
                   <Image
                     src={partner.logoUrl}
                     alt={partner.name}
-                    width={240}
-                    height={120}
+                    width={160}
+                    height={80}
                     quality={60}
+                    loading="lazy"
                     sizes="(max-width: 640px) 70vw, (max-width: 1024px) 30vw, 240px"
                     className="max-h-20 w-full object-contain transition duration-300 ease-out group-hover:scale-105"
                   />

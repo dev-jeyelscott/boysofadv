@@ -13,7 +13,10 @@ import { BUILD_STATUSES } from "@/lib/constants/build";
 import { USER_STATUSES } from "@/lib/constants/user";
 import { touchUserActivity } from "@/lib/auth/touch-user-activity";
 import { canDeleteBuildComment } from "@/lib/permissions/build-comment-permissions";
-import { searchBuilds } from "@/lib/db/build-search";
+import {
+  getPublicBuildsPage,
+  searchPublicBuilds,
+} from "@/src/features/builds/queries";
 
 const LIMIT = 9;
 const COMMENT_BODY_MAX_LENGTH = 1000;
@@ -114,12 +117,17 @@ function getActionErrorMessage(error: unknown, fallback: string) {
 }
 
 export async function getPublishedBuilds(offset = 0, search = "") {
-  const result = await searchBuilds({
-    query: search,
-    status: BUILD_STATUSES.PUBLISHED,
-    limit: LIMIT,
-    offset,
-  });
+  const trimmedSearch = search.trim();
+  const result = trimmedSearch
+    ? await searchPublicBuilds({
+        query: trimmedSearch,
+        limit: LIMIT,
+        offset,
+      })
+    : await getPublicBuildsPage({
+        page: Math.floor(offset / LIMIT),
+        limit: LIMIT,
+      });
 
   return {
     builds: result.items,

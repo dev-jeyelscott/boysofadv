@@ -1,24 +1,12 @@
 import { CalendarDays, MapPin } from "lucide-react";
-import { desc } from "drizzle-orm";
-
 import { SiteHeader } from "@/components/site/site-header";
-import { db } from "@/db/db";
-import { events } from "@/db/schema";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getUpcomingPublicEvents } from "@/src/features/events/queries";
 
 export default async function EventsPage() {
-  const eventList = await db
-    .select({
-      id: events.id,
-      title: events.title,
-      location: events.location,
-      startsAt: events.startsAt,
-      posterImageUrl: events.posterImageUrl,
-    })
-    .from(events)
-    .orderBy(desc(events.startsAt));
+  const eventList = await getUpcomingPublicEvents(12);
 
   return (
     <main className="min-h-screen bg-black text-white">

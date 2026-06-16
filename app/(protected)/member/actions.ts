@@ -11,6 +11,10 @@ import { getCurrentUser } from "@/lib/get-current-user";
 import { BUILD_STATUSES } from "@/lib/constants/build";
 import { USER_STATUSES } from "@/lib/constants/user";
 import { BuildService } from "@/src/features/builds/build-service";
+import {
+  revalidateBuildCaches,
+  revalidateMemberCaches,
+} from "@/src/lib/cache/revalidate";
 
 const utapi = new UTApi();
 
@@ -43,6 +47,7 @@ export async function updateProfile(formData: FormData) {
       .where(eq(users.id, user.id));
 
     revalidatePath("/member/profile");
+    revalidateMemberCaches();
 
     return {
       success: true,
@@ -224,6 +229,7 @@ export async function updateMyBuild(formData: FormData) {
 
     revalidatePath("/member/my-build");
     revalidatePath("/builds");
+    revalidateBuildCaches();
 
     return {
       success: true,
