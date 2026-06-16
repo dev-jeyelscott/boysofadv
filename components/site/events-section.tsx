@@ -1,8 +1,6 @@
-import { desc, eq, or } from "drizzle-orm";
 import Link from "next/link";
 
-import { db } from "@/db/db";
-import { events } from "@/db/schema";
+import { getUpcomingPublicEvents } from "@/src/features/events/queries";
 
 function formatEventDate(date: Date | string | null) {
   if (!date) return "TBA";
@@ -15,11 +13,7 @@ function formatEventDate(date: Date | string | null) {
 }
 
 export async function EventsSection() {
-  const recentEvents = await db.query.events.findMany({
-    where: or(eq(events.status, "published"), eq(events.status, "completed")),
-    orderBy: [desc(events.startsAt)],
-    limit: 3,
-  });
+  const recentEvents = await getUpcomingPublicEvents(3);
 
   if (recentEvents.length === 0) {
     return null;

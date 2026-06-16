@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { BuildService } from "@/src/features/builds/build-service";
+import { revalidateBuildCaches } from "@/src/lib/cache/revalidate";
 
 export async function publishBuild(buildId: string) {
   const actor = await requireAdmin();
@@ -15,6 +16,7 @@ export async function publishBuild(buildId: string) {
 
   revalidatePath("/admin/builds");
   revalidatePath("/builds");
+  revalidateBuildCaches();
 }
 
 export async function rejectBuild(buildId: string) {
@@ -27,4 +29,5 @@ export async function rejectBuild(buildId: string) {
   });
 
   revalidatePath("/admin/builds");
+  revalidateBuildCaches();
 }

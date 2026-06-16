@@ -8,6 +8,7 @@ import { db } from "@/db/db";
 import { partners } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { PartnerService } from "@/src/features/partners/partner-service";
+import { revalidatePartnerCaches } from "@/src/lib/cache/revalidate";
 
 const PARTNER_STATUSES = ["draft", "active", "inactive"] as const;
 
@@ -67,6 +68,8 @@ export async function createPartner(formData: FormData) {
   });
 
   revalidatePath("/admin/partners");
+  revalidatePath("/partners");
+  revalidatePartnerCaches();
 }
 
 function getString(formData: FormData, key: string) {
@@ -103,4 +106,6 @@ export async function updatePartner(id: string, formData: FormData) {
   });
 
   revalidatePath("/admin/partners");
+  revalidatePath("/partners");
+  revalidatePartnerCaches();
 }

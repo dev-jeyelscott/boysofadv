@@ -4,10 +4,12 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { MemberService } from "@/src/features/members/member-service";
+import { revalidateMemberCaches } from "@/src/lib/cache/revalidate";
 
 function revalidateMembers() {
   revalidatePath("/admin/members");
   revalidatePath("/admin/memberships");
+  revalidateMemberCaches();
 }
 
 export async function suspendMember(memberId: string) {

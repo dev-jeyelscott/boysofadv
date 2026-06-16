@@ -1,16 +1,36 @@
 import { Users, Flag, Handshake, Route, Target, Eye } from "lucide-react";
 
-export function AboutMissionVisionSection() {
+import { getHomepageStats } from "@/src/features/dashboard/queries";
+
+export async function AboutMissionVisionSection() {
+  const stats = await getHomepageStats();
+
   return (
     <section id="about" className="bg-black py-6 sm:py-10">
       <div className="container mx-auto px-4 py-6 sm:py-10">
         <div className="overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-b from-neutral-950 to-black sm:rounded-3xl">
           {/* Stats */}
           <div className="grid grid-cols-1 border-b border-red-500/20 sm:grid-cols-2 lg:grid-cols-4">
-            <StatItem icon={<Users />} value="150+" label="Official Members" />
-            <StatItem icon={<Flag />} value="30+" label="Official Events" />
-            <StatItem icon={<Handshake />} value="15+" label="Partner Shops" />
-            <StatItem icon={<Route />} value="500+" label="Community Rides" />
+            <StatItem
+              icon={<Users />}
+              value={stats.approvedMembers}
+              label="Approved Members"
+            />
+            <StatItem
+              icon={<Flag />}
+              value={stats.publishedBuilds}
+              label="Published Builds"
+            />
+            <StatItem
+              icon={<Handshake />}
+              value={stats.activePartners}
+              label="Active Partners"
+            />
+            <StatItem
+              icon={<Route />}
+              value={stats.upcomingEvents}
+              label="Upcoming Events"
+            />
           </div>
 
           {/* Content */}
@@ -78,7 +98,7 @@ function StatItem({
   label,
 }: {
   icon: React.ReactNode;
-  value: string;
+  value: number;
   label: string;
 }) {
   return (

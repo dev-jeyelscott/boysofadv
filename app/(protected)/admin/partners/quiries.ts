@@ -11,6 +11,7 @@ type GetPartnersFilters = {
   search?: string;
   status?: string;
   category?: string;
+  limit?: number;
 };
 
 function isPartnerStatus(status: string): status is PartnerStatus {
@@ -19,6 +20,7 @@ function isPartnerStatus(status: string): status is PartnerStatus {
 
 export async function getPartners(filters: GetPartnersFilters = {}) {
   const conditions = [];
+  const limit = Math.min(Math.max(1, filters.limit ?? 50), 100);
 
   if (filters.search) {
     conditions.push(ilike(partners.name, `%${filters.search}%`));
@@ -36,10 +38,25 @@ export async function getPartners(filters: GetPartnersFilters = {}) {
     conditions.push(eq(partners.category, filters.category));
   }
 
-  const data = await db.query.partners.findMany({
-    where: conditions.length ? and(...conditions) : undefined,
-    orderBy: asc(partners.name),
-  });
+  const data = await db
+    .select({
+      id: partners.id,
+      name: partners.name,
+      category: partners.category,
+      description: partners.description,
+      logoUrl: partners.logoUrl,
+      logoKey: partners.logoKey,
+      isOfficial: partners.isOfficial,
+      status: partners.status,
+      websiteUrl: partners.websiteUrl,
+      facebookUrl: partners.facebookUrl,
+      createdAt: partners.createdAt,
+      updatedAt: partners.updatedAt,
+    })
+    .from(partners)
+    .where(conditions.length ? and(...conditions) : undefined)
+    .orderBy(asc(partners.name))
+    .limit(limit);
 
   return {
     partners: data,
