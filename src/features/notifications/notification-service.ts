@@ -4,7 +4,7 @@ import crypto from "crypto";
 import { db } from "@/db/db";
 import { pushSubscriptions, users } from "@/db/schema";
 import { USER_ROLES, USER_STATUSES } from "@/lib/constants/user";
-import { webPush } from "@/lib/push";
+import { getWebPushClient } from "@/lib/push";
 import type {
   NotificationDeliverySummary,
   NotificationPayload,
@@ -59,8 +59,21 @@ async function sendPushToSubscription(
   payload: NotificationPayload,
   context: string,
 ) {
+  const webPush = getWebPushClient();
+
+  if (!webPush.ok) {
+    console.error("[PUSH_CONFIG_MISSING]", {
+      context,
+      userId: subscription.userId,
+      endpointHash: redactEndpoint(subscription.endpoint),
+      error: webPush.error,
+    });
+
+    return { sent: false, removed: false };
+  }
+
   try {
-    await webPush.sendNotification(
+    await webPush.client.sendNotification(
       {
         endpoint: subscription.endpoint,
         keys: {
