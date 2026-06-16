@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+test.use({ storageState: process.env.E2E_MEMBER_STORAGE_STATE });
+
 test("member event check-in flow", async ({ context, page }) => {
   test.skip(!process.env.E2E_MEMBER_STORAGE_STATE, "Member auth state is required.");
 

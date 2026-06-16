@@ -17,9 +17,10 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
-  allowedDevOrigins: ["unsworn-stock-naturist.ngrok-free.dev"],
+  allowedDevOrigins: ["127.0.0.1", "unsworn-stock-naturist.ngrok-free.dev"],
 
   images: {
+    qualities: [60, 70, 75],
     remotePatterns: [
       {
         protocol: "https",
