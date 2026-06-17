@@ -5,6 +5,10 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { type EventStatus, isEventStatus } from "@/lib/constants/event";
 import { EventService } from "@/src/features/events/event-service";
+import {
+  getAdminEvents,
+  type GetAdminEventsInput,
+} from "@/src/features/events/queries";
 import { revalidateEventCaches } from "@/src/lib/cache/revalidate";
 import { getServiceActionErrorMessage } from "@/src/lib/errors/handle-service-error";
 
@@ -179,4 +183,10 @@ export async function deleteEventAction(id: string): Promise<EventActionState> {
       ),
     };
   }
+}
+
+export async function loadMoreAdminEvents(input: GetAdminEventsInput) {
+  await requireAdmin();
+
+  return getAdminEvents(input);
 }

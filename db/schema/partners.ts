@@ -26,6 +26,8 @@ export const partners = pgTable(
 
     websiteUrl: text("website_url"),
     facebookUrl: text("facebook_url"),
+    email: text("email"),
+    phoneNumber: text("phone_number"),
 
     description: text("description"),
     category: text("category"),

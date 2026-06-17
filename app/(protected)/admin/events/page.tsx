@@ -1,7 +1,7 @@
 import { EventCreateDialog } from "@/components/admin/events/event-create-dialog";
 import { EventsFilters } from "@/components/admin/events/events-filter";
-import { EventsTable } from "@/components/admin/events/events-table";
 import { getAdminEvents } from "@/src/features/events/queries";
+import { AdminEventsClient } from "./admin-events-client";
 
 type Props = {
   searchParams: Promise<{
@@ -12,7 +12,7 @@ type Props = {
 
 export default async function EventsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const eventRows = await getAdminEvents({
+  const eventsData = await getAdminEvents({
     search: params.q,
     status: params.status,
   });
@@ -26,7 +26,16 @@ export default async function EventsPage({ searchParams }: Props) {
       </div>
 
       <div className="mt-5">
-        <EventsTable events={eventRows} />
+        <AdminEventsClient
+          key={[params.q, params.status].join(":")}
+          events={eventsData.events}
+          nextCursor={eventsData.nextCursor}
+          hasMore={eventsData.hasMore}
+          filters={{
+            search: params.q,
+            status: params.status,
+          }}
+        />
       </div>
     </div>
   );

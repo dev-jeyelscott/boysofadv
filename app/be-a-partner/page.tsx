@@ -53,8 +53,8 @@ export default async function BeAPartnerPage({
                 />
 
                 <Field
-                  label="Contact Person"
-                  name="contactPerson"
+                  label="Contact Name"
+                  name="contactName"
                   placeholder="Full name"
                   required
                 />
@@ -71,6 +71,7 @@ export default async function BeAPartnerPage({
                   label="Phone Number"
                   name="phoneNumber"
                   placeholder="09XX XXX XXXX"
+                  required
                 />
 
                 <Field

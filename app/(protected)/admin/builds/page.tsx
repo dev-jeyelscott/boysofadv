@@ -42,7 +42,25 @@ export default async function AdminBuildsPage({ searchParams }: Props) {
         isFeatured={params.isFeatured || ""}
       />
       <div className="p-4">
-        <AdminBuildsClient builds={data.itemsWithGalleryImages} />
+        <AdminBuildsClient
+          key={[
+            params.search,
+            params.model,
+            params.concept,
+            params.status,
+            params.isFeatured,
+          ].join(":")}
+          builds={data.itemsWithGalleryImages}
+          nextCursor={data.nextCursor}
+          hasMore={data.hasMore}
+          filters={{
+            search: params.search,
+            model: params.model,
+            concept: params.concept,
+            status: params.status,
+            isFeatured: params.isFeatured,
+          }}
+        />
       </div>
 
       <BuildDetailsDialogClient build={selectedBuild} />

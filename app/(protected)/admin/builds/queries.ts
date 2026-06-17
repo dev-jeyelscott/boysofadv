@@ -74,5 +74,6 @@ export async function getAdminBuilds({
     nextCursor: result.hasMore
       ? String((cursor ? Number(cursor) || 0 : 0) + limit)
       : null,
+    hasMore: result.hasMore,
   };
 }

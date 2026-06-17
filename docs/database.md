@@ -16,6 +16,7 @@ The schema uses explicit foreign keys, Drizzle enums for core statuses, and inde
 | `events`             | Community events, locations, publication state, and attendance summary metadata.              |
 | `event_attendance`   | One check-in record per user per event.                                                       |
 | `partners`           | Partner directory entries and sponsorship metadata.                                           |
+| `partner_inquiries`  | Public partnership inquiry submissions and admin review state.                                |
 | `push_subscriptions` | Browser Web Push subscription keys per user endpoint.                                         |
 | `audit_logs`         | Append-only admin/domain action history.                                                      |
 | `cron_runs`          | Execution records for scheduled jobs.                                                         |
@@ -172,7 +173,7 @@ Important columns:
 
 - `name`, `slug`.
 - `logo_url`, `logo_key`.
-- `website_url`, `facebook_url`.
+- `website_url`, `facebook_url`, `email`, `phone_number`.
 - `description`, `category`.
 - `status`: `draft`, `active`, or `inactive`.
 - `is_official`, `display_order`.
@@ -181,6 +182,26 @@ Indexes and constraints:
 
 - Unique `slug`.
 - Indexes on status and category.
+
+## `partner_inquiries`
+
+Purpose: stores public partnership submissions from `/be-a-partner` for admin review at `/admin/partnership`.
+
+Important columns:
+
+- `business_name`, `contact_person`, `email`, `phone_number`.
+- `website_url`, `facebook_url`.
+- `message`.
+- `status`: `new`, `contacted`, `approved`, or `rejected`.
+- `contacted_at`, `approved_at`, `rejected_at`: lifecycle timestamps for admin status changes.
+- `created_at`, `updated_at`.
+
+Workflow rules:
+
+- New inquiries may become contacted or rejected.
+- Contacted inquiries may become approved or rejected.
+- Approved and rejected inquiries are final.
+- Approval creates an active `partners` record in the same database transaction.
 
 ## `push_subscriptions`
 
