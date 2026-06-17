@@ -1,7 +1,7 @@
 import { PartnersFilters } from "@/components/admin/partners/partners-filters";
-import { PartnersTable } from "@/components/admin/partners/partners-table";
 import { getPartnerFilterOptions, getPartners } from "./quiries";
 import { AddPartnerDialog } from "@/components/admin/partners/add-partner-dialog";
+import { AdminPartnersClient } from "./admin-partners-client";
 
 type PartnersPageProps = {
   searchParams: Promise<{
@@ -16,7 +16,7 @@ export default async function PartnersPage({
 }: PartnersPageProps) {
   const params = await searchParams;
 
-  const [{ partners }, filterOptions] = await Promise.all([
+  const [partnersData, filterOptions] = await Promise.all([
     getPartners({
       search: params.search,
       status: params.status,
@@ -39,7 +39,17 @@ export default async function PartnersPage({
       </div>
 
       <div className="p-4">
-        <PartnersTable partners={partners} />
+        <AdminPartnersClient
+          key={[params.search, params.status, params.category].join(":")}
+          partners={partnersData.partners}
+          nextCursor={partnersData.nextCursor}
+          hasMore={partnersData.hasMore}
+          filters={{
+            search: params.search,
+            status: params.status,
+            category: params.category,
+          }}
+        />
       </div>
     </div>
   );

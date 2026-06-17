@@ -7,10 +7,11 @@ const PARTNER_STATUSES = ["draft", "active", "inactive"] as const;
 
 type PartnerStatus = (typeof PARTNER_STATUSES)[number];
 
-type GetPartnersFilters = {
+export type GetPartnersFilters = {
   search?: string;
   status?: string;
   category?: string;
+  cursor?: string | null;
   limit?: number;
 };
 
@@ -21,6 +22,7 @@ function isPartnerStatus(status: string): status is PartnerStatus {
 export async function getPartners(filters: GetPartnersFilters = {}) {
   const conditions = [];
   const limit = Math.min(Math.max(1, filters.limit ?? 50), 100);
+  const offset = filters.cursor ? Number(filters.cursor) || 0 : 0;
 
   if (filters.search) {
     conditions.push(ilike(partners.name, `%${filters.search}%`));
@@ -55,11 +57,14 @@ export async function getPartners(filters: GetPartnersFilters = {}) {
     })
     .from(partners)
     .where(conditions.length ? and(...conditions) : undefined)
-    .orderBy(asc(partners.name))
-    .limit(limit);
+    .orderBy(asc(partners.name), asc(partners.id))
+    .limit(limit + 1)
+    .offset(offset);
 
   return {
-    partners: data,
+    partners: data.slice(0, limit),
+    nextCursor: data.length > limit ? String(offset + limit) : null,
+    hasMore: data.length > limit,
   };
 }
 

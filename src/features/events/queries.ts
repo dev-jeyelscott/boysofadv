@@ -69,22 +69,27 @@ export async function getRecentPublicEvents(limit = 3) {
   )();
 }
 
+export type GetAdminEventsInput = {
+  search?: string;
+  status?: string;
+  cursor?: string | null;
+  limit?: number;
+};
+
 export async function getAdminEvents({
   search,
   status,
+  cursor,
   limit = 50,
-}: {
-  search?: string;
-  status?: string;
-  limit?: number;
-}) {
+}: GetAdminEventsInput) {
   const q = hasSearchQuery(search) ? normalizeSearchQuery(search ?? "") : "";
   const rank = q ? searchRank(events.searchVector, "english", q) : undefined;
   const statusParam = status?.trim() || "all";
   const safeStatus = isEventStatus(statusParam) ? statusParam : "all";
   const safeLimit = Math.min(Math.max(1, limit), 100);
+  const offset = cursor ? Number(cursor) || 0 : 0;
 
-  return db
+  const data = await db
     .select({
       id: events.id,
       title: events.title,
@@ -110,5 +115,12 @@ export async function getAdminEvents({
     .orderBy(
       ...(rank ? [desc(rank), asc(events.startsAt)] : [desc(events.startsAt)]),
     )
-    .limit(safeLimit);
+    .limit(safeLimit + 1)
+    .offset(offset);
+
+  return {
+    events: data.slice(0, safeLimit),
+    nextCursor: data.length > safeLimit ? String(offset + safeLimit) : null,
+    hasMore: data.length > safeLimit,
+  };
 }

@@ -9,6 +9,7 @@ import { partners } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { PartnerService } from "@/src/features/partners/partner-service";
 import { revalidatePartnerCaches } from "@/src/lib/cache/revalidate";
+import { getPartners, type GetPartnersFilters } from "./quiries";
 
 const PARTNER_STATUSES = ["draft", "active", "inactive"] as const;
 
@@ -108,4 +109,10 @@ export async function updatePartner(id: string, formData: FormData) {
   revalidatePath("/admin/partners");
   revalidatePath("/partners");
   revalidatePartnerCaches();
+}
+
+export async function loadMoreAdminPartners(input: GetPartnersFilters) {
+  await requireAdmin();
+
+  return getPartners(input);
 }

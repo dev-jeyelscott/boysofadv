@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { MemberService } from "@/src/features/members/member-service";
 import { revalidateMemberCaches } from "@/src/lib/cache/revalidate";
+import { getMembers, type GetMembersParams } from "./queries";
 
 function revalidateMembers() {
   revalidatePath("/admin/members");
@@ -45,4 +46,10 @@ export async function archiveMember(memberId: string) {
 
   await MemberService.archive({ memberId, actor });
   revalidateMembers();
+}
+
+export async function loadMoreAdminMembers(input: GetMembersParams) {
+  await requireAdmin();
+
+  return getMembers(input);
 }
