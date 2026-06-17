@@ -99,6 +99,7 @@ Newer business rules are centralized in `src/features/*`:
 - `EventService` owns event create, update, publish, cancel, and complete workflows.
 - `AttendanceService` owns QR token creation, geofence check-in, attendance listing, and removal.
 - `PartnerService` owns partner create/update/archive style workflows.
+- `PartnershipService` owns public partner inquiry creation, admin status transitions, and partner creation on inquiry approval.
 - `NotificationService` owns push subscription storage and push delivery.
 - `audit-service` owns append-only audit records.
 

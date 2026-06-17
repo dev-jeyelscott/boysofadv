@@ -46,7 +46,7 @@ const navItems = [
   },
   {
     label: "Partnerships",
-    href: "/admin/partnerships",
+    href: "/admin/partnership",
     icon: Handshake,
   },
   {

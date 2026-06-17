@@ -69,6 +69,7 @@ Attendance check-in requires a published event, valid time window, valid rotatin
 | Create attendance QR    |     No |                  No |                      Yes |                      Yes |
 | Check in to event       |     No |       Yes, approved |            Yes, approved |            Yes, approved |
 | Manage partners         |     No |                  No |                      Yes |                      Yes |
+| Manage partnerships     |     No |                  No |                      Yes |                      Yes |
 | View cron observability |     No |                  No |                      Yes |                      Yes |
 | Run cron endpoint       |     No |                  No |       Bearer cron secret |       Bearer cron secret |
 

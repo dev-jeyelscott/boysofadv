@@ -32,12 +32,9 @@ export default async function MembersPage({ searchParams }: MembersPageProps) {
       />
       <div className="p-4">
         <AdminMembersClient
-          key={[
-            params.search,
-            params.status,
-            params.chapter,
-            params.unit,
-          ].join(":")}
+          key={[params.search, params.status, params.chapter, params.unit].join(
+            ":",
+          )}
           members={membersData.members}
           nextCursor={membersData.nextCursor}
           hasMore={membersData.hasMore}
