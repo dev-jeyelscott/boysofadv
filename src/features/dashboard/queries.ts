@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import type { SQL } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
-import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, ne, sql } from "drizzle-orm";
 
 import { db } from "@/db/db";
 import { builds, events, partners, users } from "@/db/schema";
@@ -27,18 +27,17 @@ async function getCount(table: PgTable, where?: SQL) {
 export async function getHomepageStats() {
   return unstable_cache(
     async () => {
-      const now = new Date();
-      const [approvedMembers, publishedBuilds, activePartners, upcomingEvents] =
+      const [approvedMembers, publishedBuilds, activePartners, officialEvents] =
         await Promise.all([
           getCount(users, eq(users.status, USER_STATUSES.APPROVED)),
           getCount(builds, eq(builds.status, BUILD_STATUSES.PUBLISHED)),
           getCount(partners, eq(partners.status, "active")),
           getCount(
             events,
-            and(
-              eq(events.status, EVENT_STATUSES.PUBLISHED),
-              gte(events.startsAt, now),
-            ),
+            inArray(events.status, [
+              EVENT_STATUSES.PUBLISHED,
+              EVENT_STATUSES.COMPLETED,
+            ]),
           ),
         ]);
 
@@ -46,7 +45,7 @@ export async function getHomepageStats() {
         approvedMembers,
         publishedBuilds,
         activePartners,
-        upcomingEvents,
+        officialEvents,
       };
     },
     [CACHE_TAGS.homepageStats],

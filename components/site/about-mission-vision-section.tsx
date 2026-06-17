@@ -28,8 +28,8 @@ export async function AboutMissionVisionSection() {
             />
             <StatItem
               icon={<Route />}
-              value={stats.upcomingEvents}
-              label="Upcoming Events"
+              value={stats.officialEvents}
+              label="Official Events"
             />
           </div>
 
